@@ -1,0 +1,2 @@
+aiogram==3.0.0rc1
+environs==9.5.0

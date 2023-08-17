@@ -1,0 +1,7 @@
+.env
+.black
+.flake8
+.DS_Store
+
+.venv/
+**/__pycache__/
