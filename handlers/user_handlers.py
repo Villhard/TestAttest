@@ -1,12 +1,11 @@
-from aiogram import Router, F
+from aiogram import F, Router
+from aiogram.filters import CommandStart
 from aiogram.types import (
+    CallbackQuery,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     Message,
-    CallbackQuery,
 )
-from aiogram.filters import CommandStart
-
 
 router = Router()
 
@@ -15,9 +14,7 @@ router = Router()
 async def cmd_start(message: Message):
     """/start command handler"""
     keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [InlineKeyboardButton(text="Список тестов", callback_data="tests")]
-        ]
+        inline_keyboard=[[InlineKeyboardButton(text="Список тестов", callback_data="tests")]]
     )
     await message.answer(
         text="Привет! Я бот для тестирования.\n\n"

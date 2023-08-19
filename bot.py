@@ -1,9 +1,10 @@
-import logging
 import asyncio
-from aiogram import Bot, Dispatcher
-from handlers import user_handlers, admin_handlers
-from config import config
+import logging
 
+from aiogram import Bot, Dispatcher
+
+from config import config
+from handlers import admin_handlers, user_handlers
 
 logger = logging.getLogger(__name__)
 

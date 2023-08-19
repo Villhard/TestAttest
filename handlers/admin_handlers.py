@@ -1,8 +1,7 @@
-from aiogram import Router, F
-from aiogram.types import (
-    Message,
-)
+from aiogram import F, Router
 from aiogram.filters import CommandStart
+from aiogram.types import Message
+
 from config import config
 
 router = Router()
