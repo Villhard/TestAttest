@@ -1,3 +1,4 @@
+"""Main module of the bot."""
 import asyncio
 import logging
 
@@ -9,7 +10,8 @@ from handlers import admin_handlers, user_handlers
 logger = logging.getLogger(__name__)
 
 
-async def main():
+async def main() -> None:
+    """Start the bot."""
     logging.basicConfig(level=logging.INFO)
     logger.info("Starting bot")
 

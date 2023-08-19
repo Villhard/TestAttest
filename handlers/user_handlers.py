@@ -1,3 +1,4 @@
+"""User handlers."""
 from aiogram import F, Router
 from aiogram.filters import CommandStart
 from aiogram.types import (
@@ -11,8 +12,8 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def cmd_start(message: Message):
-    """/start command handler"""
+async def cmd_start(message: Message) -> None:
+    """Command /start handler for user."""
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[[InlineKeyboardButton(text="Список тестов", callback_data="tests")]]
     )
@@ -24,8 +25,8 @@ async def cmd_start(message: Message):
 
 
 @router.callback_query(F.data == "tests")
-async def cb_tests(callback: CallbackQuery):
-    """Tests callback handler"""
+async def cb_tests(callback: CallbackQuery) -> None:
+    """Callback handler for tests for user."""
     #  TODO: get tests from database
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[

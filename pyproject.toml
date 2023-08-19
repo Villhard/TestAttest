@@ -15,6 +15,9 @@ black = "^23.7.0"
 flake8-bugbear = "^23.7.10"
 flake8-import-order = "^0.18.2"
 flake8-pyproject = "^1.2.3"
+flake8-docstrings = "^1.7.0"
+flake8-annotations = "^3.0.1"
+flake8-builtins = "^2.1.0"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
@@ -25,8 +28,10 @@ line-length = 100
 
 [tool.isort]
 profile = "black"
+line-length = 100
+lines_after_imports = 2
 
 [tool.flake8]
 exclude = ".venv,.git,.__pycache__"
-ignore = "I201"
+ignore = "I201,D401"
 max-line-length = 100

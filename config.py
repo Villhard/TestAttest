@@ -1,3 +1,4 @@
+"""Module for reading config from .env file and create config object."""
 from dataclasses import dataclass
 
 from environs import Env
@@ -5,20 +6,14 @@ from environs import Env
 
 @dataclass
 class BotConfig:
-    """
-    Config for telegram bot
-    """
+    """Config for telegram bot."""
 
     token: str
     admin_ids: list[int]
 
 
 def load_config(path: str = None) -> BotConfig:
-    """
-    Read env and return config
-    :param path: path to .env file
-    :return: BotConfig
-    """
+    """Read env and return config."""
     env = Env()
     env.read_env(path)
 
