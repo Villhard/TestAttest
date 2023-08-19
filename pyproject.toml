@@ -1,0 +1,19 @@
+[tool.poetry]
+authors = ["Victor Ryabov <victorwillhard@gmail.com>"]
+description = ""
+name = "testattest"
+readme = "README.md"
+version = "0.1.0"
+
+[tool.poetry.dependencies]
+aiogram = "3.0.0rc2"
+environs = "^9.5.0"
+python = "^3.11"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+flake8-bugbear = "^23.7.10"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
