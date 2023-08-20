@@ -5,7 +5,7 @@ import logging
 from aiogram import Bot, Dispatcher
 
 from config import config
-from handlers import admin_handlers, user_handlers
+from handlers import user_handlers  # TODO: add admin_handlers
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ async def main() -> None:
     bot = Bot(token=config.token, parse_mode="HTML")
     dp = Dispatcher()
 
-    dp.include_router(admin_handlers.router)
+    # dp.include_router(admin_handlers.router)
     dp.include_router(user_handlers.router)
 
     await bot.delete_webhook(drop_pending_updates=True)

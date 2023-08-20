@@ -51,7 +51,6 @@ class Question(Base):
         back_populates="question", uselist=True, lazy="joined"
     )
     image: Mapped["Image"] = relationship(back_populates="question", uselist=False)
-    image_id = mapped_column(ForeignKey("images.id"), nullable=True)
     incorrect_answers: Mapped[list["Incorrect_Answer"]] = relationship(
         back_populates="question", uselist=True, lazy="joined"
     )
