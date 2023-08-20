@@ -7,7 +7,7 @@ from config import config
 
 router = Router()
 
-router.message.filter(F.from_user.id.in_(config.admin_ids))
+router.message.filter(F.from_user.id.in_(config.bot.admin_ids))
 
 
 @router.message(CommandStart())

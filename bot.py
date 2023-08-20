@@ -15,7 +15,7 @@ async def main() -> None:
     logging.basicConfig(level=logging.INFO)
     logger.info("Starting bot")
 
-    bot = Bot(token=config.token, parse_mode="HTML")
+    bot = Bot(token=config.bot.token, parse_mode="HTML")
     dp = Dispatcher()
 
     # dp.include_router(admin_handlers.router)

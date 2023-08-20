@@ -2,7 +2,9 @@
 from sqlalchemy import BigInteger, DateTime, ForeignKey, create_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
-engine = create_engine("sqlite:///database.db")
+from config import config
+
+engine = create_engine(config.database.url)
 
 
 class Base(DeclarativeBase):

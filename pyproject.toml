@@ -32,5 +32,5 @@ profile = "black"
 
 [tool.flake8]
 exclude = ".venv,.git,.__pycache__"
-ignore = "I201,D401"
+ignore = "I201,D401,I100"
 max-line-length = 100
