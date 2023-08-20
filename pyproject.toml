@@ -9,6 +9,7 @@ version = "0.1.0"
 aiogram = "3.0.0rc2"
 environs = "^9.5.0"
 python = "^3.11"
+sqlalchemy = "^2.0.20"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
@@ -28,8 +29,6 @@ line-length = 100
 
 [tool.isort]
 profile = "black"
-line-length = 100
-lines_after_imports = 2
 
 [tool.flake8]
 exclude = ".venv,.git,.__pycache__"
