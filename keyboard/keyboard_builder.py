@@ -29,7 +29,7 @@ def create_main_menu_keyboard(is_admin: bool) -> InlineKeyboardMarkup:
     return keyboard_builder.as_markup()
 
 
-def create_edit_test_keyboard(questions: list[Question]) -> InlineKeyboardMarkup:
+def create_edit_test_keyboard(test: Test, questions: list[Question]) -> InlineKeyboardMarkup:
     """Создание клавиатуры для редактирования теста."""
     keyboard_builder = InlineKeyboardBuilder()
     for button in questions:
@@ -40,10 +40,15 @@ def create_edit_test_keyboard(questions: list[Question]) -> InlineKeyboardMarkup
             )
         )
     # TODO: Добавить функцию добавления вопроса
-    keyboard_builder.row(InlineKeyboardButton(text="Добавить вопрос", callback_data="add_question"))
+    keyboard_builder.row(
+        InlineKeyboardButton(text="Добавить вопрос", callback_data=f"add_question_test_{test.id}")
+    )
     # TODO: Добавить функцию публикации теста
-    keyboard_builder.row(InlineKeyboardButton(text="Опубликовать тест", callback_data="publish"))
-    # TODO: Добавить функцию удаления теста
-    keyboard_builder.row(InlineKeyboardButton(text="Удалить тест", callback_data="delete"))
+    keyboard_builder.row(
+        InlineKeyboardButton(text="Опубликовать тест", callback_data=f"publish_test_{test.id}")
+    )
+    keyboard_builder.row(
+        InlineKeyboardButton(text="Удалить тест", callback_data=f"delete_test_{test.id}")
+    )
     keyboard_builder.row(InlineKeyboardButton(text="Назад", callback_data="tests"))
     return keyboard_builder.as_markup()

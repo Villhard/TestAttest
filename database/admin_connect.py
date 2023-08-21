@@ -34,3 +34,10 @@ def get_questions_by_test_id(test_id: int) -> list[Question]:
     with Session() as session:
         questions = session.query(Question).filter(Question.test_id == test_id).all()
         return questions
+
+
+def delete_test_by_id(test_id: int) -> None:
+    """Удаление теста по id."""
+    with Session() as session:
+        session.query(Test).filter(Test.id == test_id).delete()
+        session.commit()

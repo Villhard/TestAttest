@@ -81,11 +81,24 @@ async def call_test_with_id(callback: CallbackQuery) -> None:
     test_id = int(callback.data.split("_")[1])
     test = admin_connect.get_test_by_id(test_id)
     questions = admin_connect.get_questions_by_test_id(test_id)
-    keyboard = create_edit_test_keyboard(questions)
+    keyboard = create_edit_test_keyboard(test, questions)
     await callback.message.edit_text(
         text=f"<b>{test.title}</b>\n{test.description}",
         reply_markup=keyboard,
     )
+    await callback.answer()
+
+
+@router.callback_query(
+    lambda call: re.fullmatch(r"delete_test_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_delete_test(callback: CallbackQuery) -> None:
+    """Удаление теста."""
+    test_id = int(callback.data.split("_")[2])
+    keyboard = create_main_menu_keyboard(callback.from_user.id in config.bot.admin_ids)
+    admin_connect.delete_test_by_id(test_id)
+    await callback.message.edit_text(text="Тест успешно удален!", reply_markup=keyboard)
     await callback.answer()
 
 
@@ -110,8 +123,10 @@ async def process_input_description(message: Message, state: FSMContext) -> None
     """Создание теста. Получение описания теста."""
     await state.update_data(description=message.text)
     test = await state.get_data()
+    keyboard = create_main_menu_keyboard(message.from_user.id in config.bot.admin_ids)
     admin_connect.create_test(test["title"], test["description"])
-    await message.answer(text="Тест успешно создан!")
+    await message.answer(text="Тест успешно создан!",
+                         reply_markup=keyboard)
     await state.clear()
     await state.set_state(default_state)
 
