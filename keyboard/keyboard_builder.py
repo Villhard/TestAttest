@@ -12,7 +12,7 @@ def create_tests_keyboard(tests: list[Test], is_admin: bool) -> InlineKeyboardMa
         keyboard_builder.row(
             InlineKeyboardButton(
                 text=f"{'🔒' if button.is_publish else '✏️'}" f" {button.title}",
-                callback_data=f"test_{button.id}",
+                callback_data=f"test_{button.id}_{button.is_publish}",
             )
         )
     if is_admin:
@@ -46,3 +46,4 @@ def create_edit_test_keyboard(questions: list[Question]) -> InlineKeyboardMarkup
     # TODO: Добавить функцию удаления теста
     keyboard_builder.row(InlineKeyboardButton(text="Удалить тест", callback_data="delete"))
     keyboard_builder.row(InlineKeyboardButton(text="Назад", callback_data="tests"))
+    return keyboard_builder.as_markup()

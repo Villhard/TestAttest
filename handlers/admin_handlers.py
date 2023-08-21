@@ -1,4 +1,5 @@
 """Admin handlers."""
+import re
 from aiogram import F, Router
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.filters.state import State, StatesGroup
@@ -71,11 +72,8 @@ async def call_tests(callback: CallbackQuery) -> None:
     await callback.answer()
 
 
-# FIXME: # ! Не работает
 @router.callback_query(
-    F.data.split("_")[0] == "test",
-    F.data.split("_")[1].is_digit(),
-    # TODO: Добавить проверку на состояние is_publish
+    lambda call: re.fullmatch(r"test_\d+_False", call.data),
     StateFilter(default_state),
 )
 async def call_test_with_id(callback: CallbackQuery) -> None:
@@ -83,9 +81,10 @@ async def call_test_with_id(callback: CallbackQuery) -> None:
     test_id = int(callback.data.split("_")[1])
     test = admin_connect.get_test_by_id(test_id)
     questions = admin_connect.get_questions_by_test_id(test_id)
+    keyboard = create_edit_test_keyboard(questions)
     await callback.message.edit_text(
         text=f"<b>{test.title}</b>\n{test.description}",
-        reply_markup=create_edit_test_keyboard(questions),
+        reply_markup=keyboard,
     )
     await callback.answer()
 
