@@ -1,17 +1,17 @@
-"""Main module of the bot."""
+"""Основной файл бота."""
 import asyncio
 import logging
 
 from aiogram import Bot, Dispatcher
 
 from config import config
-from handlers import user_handlers  # TODO: add admin_handlers
+from handlers import user_handlers  # TODO: добавить admin_handlers
 
 logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
-    """Start the bot."""
+    """Создание и запуск бота."""
     logging.basicConfig(level=logging.INFO)
     logger.info("Starting bot")
 

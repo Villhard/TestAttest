@@ -12,5 +12,5 @@ router.message.filter(F.from_user.id.in_(config.bot.admin_ids))
 
 @router.message(CommandStart())
 async def cmd_start(message: Message) -> None:
-    """Command /start handler for admin."""
+    """Обработчик команды /start."""
     await message.answer("Привет, админ!")

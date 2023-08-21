@@ -1,4 +1,4 @@
-"""__init__ file for handlers."""
+"""__init__ файл для пакета handlers."""
 from . import admin_handlers, user_handlers
 
 

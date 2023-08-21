@@ -1,4 +1,8 @@
-"""Module for create database."""
+"""
+Модуль для работы с базой данных.
+
+Содержит в себе описание таблиц и их связей.
+"""
 from sqlalchemy import BigInteger, DateTime, ForeignKey, create_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -8,13 +12,13 @@ engine = create_engine(config.database.url)
 
 
 class Base(DeclarativeBase):
-    """Base class."""
+    """Базовый класс для всех моделей."""
 
     pass
 
 
 class User(Base):
-    """User class."""
+    """Класс пользователя."""
 
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
@@ -27,7 +31,7 @@ class User(Base):
 
 
 class Test(Base):
-    """Test class."""
+    """Класс теста."""
 
     __tablename__ = "tests"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
@@ -42,7 +46,7 @@ class Test(Base):
 
 
 class Question(Base):
-    """Question class."""
+    """Класс вопроса."""
 
     __tablename__ = "questions"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
@@ -59,7 +63,7 @@ class Question(Base):
 
 
 class Answer(Base):
-    """Answer class."""
+    """Класс ответа."""
 
     __tablename__ = "answers"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
@@ -70,7 +74,7 @@ class Answer(Base):
 
 
 class Image(Base):
-    """Image class."""
+    """Класс изображения."""
 
     __tablename__ = "images"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
@@ -80,7 +84,7 @@ class Image(Base):
 
 
 class Result(Base):
-    """Result class."""
+    """Класс результата."""
 
     __tablename__ = "results"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
@@ -97,7 +101,7 @@ class Result(Base):
 
 
 class Incorrect_Answer(Base):
-    """Incorrect_Answer class."""
+    """Класс неправильного ответа."""
 
     __tablename__ = "incorrect_answers"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003

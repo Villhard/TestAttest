@@ -1,4 +1,4 @@
-"""Module for reading config from .env file and create config object."""
+"""Модуль читает переменные окружения и возвращает конфигурацию приложения."""
 from dataclasses import dataclass
 
 from environs import Env
@@ -6,7 +6,7 @@ from environs import Env
 
 @dataclass
 class BotConfig:
-    """Config for telegram bot."""
+    """Конфигурация бота."""
 
     token: str
     admin_ids: list[int]
@@ -14,21 +14,25 @@ class BotConfig:
 
 @dataclass
 class DatabaseConfig:
-    """Config for database."""
+    """Конфигурация базы данных."""
 
     url: str
 
 
 @dataclass
 class Config:
-    """Config for application."""
+    """
+    Конфигурация приложения.
+
+    Содержит в себе конфигурации бота и базы данных.
+    """
 
     bot: BotConfig
     database: DatabaseConfig
 
 
 def load_config(path: str = None) -> BotConfig:
-    """Read env and return config."""
+    """Читает переменные окружения и возвращает конфигурацию приложения."""
     env = Env()
     env.read_env(path)
 
