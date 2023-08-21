@@ -2,7 +2,7 @@
 
 from sqlalchemy.orm import sessionmaker
 
-from database.database import Test, engine
+from database.database import Question, Test, engine
 
 Session = sessionmaker(engine)
 
@@ -20,3 +20,17 @@ def get_tests() -> list[Test]:
     with Session() as session:
         tests = session.query(Test).all()
         return tests
+
+
+def get_test_by_id(test_id: int) -> Test:
+    """Получение теста по id."""
+    with Session() as session:
+        test = session.query(Test).filter(Test.id == test_id).first()
+        return test
+
+
+def get_questions_by_test_id(test_id: int) -> list[Question]:
+    """Получение вопросов по id теста."""
+    with Session() as session:
+        questions = session.query(Question).filter(Question.test_id == test_id).all()
+        return questions

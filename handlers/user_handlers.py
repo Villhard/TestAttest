@@ -1,6 +1,6 @@
 """User handlers."""
 from aiogram import F, Router
-from aiogram.filters import CommandStart, StateFilter
+from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.filters.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
@@ -25,12 +25,15 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
         await message.answer(text=f"Здравствуйте, {user.name}!")
     else:
         await message.answer(
-            text=(
-                "Добро пожаловать в бота для тестирования!"
-                "\n\nВведите ваше имя и фалимию"
-            )
+            text=("Добро пожаловать в бота для тестирования!" "\n\nВведите ваше имя и фалимию")
         )
         await state.set_state(FSMUserInputName.fullname)
+
+
+@router.message(Command(commands="help"), StateFilter(default_state))
+async def cmd_help(message: Message) -> None:
+    """Помощь пользователю."""
+    pass
 
 
 @router.message(

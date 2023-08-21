@@ -12,13 +12,13 @@ engine = create_engine(config.database.url)
 
 
 class Base(DeclarativeBase):
-    """Базовый класс для всех моделей."""
+    """Базовая модель."""
 
     pass
 
 
 class User(Base):
-    """Класс пользователя."""
+    """Модель пользователя."""
 
     __tablename__ = "users"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
@@ -31,7 +31,7 @@ class User(Base):
 
 
 class Test(Base):
-    """Класс теста."""
+    """Модель теста."""
 
     __tablename__ = "tests"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
@@ -43,10 +43,11 @@ class Test(Base):
     results: Mapped[list["Result"]] = relationship(
         back_populates="test", uselist=True, lazy="joined"
     )
+    is_publish: Mapped[bool] = mapped_column(nullable=False, default=False)
 
 
 class Question(Base):
-    """Класс вопроса."""
+    """Модель вопроса."""
 
     __tablename__ = "questions"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
@@ -63,7 +64,7 @@ class Question(Base):
 
 
 class Answer(Base):
-    """Класс ответа."""
+    """Модель ответа."""
 
     __tablename__ = "answers"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
@@ -74,7 +75,7 @@ class Answer(Base):
 
 
 class Image(Base):
-    """Класс изображения."""
+    """Модель изображения."""
 
     __tablename__ = "images"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
@@ -84,7 +85,7 @@ class Image(Base):
 
 
 class Result(Base):
-    """Класс результата."""
+    """Модель результата."""
 
     __tablename__ = "results"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
@@ -101,7 +102,7 @@ class Result(Base):
 
 
 class Incorrect_Answer(Base):
-    """Класс неправильного ответа."""
+    """Модель неправильного ответа."""
 
     __tablename__ = "incorrect_answers"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa: A003
