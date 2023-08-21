@@ -19,13 +19,7 @@ class FSMUserInputName(StatesGroup):
 
 @router.message(CommandStart(), StateFilter(default_state))
 async def cmd_start(message: Message, state: FSMContext) -> None:
-    """
-    Обработчик команды /start.
-
-    Handler проверяет наличие пользователя в базе данных,
-    и если он есть, то приветствует его по имени, иначе
-    предлагает ввести имя и фамилию.
-    """
+    """Приветствие пользователя или запрос имени и фамилии."""
     user = user_connect.check_user_exists(message.from_user.id)
     if user:
         await message.answer(text=f"Здравствуйте, {user.name}!")
@@ -43,13 +37,7 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
     F.text, StateFilter(FSMUserInputName.fullname), lambda msg: len(msg.text.split()) == 2
 )
 async def process_input_name(message: Message, state: FSMContext) -> None:
-    """
-    Обработка ввода имени и фамилии.
-
-    Handler обрабатывает введенное имя и фамилию пользователя,
-    и сохраняет их в базе данных. Имя и фамилия должны быть
-    разделены пробелом.
-    """
+    """Получение имени и фамилии пользователя."""
     name, surname = message.text.title().split()
     user_connect.create_user(message.from_user.id, name, surname)
     await message.answer(text="Вы успешно зарегистрировались!")
@@ -58,12 +46,7 @@ async def process_input_name(message: Message, state: FSMContext) -> None:
 
 @router.message(F.text, StateFilter(FSMUserInputName.fullname))
 async def process_incorrect_input_name(message: Message) -> None:
-    """
-    Обработка некорректного ввода имени и фамилии.
-
-    Handler для некорректного ввода имени и фамилии.
-    Отправляет сообщение об ошибке и предлагает повторить ввод.
-    """
+    """Обработка некорректного ввода имени и фамилии."""
     await message.answer(
         text=(
             "Некорректный ввод!\n"
