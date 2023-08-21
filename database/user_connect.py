@@ -1,6 +1,8 @@
 """Модуль для работы с базой данных от лица пользователя."""
-from database.database import User, engine
+
 from sqlalchemy.orm import sessionmaker
+
+from database.database import User, engine
 
 Session = sessionmaker(engine)
 

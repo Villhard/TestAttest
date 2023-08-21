@@ -1,6 +1,9 @@
 """User handlers."""
 from aiogram import F, Router
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, StateFilter
+from aiogram.filters.state import State, StatesGroup
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import default_state
 from aiogram.types import Message
 
 from database import user_connect
@@ -8,8 +11,14 @@ from database import user_connect
 router = Router()
 
 
-@router.message(CommandStart())
-async def cmd_start(message: Message) -> None:
+class FSMUserInputName(StatesGroup):
+    """Класс состояния ввода имени пользователя."""
+
+    fullname = State()
+
+
+@router.message(CommandStart(), StateFilter(default_state))
+async def cmd_start(message: Message, state: FSMContext) -> None:
     """
     Обработчик команды /start.
 
@@ -19,26 +28,46 @@ async def cmd_start(message: Message) -> None:
     """
     user = user_connect.check_user_exists(message.from_user.id)
     if user:
-        await message.answer(text=f"Привет, {user.name}!")
+        await message.answer(text=f"Здравствуйте, {user.name}!")
     else:
         await message.answer(
             text=(
                 "Добро пожаловать в бота для тестирования!"
-                "\nВам нужно заполнить личные данные\n\n"
-                "Введите ваше имя и фалимию"
+                "\n\nВведите ваше имя и фалимию"
             )
         )
+        await state.set_state(FSMUserInputName.fullname)
 
 
-@router.message(F.text)
-async def save_user_in_db(message: Message) -> None:
+@router.message(
+    F.text, StateFilter(FSMUserInputName.fullname), lambda msg: len(msg.text.split()) == 2
+)
+async def process_input_name(message: Message, state: FSMContext) -> None:
     """
-    Сохранение пользователя в базе данных.
+    Обработка ввода имени и фамилии.
 
     Handler обрабатывает введенное имя и фамилию пользователя,
     и сохраняет их в базе данных. Имя и фамилия должны быть
     разделены пробелом.
     """
-    name, surname = message.text.title().strip().split()
+    name, surname = message.text.title().split()
     user_connect.create_user(message.from_user.id, name, surname)
     await message.answer(text="Вы успешно зарегистрировались!")
+    await state.clear()
+
+
+@router.message(F.text, StateFilter(FSMUserInputName.fullname))
+async def process_incorrect_input_name(message: Message) -> None:
+    """
+    Обработка некорректного ввода имени и фамилии.
+
+    Handler для некорректного ввода имени и фамилии.
+    Отправляет сообщение об ошибке и предлагает повторить ввод.
+    """
+    await message.answer(
+        text=(
+            "Некорректный ввод!\n"
+            "Ваше сообщение должно содержать имя и фамилию, разделенные пробелом."
+            "\n\nПопробуйте еще раз"
+        )
+    )
