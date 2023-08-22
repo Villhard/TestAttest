@@ -32,7 +32,9 @@ def get_test_by_id(test_id: int) -> Test:
 def get_questions_by_test_id(test_id: int) -> list[Question]:
     """Получение вопросов по id теста."""
     with Session() as session:
-        questions = session.query(Question).filter(Question.test_id == test_id).all()
+        questions = (
+            session.query(Question).filter(Question.test_id == test_id).all()
+        )
         return questions
 
 

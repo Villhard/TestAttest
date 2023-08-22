@@ -11,10 +11,20 @@ from database import user_connect
 router = Router()
 
 
+# ?============================================================================
+# *========== МАШИНЫ СОСТОЯНИЙ ================================================
+# ?============================================================================
+
+
 class FSMUserInputName(StatesGroup):
     """Класс состояния ввода имени пользователя."""
 
     fullname = State()
+
+
+# ?============================================================================
+# *========== НАВИГАЦИЯ =======================================================
+# ?============================================================================
 
 
 @router.message(CommandStart(), StateFilter(default_state))
@@ -25,7 +35,10 @@ async def cmd_start(message: Message, state: FSMContext) -> None:
         await message.answer(text=f"Здравствуйте, {user.name}!")
     else:
         await message.answer(
-            text=("Добро пожаловать в бота для тестирования!" "\n\nВведите ваше имя и фалимию")
+            text=(
+                "Добро пожаловать в бота для тестирования!\n\n"
+                "Введите ваше имя и фалимию"
+            )
         )
         await state.set_state(FSMUserInputName.fullname)
 
@@ -36,8 +49,15 @@ async def cmd_help(message: Message) -> None:
     pass
 
 
+# ?============================================================================
+# *========== ПРОЦЕСС СОЗДАНИЯ ПОЛЬЗОВАТЕЛЯ ===================================
+# ?============================================================================
+
+
 @router.message(
-    F.text, StateFilter(FSMUserInputName.fullname), lambda msg: len(msg.text.split()) == 2
+    F.text,
+    StateFilter(FSMUserInputName.fullname),
+    lambda msg: len(msg.text.split()) == 2,
 )
 async def process_input_name(message: Message, state: FSMContext) -> None:
     """Получение имени и фамилии пользователя."""
@@ -53,7 +73,8 @@ async def process_incorrect_input_name(message: Message) -> None:
     await message.answer(
         text=(
             "Некорректный ввод!\n"
-            "Ваше сообщение должно содержать имя и фамилию, разделенные пробелом."
+            "Ваше сообщение должно содержать"
+            "имя и фамилию, разделенные пробелом."
             "\n\nПопробуйте еще раз"
         )
     )
