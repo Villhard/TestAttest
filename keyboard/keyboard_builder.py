@@ -86,3 +86,15 @@ def create_test_keyboard(
         InlineKeyboardButton(text="Назад", callback_data="tests")
     )
     return keyboard_builder.as_markup()
+
+
+def create_answers_keyboard(
+    answers: list[str],
+) -> InlineKeyboardMarkup:
+    """Создание клавиатуры для выбора правильного ответа."""
+    keyboard_builder = InlineKeyboardBuilder()
+    for button in answers:
+        keyboard_builder.row(
+            InlineKeyboardButton(text=f"{button}", callback_data=f"{button}")
+        )
+    return keyboard_builder.as_markup()

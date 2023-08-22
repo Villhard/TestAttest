@@ -64,7 +64,7 @@ class Question(Base):
     )
     test_id = mapped_column(ForeignKey("tests.id"), nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
-    image: Mapped[str] = mapped_column(nullable=True, default="default")
+    image: Mapped[str] = mapped_column(nullable=False)
     answers: Mapped[str] = mapped_column(nullable=False)
 
 

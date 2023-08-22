@@ -1,7 +1,9 @@
 """Модуль для работы с базой данных для админов."""
+import json
+
 from sqlalchemy.orm import sessionmaker
 
-from database.database import Question, Test, engine
+from database.database import Question, Test, Result, engine
 
 Session = sessionmaker(engine)
 
@@ -38,8 +40,10 @@ def get_questions_by_test_id(test_id: int) -> list[Question]:
 
 
 def delete_test_by_id(test_id: int) -> None:
-    """Удаление теста по id."""
+    """Удаление теста и всех его связей по id."""
     with Session() as session:
+        session.query(Result).filter(Result.test_id == test_id).delete()
+        session.query(Question).filter(Question.test_id == test_id).delete()
         session.query(Test).filter(Test.id == test_id).delete()
         session.commit()
 
@@ -63,3 +67,21 @@ def check_publish_test(test_id: int) -> bool:
             .first()
         )
         return bool(test)
+
+
+def create_question(
+    test_id: int,
+    question: str,
+    answers: dict[str, bool],
+    image: str | None = None,
+) -> None:
+    """Создание вопроса в базе данных."""
+    with Session() as session:
+        question = Question(
+            test_id=test_id,
+            text=question,
+            answers=json.dumps(answers),
+            image=image if image else "default.jpg",
+        )
+        session.add(question)
+        session.commit()

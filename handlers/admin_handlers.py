@@ -6,15 +6,17 @@ from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.filters.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import CallbackQuery, Message, PhotoSize
+from aiogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+    PhotoSize,
+)
 
 from config import config
 from database import admin_connect
-from keyboard.keyboard_builder import (
-    create_main_menu_keyboard,
-    create_test_keyboard,
-    create_tests_keyboard,
-)
+from keyboard import keyboard_builder
 from utils import admin_utils
 
 router = Router()
@@ -39,12 +41,8 @@ class FSMCreateQuestions(StatesGroup):
     """Класс состояния создания вопросов."""
 
     text = State()
+    answers = State()
     image = State()
-    answer_1 = State()
-    answer_2 = State()
-    answer_3 = State()
-    answer_4 = State()
-    correct_answer = State()
 
 
 # ?============================================================================
@@ -55,7 +53,7 @@ class FSMCreateQuestions(StatesGroup):
 @router.message(CommandStart(), StateFilter(default_state))
 async def cmd_start(message: Message) -> None:
     """Приветствие админа."""
-    keyboard = create_main_menu_keyboard(
+    keyboard = keyboard_builder.create_main_menu_keyboard(
         message.from_user.id in config.bot.admin_ids
     )
     await message.answer(
@@ -73,7 +71,7 @@ async def cmd_help(message: Message) -> None:
 @router.callback_query(F.data == "main_menu", StateFilter(default_state))
 async def call_main_menu(callback: CallbackQuery) -> None:
     """Главное меню."""
-    keyboard = create_main_menu_keyboard(
+    keyboard = keyboard_builder.create_main_menu_keyboard(
         callback.from_user.id in config.bot.admin_ids
     )
     await callback.message.edit_text(
@@ -86,7 +84,7 @@ async def call_main_menu(callback: CallbackQuery) -> None:
 async def call_tests(callback: CallbackQuery) -> None:
     """Просмотр всех тестов."""
     tests = admin_connect.get_tests()
-    keyboard = create_tests_keyboard(
+    keyboard = keyboard_builder.create_tests_keyboard(
         tests, callback.from_user.id in config.bot.admin_ids
     )
     await callback.message.edit_text(
@@ -105,7 +103,7 @@ async def call_test_with_id(callback: CallbackQuery) -> None:
     is_publish = True if callback.data.split("_")[2] == "True" else False
     test = admin_connect.get_test_by_id(test_id)
     questions = admin_connect.get_questions_by_test_id(test_id)
-    keyboard = create_test_keyboard(
+    keyboard = keyboard_builder.create_test_keyboard(
         test,
         questions,
         is_publish,
@@ -150,7 +148,7 @@ async def call_delete_test(callback: CallbackQuery) -> None:
     test_id = int(callback.data.split("_")[2])
     admin_utils.delete_test_dir(test_id)
     admin_connect.delete_test_by_id(test_id)
-    keyboard = create_tests_keyboard(
+    keyboard = keyboard_builder.create_tests_keyboard(
         admin_connect.get_tests(),
         callback.from_user.id in config.bot.admin_ids,
     )
@@ -168,7 +166,7 @@ async def call_publish_test(callback: CallbackQuery) -> None:
     """Публикация теста."""
     test_id = int(callback.data.split("_")[2])
     admin_connect.publish_test_by_id(test_id)
-    keyboard = create_tests_keyboard(
+    keyboard = keyboard_builder.create_tests_keyboard(
         admin_connect.get_tests(),
         callback.from_user.id in config.bot.admin_ids,
     )
@@ -201,7 +199,7 @@ async def process_input_description(
     test = await state.get_data()
     admin_connect.create_test(test["title"], test["description"])
     admin_utils.create_test_dir(admin_connect.get_tests()[-1].id)
-    keyboard = create_tests_keyboard(
+    keyboard = keyboard_builder.create_tests_keyboard(
         admin_connect.get_tests(),
         message.from_user.id in config.bot.admin_ids,
     )
@@ -233,19 +231,126 @@ async def process_input_image(message: Message, state: FSMContext) -> None:
     await message.bot.download(
         photo_path, destination=f"img/test_{test_id}/default.jpg"
     )
-    keyboard = create_test_keyboard(
+    keyboard = keyboard_builder.create_test_keyboard(
         test,
         admin_connect.get_questions_by_test_id(test_id),
         admin_connect.check_publish_test(test_id),
         True,
     )
     await message.answer(
-        text=("Изображение успешно добавлено!"
-              f"\n\n<b>{test.title}</b>\n{test.description}"),
+        text=(
+            "Изображение успешно добавлено!"
+            f"\n\n<b>{test.title}</b>\n{test.description}"
+        ),
         reply_markup=keyboard,
     )
     await state.clear()
     await state.set_state(default_state)
 
 
-# TODO: Создание вопросов и ответов
+# ?============================================================================
+# *========== ПРОЦЕСС СОЗДАНИЯ ВОПРОСА ========================================
+# ?============================================================================
+
+
+@router.callback_query(
+    lambda call: re.fullmatch(r"add_question_test_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_add_question(
+    callback: CallbackQuery, state: FSMContext
+) -> None:
+    """Создание вопроса."""
+    await state.update_data(test_id=int(callback.data.split("_")[3]))
+    await state.update_data(answers=[])  # Создание списка ответов
+    await callback.message.edit_text(text="Введите текст вопроса")
+    await state.set_state(FSMCreateQuestions.text)
+
+
+@router.message(F.text, StateFilter(FSMCreateQuestions.text))
+async def process_input_question_text(
+    message: Message, state: FSMContext
+) -> None:
+    """Создание вопроса. Получение текста вопроса."""
+    await state.update_data(text=message.text)
+    await message.answer(text="Введите текст ответа №1")
+    await state.set_state(FSMCreateQuestions.answers)
+
+
+@router.message(F.text, StateFilter(FSMCreateQuestions.answers))
+async def process_input_answers_text(
+    message: Message, state: FSMContext
+) -> None:
+    """Создание вопроса. Получение текста ответов."""
+    data = await state.get_data()
+    answers = data["answers"]
+    answers.append(message.text)
+    await state.update_data(answers=answers)
+    if len(answers) < 4:
+        await message.answer(text=f"Введите текст ответа №{len(answers) + 1}")
+    else:
+        keyboard = keyboard_builder.create_answers_keyboard(answers)
+        await message.answer(
+            text="Выберите правильный ответ",
+            reply_markup=keyboard,
+        )
+
+
+@router.callback_query(
+    F.data, StateFilter(FSMCreateQuestions.answers)
+)
+async def process_input_correct_answer(
+    callback: CallbackQuery, state: FSMContext
+) -> None:
+    """Создание вопроса. Получение правильного ответа."""
+    data = await state.get_data()
+    await state.update_data(
+        answers={
+            answer: is_correct
+            for answer in data["answers"]
+            for is_correct in [True if answer == callback.data else False]
+        }
+    )
+    await callback.message.edit_text(
+        text="Отправьте изображение или нажмите пропустить",
+        reply_markup=InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(text="Пропустить", callback_data="skip")]
+            ]
+        ),
+    )
+    await state.set_state(FSMCreateQuestions.image)
+
+
+@router.message(F.photo, StateFilter(FSMCreateQuestions.image))
+async def process_input_image_question(
+    message: Message, state: FSMContext
+) -> None:
+    """Создание вопроса. Получение изображения вопроса."""
+    pass
+
+
+@router.callback_query(F.data == "skip", StateFilter(FSMCreateQuestions.image))
+async def process_skip_image_question(
+    callback: CallbackQuery, state: FSMContext
+) -> None:
+    """Создание вопроса. Пропуск изображения вопроса."""
+    data = await state.get_data()
+    test_id = data["test_id"]
+    admin_connect.create_question(
+        test_id,
+        data["text"],
+        data["answers"],
+    )
+    keyboard = keyboard_builder.create_test_keyboard(
+        admin_connect.get_test_by_id(test_id),
+        admin_connect.get_questions_by_test_id(test_id),
+        admin_connect.check_publish_test(test_id),
+        admin_utils.check_exists_image(test_id),
+    )
+    await callback.message.edit_text(
+        text="Вопрос успешно создан!",
+        reply_markup=keyboard,
+    )
+    await state.clear()
+    await state.set_state(default_state)
