@@ -1,5 +1,4 @@
 """Модуль для работы с базой данных для админов."""
-
 from sqlalchemy.orm import sessionmaker
 
 from database.database import Question, Test, engine
@@ -43,3 +42,24 @@ def delete_test_by_id(test_id: int) -> None:
     with Session() as session:
         session.query(Test).filter(Test.id == test_id).delete()
         session.commit()
+
+
+def publish_test_by_id(test_id: int) -> None:
+    """Публикация теста по id."""
+    with Session() as session:
+        session.query(Test).filter(Test.id == test_id).update(
+            {"is_publish": True}
+        )
+        session.commit()
+
+
+def check_publish_test(test_id: int) -> bool:
+    """Проверка публикации теста."""
+    with Session() as session:
+        test = (
+            session.query(Test)
+            .filter(Test.id == test_id)
+            .filter(Test.is_publish is True)
+            .first()
+        )
+        return bool(test)
