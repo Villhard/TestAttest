@@ -3,7 +3,7 @@ import json
 
 from sqlalchemy.orm import sessionmaker
 
-from database.database import Question, Test, Result, engine
+from database.database import Question, Result, Test, engine
 
 Session = sessionmaker(engine)
 
@@ -73,7 +73,7 @@ def create_question(
     test_id: int,
     question: str,
     answers: dict[str, bool],
-    image: str | None = None,
+    image: str,
 ) -> None:
     """Создание вопроса в базе данных."""
     with Session() as session:
@@ -81,7 +81,7 @@ def create_question(
             test_id=test_id,
             text=question,
             answers=json.dumps(answers),
-            image=image if image else "default.jpg",
+            image=image,
         )
         session.add(question)
         session.commit()

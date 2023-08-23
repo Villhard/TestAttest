@@ -23,8 +23,9 @@ def create_tests_keyboard(
     for button in tests:
         keyboard_builder.row(
             InlineKeyboardButton(
-                text=f"{'🔒' if button.is_publish else '✏️'}"
-                f" {button.title}",
+                text=(
+                    f"{'🔒' if button.is_publish else '✏️'}" f" {button.title}"
+                ),
                 callback_data=f"test_{button.id}_{button.is_publish}",
             )
         )
@@ -53,11 +54,13 @@ def create_test_keyboard(
             for button in questions:
                 keyboard_builder.row(
                     InlineKeyboardButton(
-                        text=f"{button.text}",
+                        text=(
+                            f"{'🖼' if button.image != 'default' else ''}"
+                            f" {button.text}"
+                        ),
                         callback_data=f"question_{button.id}",
                     )
                 )
-            # TODO: Добавить функцию добавления вопроса
             keyboard_builder.row(
                 InlineKeyboardButton(
                     text="Добавить вопрос",
@@ -79,7 +82,7 @@ def create_test_keyboard(
         )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text="Удалить тест", callback_data=f"delete_test_{test.id}"
+            text="Удалить тест", callback_data=f"confirm_delete_test_{test.id}"
         )
     )
     keyboard_builder.row(
@@ -97,4 +100,16 @@ def create_answers_keyboard(
         keyboard_builder.row(
             InlineKeyboardButton(text=f"{button}", callback_data=f"{button}")
         )
+    return keyboard_builder.as_markup()
+
+
+def create_confirm_keyboard(
+    callback_yes: str = "yes", callback_no: str = "no"
+) -> InlineKeyboardMarkup:
+    """Создание клавиатуры для подтверждения действия."""
+    keyboard_builder = InlineKeyboardBuilder()
+    keyboard_builder.row(
+        InlineKeyboardButton(text="Да", callback_data=callback_yes),
+        InlineKeyboardButton(text="Нет", callback_data=callback_no),
+    )
     return keyboard_builder.as_markup()

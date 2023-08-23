@@ -140,6 +140,25 @@ async def call_add_test(callback: CallbackQuery, state: FSMContext) -> None:
 
 
 @router.callback_query(
+    lambda call: re.fullmatch(r"confirm_delete_test_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_confirm_delete_test(callback: CallbackQuery) -> None:
+    """Подтверждение удаления теста."""
+    test_id = int(callback.data.split("_")[3])
+    is_publish = admin_connect.check_publish_test(test_id)
+    keyboard = keyboard_builder.create_confirm_keyboard(
+        callback_yes=f"delete_test_{test_id}",
+        callback_no=f"test_{test_id}_{is_publish}",
+    )
+    await callback.message.edit_text(
+        text="Вы уверены, что хотите удалить тест?",
+        reply_markup=keyboard,
+    )
+    await callback.answer()
+
+
+@router.callback_query(
     lambda call: re.fullmatch(r"delete_test_\d+", call.data),
     StateFilter(default_state),
 )
@@ -170,7 +189,6 @@ async def call_publish_test(callback: CallbackQuery) -> None:
         admin_connect.get_tests(),
         callback.from_user.id in config.bot.admin_ids,
     )
-    # TODO: Добавить проверку на наличие изображение по умолчанию
     await callback.message.edit_text(
         text="Тест успешно опубликован!", reply_markup=keyboard
     )
@@ -296,9 +314,7 @@ async def process_input_answers_text(
         )
 
 
-@router.callback_query(
-    F.data, StateFilter(FSMCreateQuestions.answers)
-)
+@router.callback_query(F.data, StateFilter(FSMCreateQuestions.answers))
 async def process_input_correct_answer(
     callback: CallbackQuery, state: FSMContext
 ) -> None:
@@ -327,7 +343,35 @@ async def process_input_image_question(
     message: Message, state: FSMContext
 ) -> None:
     """Создание вопроса. Получение изображения вопроса."""
-    pass
+    data = await state.get_data()
+    test_id = data["test_id"]
+    question = data["text"]
+    answers = data["answers"]
+    photo: PhotoSize = message.photo[-1]
+    photo_path = photo.file_id
+    number_image = admin_utils.get_count_images(test_id)
+    await message.bot.download(
+        photo_path,
+        destination=f"img/test_{test_id}/question_{number_image}.jpg",
+    )
+    admin_connect.create_question(
+        test_id=test_id,
+        question=question,
+        answers=answers,
+        image=f"question_{number_image}.jpg",
+    )
+    keyboard = keyboard_builder.create_test_keyboard(
+        admin_connect.get_test_by_id(test_id),
+        admin_connect.get_questions_by_test_id(test_id),
+        admin_connect.check_publish_test(test_id),
+        admin_utils.check_exists_image(test_id),
+    )
+    await message.answer(
+        text="Вопрос успешно создан!",
+        reply_markup=keyboard,
+    )
+    await state.clear()
+    await state.set_state(default_state)
 
 
 @router.callback_query(F.data == "skip", StateFilter(FSMCreateQuestions.image))
@@ -337,10 +381,13 @@ async def process_skip_image_question(
     """Создание вопроса. Пропуск изображения вопроса."""
     data = await state.get_data()
     test_id = data["test_id"]
+    question = data["question"]
+    answers = data["answers"]
     admin_connect.create_question(
-        test_id,
-        data["text"],
-        data["answers"],
+        test_id=test_id,
+        question=question,
+        answers=answers,
+        image="default.jpg",
     )
     keyboard = keyboard_builder.create_test_keyboard(
         admin_connect.get_test_by_id(test_id),
