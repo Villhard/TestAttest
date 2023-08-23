@@ -21,7 +21,6 @@ def check_exists_image(test_id: int) -> bool:
     return os.path.exists(f"img/test_{test_id}/default.jpg")
 
 
-# Проверка сколько файлов в директории
 def get_count_images(test_id: int) -> int:
-    """Получение количества изображений в тесте."""
+    """Получение количества изображений в директории теста."""
     return len(os.listdir(f"img/test_{test_id}"))

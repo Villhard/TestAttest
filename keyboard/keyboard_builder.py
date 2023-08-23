@@ -55,7 +55,7 @@ def create_test_keyboard(
                 keyboard_builder.row(
                     InlineKeyboardButton(
                         text=(
-                            f"{'🖼' if button.image != 'default' else ''}"
+                            f"{'🖼' if button.image != 'default.jpg' else ''}"
                             f" {button.text}"
                         ),
                         callback_data=f"question_{button.id}",

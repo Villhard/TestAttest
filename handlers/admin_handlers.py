@@ -381,7 +381,7 @@ async def process_skip_image_question(
     """Создание вопроса. Пропуск изображения вопроса."""
     data = await state.get_data()
     test_id = data["test_id"]
-    question = data["question"]
+    question = data["text"]
     answers = data["answers"]
     admin_connect.create_question(
         test_id=test_id,

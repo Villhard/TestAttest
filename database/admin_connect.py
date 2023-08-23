@@ -1,9 +1,14 @@
 """Модуль для работы с базой данных для админов."""
-import json
-
 from sqlalchemy.orm import sessionmaker
 
-from database.database import Question, Result, Test, engine
+from database.database import (
+    Answer,
+    IncorrectAnswer,
+    Question,
+    Result,
+    Test,
+    engine,
+)
 
 Session = sessionmaker(engine)
 
@@ -42,7 +47,13 @@ def get_questions_by_test_id(test_id: int) -> list[Question]:
 def delete_test_by_id(test_id: int) -> None:
     """Удаление теста и всех его связей по id."""
     with Session() as session:
+        session.query(IncorrectAnswer).filter(
+            IncorrectAnswer.result.has(test_id=test_id)
+        ).delete()
         session.query(Result).filter(Result.test_id == test_id).delete()
+        session.query(Answer).filter(
+            Answer.question.has(test_id=test_id)
+        ).delete()
         session.query(Question).filter(Question.test_id == test_id).delete()
         session.query(Test).filter(Test.id == test_id).delete()
         session.commit()
@@ -80,8 +91,24 @@ def create_question(
         question = Question(
             test_id=test_id,
             text=question,
-            answers=json.dumps(answers),
             image=image,
         )
         session.add(question)
+        session.commit()
+        create_answers(question_id=question.id, answers=answers)
+
+
+def create_answers(
+    question_id: int,
+    answers: dict[str, bool],
+) -> None:
+    """Создание ответов в базе данных."""
+    with Session() as session:
+        for answer in answers:
+            answer = Answer(
+                question_id=question_id,
+                text=answer,
+                is_correct=answers[answer],
+            )
+            session.add(answer)
         session.commit()

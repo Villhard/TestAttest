@@ -26,7 +26,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(  # noqa: A003
         primary_key=True, autoincrement=True
     )
-    tg_id = mapped_column(BigInteger, unique=True, nullable=False)
+    tg_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
     name: Mapped[str] = mapped_column(nullable=False)
     surname: Mapped[str] = mapped_column(nullable=False)
     results: Mapped[list["Result"]] = relationship(
@@ -65,7 +65,30 @@ class Question(Base):
     test_id = mapped_column(ForeignKey("tests.id"), nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
     image: Mapped[str] = mapped_column(nullable=False)
-    answers: Mapped[str] = mapped_column(nullable=False)
+    answers: Mapped[list["Answer"]] = relationship(
+        back_populates="question", uselist=True, lazy="joined"
+    )
+    incorrect_answers: Mapped[list["IncorrectAnswer"]] = relationship(
+        back_populates="question", uselist=True, lazy="joined"
+    )
+
+
+class Answer(Base):
+    """Модель ответа."""
+
+    __tablename__ = "answers"
+    id: Mapped[int] = mapped_column(  # noqa: A003
+        primary_key=True, autoincrement=True
+    )
+    question: Mapped["Question"] = relationship(
+        back_populates="answers", uselist=False
+    )
+    question_id = mapped_column(ForeignKey("questions.id"), nullable=False)
+    text: Mapped[str] = mapped_column(nullable=False)
+    is_correct: Mapped[bool] = mapped_column(nullable=False)
+    incorrect_answers: Mapped[list["IncorrectAnswer"]] = relationship(
+        back_populates="answer", uselist=True, lazy="joined"
+    )
 
 
 class Result(Base):
@@ -86,7 +109,30 @@ class Result(Base):
     score: Mapped[int] = mapped_column(nullable=False)
     datetime_start = mapped_column(DateTime, nullable=False)
     datetime_end = mapped_column(DateTime, nullable=False)
-    incorrect_answers: Mapped[str] = mapped_column(nullable=True)
+    incorrect_answers: Mapped[list["IncorrectAnswer"]] = relationship(
+        back_populates="result", uselist=True, lazy="joined"
+    )
+
+
+class IncorrectAnswer(Base):
+    """Модель неправильного ответа."""
+
+    __tablename__ = "incorrect_answers"
+    id: Mapped[int] = mapped_column(  # noqa: A003
+        primary_key=True, autoincrement=True
+    )
+    result: Mapped["Result"] = relationship(
+        back_populates="incorrect_answers", uselist=False
+    )
+    result_id = mapped_column(ForeignKey("results.id"), nullable=False)
+    question: Mapped["Question"] = relationship(
+        back_populates="incorrect_answers", uselist=False
+    )
+    question_id = mapped_column(ForeignKey("questions.id"), nullable=False)
+    answer: Mapped["Answer"] = relationship(
+        back_populates="incorrect_answers", uselist=False
+    )
+    answer_id = mapped_column(ForeignKey("answers.id"), nullable=False)
 
 
 Base.metadata.create_all(engine)
