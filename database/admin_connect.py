@@ -68,21 +68,9 @@ def publish_test_by_id(test_id: int) -> None:
         session.commit()
 
 
-def check_publish_test(test_id: int) -> bool:
-    """Проверка публикации теста."""
-    with Session() as session:
-        test = (
-            session.query(Test)
-            .filter(Test.id == test_id)
-            .filter(Test.is_publish is True)
-            .first()
-        )
-        return bool(test)
-
-
 def create_question(
     test_id: int,
-    question: str,
+    text: str,
     answers: dict[str, bool],
     image: str,
 ) -> None:
@@ -90,7 +78,7 @@ def create_question(
     with Session() as session:
         question = Question(
             test_id=test_id,
-            text=question,
+            text=text,
             image=image,
         )
         session.add(question)
@@ -104,11 +92,11 @@ def create_answers(
 ) -> None:
     """Создание ответов в базе данных."""
     with Session() as session:
-        for answer in answers:
+        for text in answers:
             answer = Answer(
                 question_id=question_id,
-                text=answer,
-                is_correct=answers[answer],
+                text=text,
+                is_correct=answers[text],
             )
             session.add(answer)
         session.commit()

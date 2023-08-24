@@ -26,7 +26,7 @@ def create_tests_keyboard(
                 text=(
                     f"{'🔒' if button.is_publish else '✏️'}" f" {button.title}"
                 ),
-                callback_data=f"test_{button.id}_{button.is_publish}",
+                callback_data=f"test_{button.id}",
             )
         )
     if is_admin:

@@ -83,9 +83,9 @@ async def call_main_menu(callback: CallbackQuery) -> None:
 @router.callback_query(F.data == "tests", StateFilter(default_state))
 async def call_tests(callback: CallbackQuery) -> None:
     """Просмотр всех тестов."""
-    tests = admin_connect.get_tests()
     keyboard = keyboard_builder.create_tests_keyboard(
-        tests, callback.from_user.id in config.bot.admin_ids
+        tests=admin_connect.get_tests(),
+        is_admin=callback.from_user.id in config.bot.admin_ids,
     )
     await callback.message.edit_text(
         text="Список тестов", reply_markup=keyboard
@@ -94,20 +94,19 @@ async def call_tests(callback: CallbackQuery) -> None:
 
 
 @router.callback_query(
-    lambda call: re.fullmatch(r"test_\d+_(True|False)", call.data),
+    lambda call: re.fullmatch(r"test_\d+", call.data),
     StateFilter(default_state),
 )
 async def call_test_with_id(callback: CallbackQuery) -> None:
     """Просмотр теста."""
     test_id = int(callback.data.split("_")[1])
-    is_publish = True if callback.data.split("_")[2] == "True" else False
     test = admin_connect.get_test_by_id(test_id)
-    questions = admin_connect.get_questions_by_test_id(test_id)
+    is_publish = test.is_publish
     keyboard = keyboard_builder.create_test_keyboard(
-        test,
-        questions,
-        is_publish,
-        admin_utils.check_exists_image(test_id),
+        test=test,
+        questions=admin_connect.get_questions_by_test_id(test_id),
+        is_publish=is_publish,
+        is_exists_image=admin_utils.check_exists_image(test_id),
     )
     if is_publish:
         await callback.message.edit_text(
@@ -146,10 +145,9 @@ async def call_add_test(callback: CallbackQuery, state: FSMContext) -> None:
 async def call_confirm_delete_test(callback: CallbackQuery) -> None:
     """Подтверждение удаления теста."""
     test_id = int(callback.data.split("_")[3])
-    is_publish = admin_connect.check_publish_test(test_id)
     keyboard = keyboard_builder.create_confirm_keyboard(
         callback_yes=f"delete_test_{test_id}",
-        callback_no=f"test_{test_id}_{is_publish}",
+        callback_no=f"test_{test_id}",
     )
     await callback.message.edit_text(
         text="Вы уверены, что хотите удалить тест?",
@@ -168,8 +166,8 @@ async def call_delete_test(callback: CallbackQuery) -> None:
     admin_utils.delete_test_dir(test_id)
     admin_connect.delete_test_by_id(test_id)
     keyboard = keyboard_builder.create_tests_keyboard(
-        admin_connect.get_tests(),
-        callback.from_user.id in config.bot.admin_ids,
+        tests=admin_connect.get_tests(),
+        is_admin=callback.from_user.id in config.bot.admin_ids,
     )
     await callback.message.edit_text(
         text="Тест успешно удален!", reply_markup=keyboard
@@ -186,8 +184,8 @@ async def call_publish_test(callback: CallbackQuery) -> None:
     test_id = int(callback.data.split("_")[2])
     admin_connect.publish_test_by_id(test_id)
     keyboard = keyboard_builder.create_tests_keyboard(
-        admin_connect.get_tests(),
-        callback.from_user.id in config.bot.admin_ids,
+        tests=admin_connect.get_tests(),
+        is_admin=callback.from_user.id in config.bot.admin_ids,
     )
     await callback.message.edit_text(
         text="Тест успешно опубликован!", reply_markup=keyboard
@@ -218,8 +216,8 @@ async def process_input_description(
     admin_connect.create_test(test["title"], test["description"])
     admin_utils.create_test_dir(admin_connect.get_tests()[-1].id)
     keyboard = keyboard_builder.create_tests_keyboard(
-        admin_connect.get_tests(),
-        message.from_user.id in config.bot.admin_ids,
+        tests=admin_connect.get_tests(),
+        is_admin=message.from_user.id in config.bot.admin_ids,
     )
     await message.answer(text="Тест успешно создан!", reply_markup=keyboard)
     await state.clear()
@@ -250,10 +248,10 @@ async def process_input_image(message: Message, state: FSMContext) -> None:
         photo_path, destination=f"img/test_{test_id}/default.jpg"
     )
     keyboard = keyboard_builder.create_test_keyboard(
-        test,
-        admin_connect.get_questions_by_test_id(test_id),
-        admin_connect.check_publish_test(test_id),
-        True,
+        test=test,
+        questions=admin_connect.get_questions_by_test_id(test_id),
+        is_publish=test.is_publish,
+        is_exists_image=admin_utils.check_exists_image(test_id),
     )
     await message.answer(
         text=(
@@ -356,15 +354,16 @@ async def process_input_image_question(
     )
     admin_connect.create_question(
         test_id=test_id,
-        question=question,
+        text=question,
         answers=answers,
         image=f"question_{number_image}.jpg",
     )
+    test = admin_connect.get_test_by_id(test_id)
     keyboard = keyboard_builder.create_test_keyboard(
-        admin_connect.get_test_by_id(test_id),
-        admin_connect.get_questions_by_test_id(test_id),
-        admin_connect.check_publish_test(test_id),
-        admin_utils.check_exists_image(test_id),
+        test=test,
+        questions=admin_connect.get_questions_by_test_id(test_id),
+        is_publish=test.is_publish,
+        is_exists_image=admin_utils.check_exists_image(test_id),
     )
     await message.answer(
         text="Вопрос успешно создан!",
@@ -385,15 +384,16 @@ async def process_skip_image_question(
     answers = data["answers"]
     admin_connect.create_question(
         test_id=test_id,
-        question=question,
+        text=question,
         answers=answers,
         image="default.jpg",
     )
+    test = admin_connect.get_test_by_id(test_id)
     keyboard = keyboard_builder.create_test_keyboard(
-        admin_connect.get_test_by_id(test_id),
-        admin_connect.get_questions_by_test_id(test_id),
-        admin_connect.check_publish_test(test_id),
-        admin_utils.check_exists_image(test_id),
+        test=test,
+        questions=admin_connect.get_questions_by_test_id(test_id),
+        is_publish=test.is_publish,
+        is_exists_image=admin_utils.check_exists_image(test_id),
     )
     await callback.message.edit_text(
         text="Вопрос успешно создан!",
