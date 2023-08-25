@@ -10,7 +10,7 @@ from aiogram.types import (
     CallbackQuery,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
-    InputFile,
+    FSInputFile,
     Message,
 )
 
@@ -106,7 +106,7 @@ async def call_test(callback: CallbackQuery) -> None:
     """Переход к тесту."""
     test_id = int(callback.data.split("_")[1])
     test = user_connect.get_test(test_id)
-    photo = InputFile(f"img/test_{test_id}/default.jpg")
+    photo = FSInputFile(f"img/test_{test_id}/default.jpg")
     await callback.message.answer_photo(
         photo=photo,
         caption=f"<b>{test.title}</b>\n\n{test.description}",
@@ -114,12 +114,14 @@ async def call_test(callback: CallbackQuery) -> None:
             inline_keyboard=[
                 [
                     InlineKeyboardButton(
-                        text="Начать", callback_data=f"start_test_{test_id}"
+                        text="Начать",
+                        callback_data=f"start_test_{test_id}",
                     )
                 ]
             ]
         ),
     )
+    await callback.answer()
 
 
 # ?============================================================================

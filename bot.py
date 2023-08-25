@@ -25,7 +25,7 @@ async def main() -> None:
 
     await set_menu(bot)
 
-    # dp.include_router(admin_handlers.router) # FIXME
+    # dp.include_router(admin_handlers.router)
     dp.include_router(user_handlers.router)
 
     await bot.delete_webhook(drop_pending_updates=True)
