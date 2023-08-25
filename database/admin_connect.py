@@ -16,7 +16,10 @@ Session = sessionmaker(engine)
 def create_test(title: str, description: str) -> None:
     """Создание теста в базе данных."""
     with Session() as session:
-        test = Test(title=title, description=description)
+        test = Test(
+            title=title,
+            description=description,
+        )
         session.add(test)
         session.commit()
 

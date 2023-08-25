@@ -4,9 +4,10 @@ from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.filters.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import Message
+from aiogram.types import CallbackQuery, Message
 
 from database import user_connect
+from keyboard import keyboard_builder
 
 router = Router()
 
@@ -30,9 +31,15 @@ class FSMUserInputName(StatesGroup):
 @router.message(CommandStart(), StateFilter(default_state))
 async def cmd_start(message: Message, state: FSMContext) -> None:
     """Приветствие пользователя или запрос имени и фамилии."""
-    user = user_connect.check_user_exists(message.from_user.id)
+    user = user_connect.get_user(message.from_user.id)
     if user:
-        await message.answer(text=f"Здравствуйте, {user.name}!")
+        keyboard = keyboard_builder.create_main_menu_keyboard(
+            is_admin=False,
+        )
+        await message.answer(
+            text=f"Здравствуйте, {user.name}!",
+            reply_markup=keyboard,
+        )
     else:
         await message.answer(
             text=(
@@ -49,6 +56,34 @@ async def cmd_help(message: Message) -> None:
     pass
 
 
+@router.callback_query(F.data == "main_menu", StateFilter(default_state))
+async def call_main_menu(callback: CallbackQuery) -> None:
+    """Переход к главному меню."""
+    keyboard = keyboard_builder.create_main_menu_keyboard(
+        is_admin=False,
+    )
+    await callback.message.edit_text(
+        text="Главное меню",
+        reply_markup=keyboard,
+    )
+
+
+@router.callback_query(F.data == "tests", StateFilter(default_state))
+async def call_tests(callback: CallbackQuery) -> None:
+    """Переход к списку тестов."""
+    user_tg_id = callback.from_user.id
+    keyboard = keyboard_builder.create_tests_keyboard(
+        tests=user_connect.get_tests(
+            tg_id=user_tg_id,
+        ),
+        is_admin=False,
+    )
+    await callback.message.edit_text(
+        text="Выберите тест",
+        reply_markup=keyboard,
+    )
+
+
 # ?============================================================================
 # *========== ПРОЦЕСС СОЗДАНИЯ ПОЛЬЗОВАТЕЛЯ ===================================
 # ?============================================================================
@@ -63,7 +98,13 @@ async def process_input_name(message: Message, state: FSMContext) -> None:
     """Получение имени и фамилии пользователя."""
     name, surname = message.text.title().split()
     user_connect.create_user(message.from_user.id, name, surname)
-    await message.answer(text="Вы успешно зарегистрировались!")
+    keyboard = keyboard_builder.create_main_menu_keyboard(
+        is_admin=False,
+    )
+    await message.answer(
+        text="Вы успешно зарегистрировались!",
+        reply_markup=keyboard,
+    )
     await state.clear()
 
 
@@ -78,3 +119,8 @@ async def process_incorrect_input_name(message: Message) -> None:
             "\n\nПопробуйте еще раз"
         )
     )
+
+
+# ?============================================================================
+# *========== ПРОЦЕСС ПРОХОЖДЕНИЯ ТЕСТА =======================================
+# ?============================================================================

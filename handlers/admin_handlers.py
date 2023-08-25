@@ -54,7 +54,7 @@ class FSMCreateQuestions(StatesGroup):
 async def cmd_start(message: Message) -> None:
     """Приветствие админа."""
     keyboard = keyboard_builder.create_main_menu_keyboard(
-        message.from_user.id in config.bot.admin_ids
+        is_admin=True,
     )
     await message.answer(
         "Привет, админ!",
@@ -72,7 +72,7 @@ async def cmd_help(message: Message) -> None:
 async def call_main_menu(callback: CallbackQuery) -> None:
     """Главное меню."""
     keyboard = keyboard_builder.create_main_menu_keyboard(
-        callback.from_user.id in config.bot.admin_ids
+        is_admin=True,
     )
     await callback.message.edit_text(
         text="Главное меню", reply_markup=keyboard
@@ -85,7 +85,7 @@ async def call_tests(callback: CallbackQuery) -> None:
     """Просмотр всех тестов."""
     keyboard = keyboard_builder.create_tests_keyboard(
         tests=admin_connect.get_tests(),
-        is_admin=callback.from_user.id in config.bot.admin_ids,
+        is_admin=True,
     )
     await callback.message.edit_text(
         text="Список тестов", reply_markup=keyboard
@@ -167,7 +167,7 @@ async def call_delete_test(callback: CallbackQuery) -> None:
     admin_connect.delete_test_by_id(test_id)
     keyboard = keyboard_builder.create_tests_keyboard(
         tests=admin_connect.get_tests(),
-        is_admin=callback.from_user.id in config.bot.admin_ids,
+        is_admin=True,
     )
     await callback.message.edit_text(
         text="Тест успешно удален!", reply_markup=keyboard
@@ -185,7 +185,7 @@ async def call_publish_test(callback: CallbackQuery) -> None:
     admin_connect.publish_test_by_id(test_id)
     keyboard = keyboard_builder.create_tests_keyboard(
         tests=admin_connect.get_tests(),
-        is_admin=callback.from_user.id in config.bot.admin_ids,
+        is_admin=True,
     )
     await callback.message.edit_text(
         text="Тест успешно опубликован!", reply_markup=keyboard
@@ -217,7 +217,7 @@ async def process_input_description(
     admin_utils.create_test_dir(admin_connect.get_tests()[-1].id)
     keyboard = keyboard_builder.create_tests_keyboard(
         tests=admin_connect.get_tests(),
-        is_admin=message.from_user.id in config.bot.admin_ids,
+        is_admin=True,
     )
     await message.answer(text="Тест успешно создан!", reply_markup=keyboard)
     await state.clear()

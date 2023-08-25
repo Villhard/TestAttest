@@ -24,7 +24,10 @@ def create_tests_keyboard(
         keyboard_builder.row(
             InlineKeyboardButton(
                 text=(
-                    f"{'🔒' if button.is_publish else '✏️'}" f" {button.title}"
+                    f"{'🔒' if button.is_publish else '✏️'}"
+                    f" {button.title}"
+                    if is_admin
+                    else f"{button.title}"
                 ),
                 callback_data=f"test_{button.id}",
             )
