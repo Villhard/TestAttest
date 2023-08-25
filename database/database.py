@@ -3,7 +3,7 @@
 
 Содержит в себе описание таблиц и их связей.
 """
-from sqlalchemy import BigInteger, DateTime, ForeignKey, create_engine
+from sqlalchemy import BigInteger, ForeignKey, create_engine
 from sqlalchemy.orm import (
     Mapped,
     declarative_base,
@@ -107,8 +107,6 @@ class Result(Base):
     )
     user_id = mapped_column(ForeignKey("users.id"), nullable=False)
     score: Mapped[int] = mapped_column(nullable=False)
-    datetime_start = mapped_column(DateTime, nullable=False)
-    datetime_end = mapped_column(DateTime, nullable=False)
     incorrect_answers: Mapped[list["IncorrectAnswer"]] = relationship(
         back_populates="result", uselist=True, lazy="joined"
     )

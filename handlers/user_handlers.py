@@ -1,10 +1,18 @@
 """User handlers."""
+import re
+
 from aiogram import F, Router
 from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.filters.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    InputFile,
+    Message,
+)
 
 from database import user_connect
 from keyboard import keyboard_builder
@@ -21,6 +29,12 @@ class FSMUserInputName(StatesGroup):
     """Класс состояния ввода имени пользователя."""
 
     fullname = State()
+
+
+class FSMTesting(StatesGroup):
+    """Класс состояния прохождения теста."""
+
+    answering = State()
 
 
 # ?============================================================================
@@ -81,6 +95,30 @@ async def call_tests(callback: CallbackQuery) -> None:
     await callback.message.edit_text(
         text="Выберите тест",
         reply_markup=keyboard,
+    )
+
+
+@router.callback_query(
+    lambda call: re.fullmatch(r"test_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_test(callback: CallbackQuery) -> None:
+    """Переход к тесту."""
+    test_id = int(callback.data.split("_")[1])
+    test = user_connect.get_test(test_id)
+    photo = InputFile(f"img/test_{test_id}/default.jpg")
+    await callback.message.answer_photo(
+        photo=photo,
+        caption=f"<b>{test.title}</b>\n\n{test.description}",
+        reply_markup=InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(
+                        text="Начать", callback_data=f"start_test_{test_id}"
+                    )
+                ]
+            ]
+        ),
     )
 
 
