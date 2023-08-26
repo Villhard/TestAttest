@@ -64,7 +64,7 @@ class Question(Base):
     )
     test_id = mapped_column(ForeignKey("tests.id"), nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
-    image: Mapped[str] = mapped_column(nullable=False)
+    image: Mapped[str] = mapped_column(nullable=True)
     answers: Mapped[list["Answer"]] = relationship(
         back_populates="question", uselist=True, lazy="joined"
     )

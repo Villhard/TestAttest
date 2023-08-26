@@ -7,3 +7,5 @@ database.db
 .venv/
 **/__pycache__/
 img/
+.vscode/
+.pytest_cache/

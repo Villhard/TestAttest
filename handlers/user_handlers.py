@@ -8,9 +8,6 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
 from aiogram.types import (
     CallbackQuery,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    FSInputFile,
     Message,
 )
 
@@ -34,7 +31,7 @@ class FSMUserInputName(StatesGroup):
 class FSMTesting(StatesGroup):
     """Класс состояния прохождения теста."""
 
-    answering = State()
+    testing = State()
 
 
 # ?============================================================================
@@ -106,20 +103,15 @@ async def call_test(callback: CallbackQuery) -> None:
     """Переход к тесту."""
     test_id = int(callback.data.split("_")[1])
     test = user_connect.get_test(test_id)
-    photo = FSInputFile(f"img/test_{test_id}/default.jpg")
-    await callback.message.answer_photo(
-        photo=photo,
-        caption=f"<b>{test.title}</b>\n\n{test.description}",
-        reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(
-                        text="Начать",
-                        callback_data=f"start_test_{test_id}",
-                    )
-                ]
-            ]
-        ),
+    keyboard = keyboard_builder.create_confirm_keyboard(
+        callback_yes=f"start_test_{test_id}",
+        callback_no="tests",
+        text_yes="Начать",
+        text_no="Назад",
+    )
+    await callback.message.edit_text(
+        text=f"<b>{test.title}</b>\n\n{test.description}",
+        reply_markup=keyboard,
     )
     await callback.answer()
 
@@ -164,3 +156,26 @@ async def process_incorrect_input_name(message: Message) -> None:
 # ?============================================================================
 # *========== ПРОЦЕСС ПРОХОЖДЕНИЯ ТЕСТА =======================================
 # ?============================================================================
+
+
+# @router.callback_query(
+#     lambda call: re.fullmatch(r"start_test_\d+", call.data),
+#     StateFilter(default_state),
+# )
+# async def call_start_test(
+#     callback: CallbackQuery,
+#     state: FSMContext,
+# ) -> None:
+#     """Начало теста."""
+#     await state.set_state(FSMTesting.testing)
+#     test_id = int(callback.data.split("_")[2])
+#     await state.update_data(test_id=test_id)
+#     await state.update_data(number_current_question=0)
+#     questions = user_connect.get_questions(test_id)
+#     await state.update_data(questions=questions)
+#     await state.update_data(answers={})
+#     question = questions[0]
+#     await callback.message.edit_text(
+#         text=question.text,
+#     )
+#     await callback.answer()

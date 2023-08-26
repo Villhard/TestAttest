@@ -48,39 +48,30 @@ def create_test_keyboard(
     test: Test,
     questions: list[Question],
     is_publish: bool,
-    is_exists_image: bool,
 ) -> InlineKeyboardMarkup:
     """Создание клавиатуры для меню теста."""
     keyboard_builder = InlineKeyboardBuilder()
-    if is_exists_image:
-        if not is_publish:
-            for button in questions:
-                keyboard_builder.row(
-                    InlineKeyboardButton(
-                        text=(
-                            f"{'🖼' if button.image != 'default.jpg' else ''}"
-                            f" {button.text}"
-                        ),
-                        callback_data=f"question_{button.id}",
-                    )
-                )
+    if not is_publish:
+        for button in questions:
             keyboard_builder.row(
                 InlineKeyboardButton(
-                    text="Добавить вопрос",
-                    callback_data=f"add_question_test_{test.id}",
+                    text=(
+                        f"{'🖼' if button.image else ''}"
+                        f" {button.text}"
+                    ),
+                    callback_data=f"question_{button.id}",
                 )
             )
-            keyboard_builder.row(
-                InlineKeyboardButton(
-                    text="Опубликовать тест",
-                    callback_data=f"publish_test_{test.id}",
-                )
-            )
-    else:
         keyboard_builder.row(
             InlineKeyboardButton(
-                text="Добавить изображение теста",
-                callback_data=f"add_image_test_{test.id}",
+                text="Добавить вопрос",
+                callback_data=f"add_question_test_{test.id}",
+            )
+        )
+        keyboard_builder.row(
+            InlineKeyboardButton(
+                text="Опубликовать тест",
+                callback_data=f"publish_test_{test.id}",
             )
         )
     keyboard_builder.row(
@@ -107,12 +98,15 @@ def create_answers_keyboard(
 
 
 def create_confirm_keyboard(
-    callback_yes: str = "yes", callback_no: str = "no"
+    callback_yes: str = "yes",
+    callback_no: str = "no",
+    text_yes: str = "Да",
+    text_no: str = "Нет",
 ) -> InlineKeyboardMarkup:
     """Создание клавиатуры для подтверждения действия."""
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
-        InlineKeyboardButton(text="Да", callback_data=callback_yes),
-        InlineKeyboardButton(text="Нет", callback_data=callback_no),
+        InlineKeyboardButton(text=text_yes, callback_data=callback_yes),
+        InlineKeyboardButton(text=text_no, callback_data=callback_no),
     )
     return keyboard_builder.as_markup()

@@ -57,7 +57,7 @@ async def cmd_start(message: Message) -> None:
         is_admin=True,
     )
     await message.answer(
-        "Привет, админ!",
+        text="Привет, админ!",
         reply_markup=keyboard,
     )
 
@@ -75,7 +75,8 @@ async def call_main_menu(callback: CallbackQuery) -> None:
         is_admin=True,
     )
     await callback.message.edit_text(
-        text="Главное меню", reply_markup=keyboard
+        text="Главное меню",
+        reply_markup=keyboard,
     )
     await callback.answer()
 
@@ -106,7 +107,6 @@ async def call_test_with_id(callback: CallbackQuery) -> None:
         test=test,
         questions=admin_connect.get_questions_by_test_id(test_id),
         is_publish=is_publish,
-        is_exists_image=admin_utils.check_exists_image(test_id),
     )
     if is_publish:
         await callback.message.edit_text(
@@ -224,46 +224,6 @@ async def process_input_description(
     await state.set_state(default_state)
 
 
-@router.callback_query(
-    lambda call: re.fullmatch(r"add_image_test_\d+", call.data),
-    StateFilter(default_state),
-)
-async def call_add_defaul_image(
-    callback: CallbackQuery, state: FSMContext
-) -> None:
-    """Добавление в тест изображения по умолчанию."""
-    await state.update_data(test_id=int(callback.data.split("_")[3]))
-    await callback.message.edit_text(text="Отправьте изображение")
-    await state.set_state(FSMCreateTest.image)
-
-
-@router.message(F.photo, StateFilter(FSMCreateTest.image))
-async def process_input_image(message: Message, state: FSMContext) -> None:
-    """Создание теста. Получение изображения теста."""
-    test_id = (await state.get_data())["test_id"]
-    test = admin_connect.get_test_by_id(test_id)
-    photo: PhotoSize = message.photo[-1]
-    photo_path = photo.file_id
-    await message.bot.download(
-        photo_path, destination=f"img/test_{test_id}/default.jpg"
-    )
-    keyboard = keyboard_builder.create_test_keyboard(
-        test=test,
-        questions=admin_connect.get_questions_by_test_id(test_id),
-        is_publish=test.is_publish,
-        is_exists_image=admin_utils.check_exists_image(test_id),
-    )
-    await message.answer(
-        text=(
-            "Изображение успешно добавлено!"
-            f"\n\n<b>{test.title}</b>\n{test.description}"
-        ),
-        reply_markup=keyboard,
-    )
-    await state.clear()
-    await state.set_state(default_state)
-
-
 # ?============================================================================
 # *========== ПРОЦЕСС СОЗДАНИЯ ВОПРОСА ========================================
 # ?============================================================================
@@ -347,7 +307,7 @@ async def process_input_image_question(
     answers = data["answers"]
     photo: PhotoSize = message.photo[-1]
     photo_path = photo.file_id
-    number_image = admin_utils.get_count_images(test_id)
+    number_image = admin_utils.get_next_number_image(test_id)
     await message.bot.download(
         photo_path,
         destination=f"img/test_{test_id}/question_{number_image}.jpg",
@@ -363,7 +323,6 @@ async def process_input_image_question(
         test=test,
         questions=admin_connect.get_questions_by_test_id(test_id),
         is_publish=test.is_publish,
-        is_exists_image=admin_utils.check_exists_image(test_id),
     )
     await message.answer(
         text="Вопрос успешно создан!",
@@ -386,14 +345,13 @@ async def process_skip_image_question(
         test_id=test_id,
         text=question,
         answers=answers,
-        image="default.jpg",
+        image=None,
     )
     test = admin_connect.get_test_by_id(test_id)
     keyboard = keyboard_builder.create_test_keyboard(
         test=test,
         questions=admin_connect.get_questions_by_test_id(test_id),
         is_publish=test.is_publish,
-        is_exists_image=admin_utils.check_exists_image(test_id),
     )
     await callback.message.edit_text(
         text="Вопрос успешно создан!",
