@@ -3,7 +3,7 @@
 from sqlalchemy import and_
 from sqlalchemy.orm import sessionmaker
 
-from database.database import Result, Test, User, engine
+from database.database import Result, Test, User, engine, Question
 
 Session = sessionmaker(engine)
 
@@ -49,3 +49,15 @@ def get_test(test_id: int) -> Test:
     with Session() as session:
         test = session.query(Test).filter(Test.id == test_id).first()
         return test
+
+
+def get_questions(test_id: int) -> list[Question]:
+    """Получение вопросов из базы данных."""
+    with Session() as session:
+        questions = (
+            session.query(Question)
+            .filter(Question.test_id == test_id)
+            .order_by(Question.id)
+            .all()
+        )
+        return questions

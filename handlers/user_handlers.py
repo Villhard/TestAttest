@@ -9,6 +9,7 @@ from aiogram.fsm.state import default_state
 from aiogram.types import (
     CallbackQuery,
     Message,
+    FSInputFile,
 )
 
 from database import user_connect
@@ -158,24 +159,31 @@ async def process_incorrect_input_name(message: Message) -> None:
 # ?============================================================================
 
 
-# @router.callback_query(
-#     lambda call: re.fullmatch(r"start_test_\d+", call.data),
-#     StateFilter(default_state),
-# )
-# async def call_start_test(
-#     callback: CallbackQuery,
-#     state: FSMContext,
-# ) -> None:
-#     """Начало теста."""
-#     await state.set_state(FSMTesting.testing)
-#     test_id = int(callback.data.split("_")[2])
-#     await state.update_data(test_id=test_id)
-#     await state.update_data(number_current_question=0)
-#     questions = user_connect.get_questions(test_id)
-#     await state.update_data(questions=questions)
-#     await state.update_data(answers={})
-#     question = questions[0]
-#     await callback.message.edit_text(
-#         text=question.text,
-#     )
-#     await callback.answer()
+@router.callback_query(
+    lambda call: re.fullmatch(r"start_test_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_start_test(
+    callback: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    """Начало теста."""
+    await state.set_state(FSMTesting.testing)
+    test_id = int(callback.data.split("_")[2])
+    await state.update_data(test_id=test_id)
+    questions = user_connect.get_questions(test_id)
+    await state.update_data(questions=questions)
+    await state.update_data(answers={})
+    question = questions.pop(0)
+    if question.image:
+        image = FSInputFile(f"img/test_{test_id}/{question.image}")
+        await callback.message.answer_photo(
+            photo=image,
+            caption=question.text,
+        )
+        await callback.message.delete()
+    else:
+        await callback.message.edit_text(
+            text=question.text,
+        )
+        await callback.answer()
