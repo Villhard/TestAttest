@@ -1,4 +1,26 @@
-"""Модуль для создания клавиатур."""
+"""
+Модуль для создания клавиатур.
+
+Содержит функции для создания клавиатур для бота.
+
+Функции:
+    create_main_menu_keyboard:
+        Создание главного меню.
+    create_tests_keyboard:
+        Создание клавиатуры для списка тестов.
+    create_test_keyboard:
+        Создание клавиатуры для меню теста.
+    create_answers_keyboard:
+        Создание клавиатуры для выбора правильного ответа.
+    create_confirm_keyboard:
+        Создание клавиатуры для подтверждения действия.
+    create_after_test_keyboard:
+        Создание клавиатуры после прохождения теста.
+    create_users_keyboard:
+        Создание клавиатуры для выбора пользователя.
+    create_user_keyboard:
+        Создание клавиатуры просмотра пользователя.
+"""
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 

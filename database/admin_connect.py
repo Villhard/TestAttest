@@ -1,4 +1,34 @@
-"""Модуль для работы с базой данных для админов."""
+"""
+Модуль для работы с базой данных для админов.
+
+Содержит функции для создания, удаления, публикации тестов,
+создания вопросов с ответами, получения статистики по тестам,
+получения пользователей и их результатов.
+
+Функции:
+    create_test:
+        Создание теста в базе данных.
+    get_tests:
+        Получение всех тестов из базы данных.
+    get_test_by_id:
+        Получение теста по id.
+    get_questions_by_test_id:
+        Получение вопросов по id теста.
+    delete_test_by_id:
+        Удаление теста и всех его связей по id.
+    publish_test_by_id:
+        Публикация теста по id.
+    create_question:
+        Создание вопроса с ответами в базе данных.
+    get_statistics_by_test_id:
+        Получение статистики по тесту.
+    get_users:
+        Получение всех пользователей из базы данных.
+    get_user_by_id:
+        Получение пользователя по id.
+    get_results_by_user_id:
+        Получение результатов пользователя по id.
+"""
 from sqlalchemy.orm import sessionmaker
 
 from database.database import (
@@ -16,7 +46,15 @@ Session = sessionmaker(engine)
 
 
 def create_test(title: str, description: str) -> None:
-    """Создание теста в базе данных."""
+    """
+    Создание теста в базе данных.
+
+    Args:
+        title:
+            Название теста.
+        description:
+            Описание теста.
+    """
     with Session() as session:
         test = Test(
             title=title,
@@ -27,21 +65,44 @@ def create_test(title: str, description: str) -> None:
 
 
 def get_tests() -> list[Test]:
-    """Получение всех тестов из базы данных."""
+    """
+    Получение всех тестов из базы данных.
+
+    Returns:
+        Список тестов.
+    """
     with Session() as session:
         tests = session.query(Test).all()
         return tests
 
 
 def get_test_by_id(test_id: int) -> Test:
-    """Получение теста по id."""
+    """
+    Получение теста по id.
+
+    Args:
+        test_id:
+            id теста.
+
+    Returns:
+        Тест.
+    """
     with Session() as session:
         test = session.query(Test).filter(Test.id == test_id).first()
         return test
 
 
 def get_questions_by_test_id(test_id: int) -> list[Question]:
-    """Получение вопросов по id теста."""
+    """
+    Получение вопросов по id теста.
+
+    Args:
+        test_id:
+            id теста.
+
+    Returns:
+        Список вопросов.
+    """
     with Session() as session:
         questions = (
             session.query(Question).filter(Question.test_id == test_id).all()
@@ -50,7 +111,13 @@ def get_questions_by_test_id(test_id: int) -> list[Question]:
 
 
 def delete_test_by_id(test_id: int) -> None:
-    """Удаление теста и всех его связей по id."""
+    """
+    Удаление теста и всех его связей по id.
+
+    Args:
+        test_id:
+            id теста.
+    """
     with Session() as session:
         session.query(IncorrectAnswer).filter(
             IncorrectAnswer.result.has(test_id=test_id)
@@ -65,7 +132,13 @@ def delete_test_by_id(test_id: int) -> None:
 
 
 def publish_test_by_id(test_id: int) -> None:
-    """Публикация теста по id."""
+    """
+    Публикация теста по id.
+
+    Args:
+        test_id:
+            id теста.
+    """
     with Session() as session:
         session.query(Test).filter(Test.id == test_id).update(
             {"is_publish": True}
@@ -76,7 +149,20 @@ def publish_test_by_id(test_id: int) -> None:
 def create_question(
     test_id: int, text: str, answers: dict[str, bool], image: str | None = None
 ) -> None:
-    """Создание вопроса с ответами в базе данных."""
+    """
+    Создание вопроса с ответами в базе данных.
+
+    Args:
+        test_id:
+            id теста.
+        text:
+            Текст вопроса.
+        answers:
+            Словарь с ответами.
+        image:
+            Ссылка на изображение.
+            По умолчанию None.
+    """
     with Session() as session:
         question = Question(test_id=test_id, text=text, image=image)
 
@@ -97,7 +183,16 @@ def create_question(
 
 
 def get_statistics_by_test_id(test_id: int) -> dict[str, int]:
-    """Получение статистики по тесту."""
+    """
+    Получение статистики по тесту.
+
+    Args:
+        test_id:
+            id теста.
+
+    Returns:
+        Словарь со статистикой.
+    """
     with Session() as session:
         results = session.query(Result).filter(Result.test_id == test_id)
 
@@ -110,21 +205,44 @@ def get_statistics_by_test_id(test_id: int) -> dict[str, int]:
 
 
 def get_users() -> list[User]:
-    """Получение всех пользователей из базы данных."""
+    """
+    Получение всех пользователей из базы данных.
+
+    Returns:
+        Список пользователей.
+    """
     with Session() as session:
         users = session.query(User).all()
         return users
 
 
 def get_user_by_id(user_id: int) -> User:
-    """Получение пользователя по id."""
+    """
+    Получение пользователя по id.
+
+    Args:
+        user_id:
+            id пользователя.
+
+    Returns:
+        Пользователь.
+    """
     with Session() as session:
         user = session.query(User).filter(User.id == user_id).first()
         return user
 
 
 def get_results_by_user_id(user_id: int) -> dict[str, int]:
-    """Получение результатов пользователя по id."""
+    """
+    Получение результатов пользователя по id.
+
+    Args:
+        user_id:
+            id пользователя.
+
+    Returns:
+        Словарь с результатами.
+    """
     with Session() as session:
         total_tests = session.query(Test).count()
         completed_tests = (

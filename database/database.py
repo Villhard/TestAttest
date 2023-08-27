@@ -1,7 +1,15 @@
 """
 Модуль для работы с базой данных.
 
-Содержит в себе описание таблиц и их связей.
+Содержит в себе модели таблиц и функции для работы с ними.
+
+Модели таблиц:
+    User - модель пользователя.
+    Test - модель теста.
+    Question - модель вопроса.
+    Answer - модель ответа.
+    Result - модель результата.
+    IncorrectAnswer - модель неправильного ответа.
 """
 from sqlalchemy import BigInteger, ForeignKey, create_engine
 from sqlalchemy.orm import (
@@ -15,17 +23,23 @@ from config import config
 
 engine = create_engine(config.database.url)
 
-# Создание базовой модели
+# Базовая модель
 Base = declarative_base()
 
 
 class User(Base):
-    """Модель пользователя."""
+    """
+    Модель пользователя.
+
+    id: int - id пользователя.
+    tg_id: int - id пользователя в Telegram.
+    name: str - имя пользователя.
+    surname: str - фамилия пользователя.
+    results: list[Result] - результаты пользователя.
+    """
 
     __tablename__ = "users"
-    id: Mapped[int] = mapped_column(
-        primary_key=True, autoincrement=True
-    )
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     tg_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
     name: Mapped[str] = mapped_column(nullable=False)
     surname: Mapped[str] = mapped_column(nullable=False)
@@ -35,12 +49,19 @@ class User(Base):
 
 
 class Test(Base):
-    """Модель теста."""
+    """
+    Модель теста.
+
+    id: int - id теста.
+    title: str - название теста.
+    description: str - описание теста.
+    questions: list[Question] - вопросы теста.
+    results: list[Result] - результаты теста.
+    is_publish: bool - опубликован ли тест.
+    """
 
     __tablename__ = "tests"
-    id: Mapped[int] = mapped_column(
-        primary_key=True, autoincrement=True
-    )
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(nullable=False)
     description: Mapped[str] = mapped_column(nullable=False)
     questions: Mapped[list["Question"]] = relationship(
@@ -53,12 +74,19 @@ class Test(Base):
 
 
 class Question(Base):
-    """Модель вопроса."""
+    """
+    Модель вопроса.
+
+    id: int - id вопроса.
+    test: Test - тест, к которому относится вопрос.
+    text: str - текст вопроса.
+    image: str - изображение вопроса.
+    answers: list[Answer] - ответы на вопрос.
+    incorrect_answers: list[IncorrectAnswer] - неправильные ответы на вопрос.
+    """
 
     __tablename__ = "questions"
-    id: Mapped[int] = mapped_column(
-        primary_key=True, autoincrement=True
-    )
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     test: Mapped["Test"] = relationship(
         back_populates="questions", uselist=False
     )
@@ -74,12 +102,18 @@ class Question(Base):
 
 
 class Answer(Base):
-    """Модель ответа."""
+    """
+    Модель ответа.
+
+    id: int - id ответа.
+    question: Question - вопрос, к которому относится ответ.
+    text: str - текст ответа.
+    is_correct: bool - является ли ответ правильным.
+    incorrect_answers: list[IncorrectAnswer] - неправильные ответы на вопрос.
+    """
 
     __tablename__ = "answers"
-    id: Mapped[int] = mapped_column(
-        primary_key=True, autoincrement=True
-    )
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     question: Mapped["Question"] = relationship(
         back_populates="answers", uselist=False
     )
@@ -92,12 +126,18 @@ class Answer(Base):
 
 
 class Result(Base):
-    """Модель результата."""
+    """
+    Модель результата.
+
+    id: int - id результата.
+    test: Test - тест, к которому относится результат.
+    user: User - пользователь, к которому относится результат.
+    score: int - количество правильных ответов.
+    incorrect_answers: list[IncorrectAnswer] - неправильные ответы на вопрос.
+    """
 
     __tablename__ = "results"
-    id: Mapped[int] = mapped_column(
-        primary_key=True, autoincrement=True
-    )
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     test: Mapped["Test"] = relationship(
         back_populates="results", uselist=False
     )
@@ -113,12 +153,17 @@ class Result(Base):
 
 
 class IncorrectAnswer(Base):
-    """Модель неправильного ответа."""
+    """
+    Модель неправильного ответа.
+
+    id: int - id неправильного ответа.
+    result: Result - результат, к которому относится неправильный ответ.
+    question: Question - вопрос, к которому относится неправильный ответ.
+    answer: Answer - ответ, к которому относится неправильный ответ.
+    """
 
     __tablename__ = "incorrect_answers"
-    id: Mapped[int] = mapped_column(
-        primary_key=True, autoincrement=True
-    )
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     result: Mapped["Result"] = relationship(
         back_populates="incorrect_answers", uselist=False
     )

@@ -1,4 +1,36 @@
-"""User handlers."""
+"""
+User handlers.
+
+Машины состояний:
+    FSMUserInputName:
+        fullname - ввод имени и фамилии пользователя
+    FSMTesting:
+        testing - прохождение теста
+
+Навигация:
+    cmd_start:
+        Приветствие пользователя или запрос имени и фамилии
+    cmd_help:
+        Помощь пользователю
+    call_main_menu:
+        Переход к главному меню
+    call_tests:
+        Переход к списку тестов
+    call_test:
+        Переход к тесту
+
+Процесс создания пользователя:
+    process_input_name:
+        Получение имени и фамилии пользователя
+    process_incorrect_input_name:
+        Обработка некорректного ввода имени и фамилии
+
+Процесс прохождения теста:
+    call_start_test:
+        Начало теста
+    call_answering:
+        Процесс прохождения теста
+"""
 import re
 
 from aiogram import F, Router

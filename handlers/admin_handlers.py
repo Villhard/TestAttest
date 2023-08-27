@@ -1,4 +1,59 @@
-"""Admin handlers."""
+"""
+Admin handlers.
+
+Машины состояний:
+    FSMCreateTest:
+        title - ввод названия теста
+        description - ввод описания теста
+    FSMCreateQuestions:
+        text - ввод текста вопроса
+        answers - ввод текста ответов
+        image - ввод изображения вопроса
+
+Навигация:
+    cmd_start:
+        Приветствие админа
+    cmd_help:
+        Помощь админу
+    call_main_menu:
+        Главное меню
+    call_tests:
+        Просмотр всех тестов
+    call_test_with_id:
+        Просмотр теста
+    call_users:
+        Просмотр пользователей
+    call_user_with_id:
+        Просмотр пользователя
+
+Создание, редактирование и удаление теста и вопросов:
+    call_add_test:
+        Создание теста
+    call_confirm_delete_test:
+        Подтверждение удаления теста
+    call_delete_test:
+        Удаление теста
+
+Процесс создания теста:
+    process_input_title:
+        Создание теста. Получение названия теста
+    process_input_description:
+        Создание теста. Получение описания теста
+
+Процесс создания вопроса:
+    call_add_question:
+        Создание вопроса
+    process_input_question_text:
+        Создание вопроса. Получение текста вопроса
+    process_input_answers_text:
+        Создание вопроса. Получение текста ответов
+    process_input_correct_answer:
+        Создание вопроса. Получение правильного ответа
+    process_input_image_question:
+        Создание вопроса. Получение изображения вопроса
+    process_skip_image_question:
+        Создание вопроса. Пропуск изображения вопроса
+"""
 import re
 
 from aiogram import F, Router
@@ -30,15 +85,30 @@ router.message.filter(F.from_user.id.in_(config.bot.admin_ids))
 
 
 class FSMCreateTest(StatesGroup):
-    """Класс состояния создания теста."""
+    """
+    Класс состояния создания теста.
+
+    title:
+        Ввод названия теста
+    description:
+        Ввод описания теста
+    """
 
     title = State()
     description = State()
-    image = State()
 
 
 class FSMCreateQuestions(StatesGroup):
-    """Класс состояния создания вопросов."""
+    """
+    Класс состояния создания вопросов.
+
+    text:
+        Ввод текста вопроса
+    answers:
+        Ввод текста ответов
+    image:
+        Ввод изображения вопроса
+    """
 
     text = State()
     answers = State()

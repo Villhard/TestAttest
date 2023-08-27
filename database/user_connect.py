@@ -1,4 +1,22 @@
-"""Модуль работы с базой данных для пользователей."""
+"""
+Модуль работы с базой данных для пользователей.
+
+Содержит функции для работы с базой данных для пользователей.
+
+Функции:
+    get_user:
+        Получение пользователя из базы данных.
+    create_user:
+        Создание пользователя в базе данных.
+    get_tests:
+        Получение тестов для прохождения из базы данных.
+    get_test:
+        Получение теста из базы данных.
+    get_questions:
+        Получение вопросов из базы данных.
+    save_result:
+        Сохранение результата теста в базу данных.
+"""
 
 from sqlalchemy import and_
 from sqlalchemy.orm import sessionmaker
@@ -17,14 +35,33 @@ Session = sessionmaker(engine)
 
 
 def get_user(tg_id: int) -> User | None:
-    """Получение пользователя из базы данных."""
+    """
+    Получение пользователя из базы данных.
+
+    Args:
+        tg_id:
+            Идентификатор пользователя в Telegram.
+
+    Returns:
+        Пользователь.
+    """
     with Session() as session:
         user = session.query(User).filter(User.tg_id == tg_id).first()
         return user
 
 
 def create_user(tg_id: int, name: str, surname: str) -> None:
-    """Создание пользователя в базе данных."""
+    """
+    Создание пользователя в базе данных.
+
+    Args:
+        tg_id:
+            Идентификатор пользователя в Telegram.
+        name:
+            Имя пользователя.
+        surname:
+            Фамилия пользователя.
+    """
     with Session() as session:
         user = User(tg_id=tg_id, name=name, surname=surname)
         session.add(user)
@@ -32,7 +69,16 @@ def create_user(tg_id: int, name: str, surname: str) -> None:
 
 
 def get_tests(tg_id: int) -> list[Test]:
-    """Получение тестов для прохождения из базы данных."""
+    """
+    Получение тестов для прохождения из базы данных.
+
+    Args:
+        tg_id:
+            Идентификатор пользователя в Telegram.
+
+    Returns:
+        Список тестов.
+    """
     with Session() as session:
         user_id = session.query(User.id).filter(User.tg_id == tg_id).first()[0]
         tests = (
@@ -53,14 +99,32 @@ def get_tests(tg_id: int) -> list[Test]:
 
 
 def get_test(test_id: int) -> Test:
-    """Получение теста из базы данных."""
+    """
+    Получение теста из базы данных.
+
+    Args:
+        test_id:
+            Идентификатор теста.
+
+    Returns:
+        Тест.
+    """
     with Session() as session:
         test = session.query(Test).filter(Test.id == test_id).first()
         return test
 
 
 def get_questions(test_id: int) -> list[Question]:
-    """Получение вопросов из базы данных."""
+    """
+    Получение вопросов из базы данных.
+
+    Args:
+        test_id:
+            Идентификатор теста.
+
+    Returns:
+        Список вопросов.
+    """
     with Session() as session:
         questions = (
             session.query(Question)
@@ -76,7 +140,17 @@ def save_result(
     test_id: int,
     result: dict[int, dict[int, bool]],
 ) -> None:
-    """Сохранение результата теста в базу данных."""
+    """
+    Сохранение результата теста в базу данных.
+
+    Args:
+        user_id:
+            Идентификатор пользователя.
+        test_id:
+            Идентификатор теста.
+        result:
+            Результат теста.
+    """
 
     incorrect_answers = [
         (question_id, next(iter(answer)))
