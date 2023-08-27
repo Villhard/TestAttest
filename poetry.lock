@@ -421,23 +421,6 @@ flake8 = ">=6.0.0"
 dev = ["coverage", "hypothesis", "hypothesmith (>=0.2)", "pre-commit", "pytest", "tox"]
 
 [[package]]
-name = "flake8-builtins"
-version = "2.1.0"
-description = "Check for python builtins being used as variables or parameters."
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "flake8-builtins-2.1.0.tar.gz", hash = "sha256:12ff1ee96dd4e1f3141141ee6c45a5c7d3b3c440d0949e9b8d345c42b39c51d4"},
-    {file = "flake8_builtins-2.1.0-py3-none-any.whl", hash = "sha256:469e8f03d6d0edf4b1e62b6d5a97dce4598592c8a13ec8f0952e7a185eba50a1"},
-]
-
-[package.dependencies]
-flake8 = "*"
-
-[package.extras]
-test = ["pytest"]
-
-[[package]]
 name = "flake8-pyproject"
 version = "1.2.3"
 description = "Flake8 plug-in loading the configuration from pyproject.toml"
@@ -1135,4 +1118,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "36920b055a8a7401fdfc9d070c9f1e9f34dcacdf535857c84a555c2b524e761b"
+content-hash = "aa1a5acef91eb99ee6a90cae0f53cde8d5a87d0383fe5aacb32222bc944b9b9f"

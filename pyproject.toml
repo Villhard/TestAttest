@@ -14,7 +14,6 @@ sqlalchemy = "^2.0.20"
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
 flake8-bugbear = "^23.7.10"
-flake8-builtins = "^2.1.0"
 flake8-pyproject = "^1.2.3"
 
 [build-system]

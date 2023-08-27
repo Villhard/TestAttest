@@ -23,7 +23,7 @@ class User(Base):
     """Модель пользователя."""
 
     __tablename__ = "users"
-    id: Mapped[int] = mapped_column(  # noqa: A003
+    id: Mapped[int] = mapped_column(
         primary_key=True, autoincrement=True
     )
     tg_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
@@ -38,7 +38,7 @@ class Test(Base):
     """Модель теста."""
 
     __tablename__ = "tests"
-    id: Mapped[int] = mapped_column(  # noqa: A003
+    id: Mapped[int] = mapped_column(
         primary_key=True, autoincrement=True
     )
     title: Mapped[str] = mapped_column(nullable=False)
@@ -56,7 +56,7 @@ class Question(Base):
     """Модель вопроса."""
 
     __tablename__ = "questions"
-    id: Mapped[int] = mapped_column(  # noqa: A003
+    id: Mapped[int] = mapped_column(
         primary_key=True, autoincrement=True
     )
     test: Mapped["Test"] = relationship(
@@ -77,7 +77,7 @@ class Answer(Base):
     """Модель ответа."""
 
     __tablename__ = "answers"
-    id: Mapped[int] = mapped_column(  # noqa: A003
+    id: Mapped[int] = mapped_column(
         primary_key=True, autoincrement=True
     )
     question: Mapped["Question"] = relationship(
@@ -95,7 +95,7 @@ class Result(Base):
     """Модель результата."""
 
     __tablename__ = "results"
-    id: Mapped[int] = mapped_column(  # noqa: A003
+    id: Mapped[int] = mapped_column(
         primary_key=True, autoincrement=True
     )
     test: Mapped["Test"] = relationship(
@@ -116,7 +116,7 @@ class IncorrectAnswer(Base):
     """Модель неправильного ответа."""
 
     __tablename__ = "incorrect_answers"
-    id: Mapped[int] = mapped_column(  # noqa: A003
+    id: Mapped[int] = mapped_column(
         primary_key=True, autoincrement=True
     )
     result: Mapped["Result"] = relationship(

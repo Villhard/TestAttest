@@ -173,17 +173,87 @@ async def call_start_test(
     await state.update_data(test_id=test_id)
     questions = user_connect.get_questions(test_id)
     await state.update_data(questions=questions)
-    await state.update_data(answers={})
+    await state.update_data(result={})
     question = questions.pop(0)
+    await state.update_data(question_id=question.id)
+    answers = {
+        answer.text: (answer.is_correct, answer.id)
+        for answer in question.answers
+    }
+    await state.update_data(answers=answers)
+    keyboard = keyboard_builder.create_answers_keyboard(answers)
     if question.image:
         image = FSInputFile(f"img/test_{test_id}/{question.image}")
         await callback.message.answer_photo(
             photo=image,
             caption=question.text,
+            reply_markup=keyboard,
         )
         await callback.message.delete()
     else:
         await callback.message.edit_text(
             text=question.text,
+            reply_markup=keyboard,
         )
         await callback.answer()
+
+
+@router.callback_query(F.data, StateFilter(FSMTesting.testing))
+async def call_answering(callback: CallbackQuery, state: FSMContext):
+    """Процесс прохождения теста."""
+    data = await state.get_data()
+    answers = data["answers"]
+    result = data["result"]
+    if answers[callback.data][0]:
+        result[data["question_id"]] = {answers[callback.data][1]: True}
+    else:
+        result[data["question_id"]] = {answers[callback.data][1]: False}
+
+    if data["questions"]:
+        question = data["questions"].pop(0)
+        await state.update_data(question_id=question.id)
+        answers = {
+            answer.text: (answer.is_correct, answer.id)
+            for answer in question.answers
+        }
+        await state.update_data(answers=answers)
+        keyboard = keyboard_builder.create_answers_keyboard(answers)
+        if question.image:
+            image = FSInputFile(f"img/test_{data['test_id']}/{question.image}")
+            await callback.message.answer_photo(
+                photo=image,
+                caption=question.text,
+                reply_markup=keyboard,
+            )
+            await callback.message.delete()
+        else:
+            await callback.message.answer(
+                text=question.text,
+                reply_markup=keyboard,
+            )
+            await callback.message.delete()
+    else:
+        result_id = user_connect.save_result(
+            user_id=user_connect.get_user(callback.from_user.id).id,
+            test_id=data["test_id"],
+            result=result,
+        )
+        await state.clear()
+        await state.set_state(default_state)
+        keyboard = keyboard_builder.create_after_test_keyboard(
+            result_id=result_id,
+        )
+        await callback.message.answer(
+            text="Тест пройден!",
+            reply_markup=keyboard,
+        )
+        await callback.message.delete()
+
+
+@router.callback_query(
+    lambda call: re.fullmatch(r"result_\d+", call.data),
+    StateFilter(default_state),
+)
+def call_show_result(callback: CallbackQuery):
+    """Показать результат теста."""
+    pass

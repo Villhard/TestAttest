@@ -24,8 +24,7 @@ def create_tests_keyboard(
         keyboard_builder.row(
             InlineKeyboardButton(
                 text=(
-                    f"{'🔒' if button.is_publish else '✏️'}"
-                    f" {button.title}"
+                    f"{'🔒' if button.is_publish else '✏️'}" f" {button.title}"
                     if is_admin
                     else f"{button.title}"
                 ),
@@ -55,10 +54,7 @@ def create_test_keyboard(
         for button in questions:
             keyboard_builder.row(
                 InlineKeyboardButton(
-                    text=(
-                        f"{'🖼' if button.image else ''}"
-                        f" {button.text}"
-                    ),
+                    text=(f"{'🖼' if button.image else ''}" f" {button.text}"),
                     callback_data=f"question_{button.id}",
                 )
             )
@@ -87,6 +83,7 @@ def create_test_keyboard(
 
 def create_answers_keyboard(
     answers: list[str],
+    for_test: bool = False,
 ) -> InlineKeyboardMarkup:
     """Создание клавиатуры для выбора правильного ответа."""
     keyboard_builder = InlineKeyboardBuilder()
@@ -108,5 +105,19 @@ def create_confirm_keyboard(
     keyboard_builder.row(
         InlineKeyboardButton(text=text_yes, callback_data=callback_yes),
         InlineKeyboardButton(text=text_no, callback_data=callback_no),
+    )
+    return keyboard_builder.as_markup()
+
+
+def create_after_test_keyboard(
+    result_id: int,
+) -> InlineKeyboardMarkup:
+    """Создание клавиатуры после прохождения теста."""
+    keyboard_builder = InlineKeyboardBuilder()
+    keyboard_builder.row(
+        InlineKeyboardButton(
+            text="Результат", callback_data=f"result_{result_id}"
+        ),
+        InlineKeyboardButton(text="Назад", callback_data="main_menu"),
     )
     return keyboard_builder.as_markup()
