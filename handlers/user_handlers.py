@@ -6,12 +6,9 @@ from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.filters.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import (
-    CallbackQuery,
-    Message,
-    FSInputFile,
-)
+from aiogram.types import CallbackQuery, FSInputFile, Message
 
+from config import config
 from database import user_connect
 from keyboard import keyboard_builder
 
@@ -233,27 +230,21 @@ async def call_answering(callback: CallbackQuery, state: FSMContext):
             )
             await callback.message.delete()
     else:
-        result_id = user_connect.save_result(
+        score = user_connect.save_result(
             user_id=user_connect.get_user(callback.from_user.id).id,
             test_id=data["test_id"],
             result=result,
         )
         await state.clear()
         await state.set_state(default_state)
-        keyboard = keyboard_builder.create_after_test_keyboard(
-            result_id=result_id,
-        )
+        keyboard = keyboard_builder.create_after_test_keyboard()
         await callback.message.answer(
-            text="Тест пройден!",
+            text=(
+                f"Тест пройден!\nВы набрали: {score} баллов"
+                if score >= config.pass_score
+                else f"Тест не пройден!\nВы набрали: {score} баллов\n\n"
+                "Попробуйте еще раз"
+            ),
             reply_markup=keyboard,
         )
         await callback.message.delete()
-
-
-@router.callback_query(
-    lambda call: re.fullmatch(r"result_\d+", call.data),
-    StateFilter(default_state),
-)
-def call_show_result(callback: CallbackQuery):
-    """Показать результат теста."""
-    pass

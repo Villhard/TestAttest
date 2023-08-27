@@ -3,6 +3,7 @@
 from sqlalchemy import and_
 from sqlalchemy.orm import sessionmaker
 
+from config import config
 from database.database import (
     IncorrectAnswer,
     Question,
@@ -41,7 +42,7 @@ def get_tests(tg_id: int) -> list[Test]:
                 and_(
                     Result.test_id == Test.id,
                     Result.user_id == user_id,
-                    Result.score > 70,
+                    Result.score > config.pass_score,
                 ),
             )
             .filter(Test.is_publish)
@@ -98,4 +99,4 @@ def save_result(
             )
             session.add(incorrect_answer)
         session.commit()
-    return result_id
+    return score

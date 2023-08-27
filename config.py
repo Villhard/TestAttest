@@ -29,6 +29,7 @@ class Config:
 
     bot: BotConfig
     database: DatabaseConfig
+    pass_score: int
 
 
 def load_config(path: str = None) -> BotConfig:
@@ -42,6 +43,7 @@ def load_config(path: str = None) -> BotConfig:
             admin_ids=[int(admin_id) for admin_id in env.list("ADMIN_IDS")],
         ),
         database=DatabaseConfig(url=env("URL_DATABASE")),
+        pass_score=env.int("PASS_SCORE"),
     )
 
 

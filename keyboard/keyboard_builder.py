@@ -109,15 +109,10 @@ def create_confirm_keyboard(
     return keyboard_builder.as_markup()
 
 
-def create_after_test_keyboard(
-    result_id: int,
-) -> InlineKeyboardMarkup:
+def create_after_test_keyboard() -> InlineKeyboardMarkup:
     """Создание клавиатуры после прохождения теста."""
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
-        InlineKeyboardButton(
-            text="Результат", callback_data=f"result_{result_id}"
-        ),
-        InlineKeyboardButton(text="Назад", callback_data="main_menu"),
+        InlineKeyboardButton(text="Главное меню", callback_data="main_menu"),
     )
     return keyboard_builder.as_markup()

@@ -3,7 +3,7 @@ authors = ["Victor Ryabov <victorwillhard@gmail.com>"]
 description = ""
 name = "testattest"
 readme = "README.md"
-version = "0.1.0"
+version = "0.5.0"
 
 [tool.poetry.dependencies]
 aiogram = "3.0.0rc2"
