@@ -114,8 +114,8 @@ async def call_test_with_id(callback: CallbackQuery) -> None:
             text=(
                 f"<b>{test.title}</b>\n{test.description}"
                 "\n\n<b>Cтатистика:</b>\n"
-                f"Тест запускали {statistics['total']} раз\n"
-                f"Тест прошли {statistics['completed']} раз\n"
+                "Успех/Всего: "
+                f"{statistics['completed']}/{statistics['total']}"
             ),
             reply_markup=keyboard,
         )

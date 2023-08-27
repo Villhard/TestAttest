@@ -12,9 +12,10 @@ def create_main_menu_keyboard(is_admin: bool) -> InlineKeyboardMarkup:
     keyboard_builder.row(
         InlineKeyboardButton(text="Тесты", callback_data="tests")
     )
-    keyboard_builder.row(
-        InlineKeyboardButton(text="Пользователи", callback_data="users")
-    )
+    if is_admin:
+        keyboard_builder.row(
+            InlineKeyboardButton(text="Пользователи", callback_data="users")
+        )
     return keyboard_builder.as_markup()
 
 
