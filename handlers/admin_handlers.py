@@ -127,6 +127,40 @@ async def call_test_with_id(callback: CallbackQuery) -> None:
     await callback.answer()
 
 
+@router.callback_query(
+    F.data == "users",
+    StateFilter(default_state),
+)
+async def call_users(callback: CallbackQuery) -> None:
+    """Просмотр пользователей."""
+    users = admin_connect.get_users()
+    keyboard = keyboard_builder.create_users_keyboard(users)
+    await callback.message.edit_text(
+        text="Все пользователи",
+        reply_markup=keyboard,
+    )
+    await callback.answer()
+
+
+@router.callback_query(
+    lambda call: re.fullmatch(r"user_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_user_with_id(callback: CallbackQuery) -> None:
+    """Просмотр пользователя."""
+    user_id = int(callback.data.split("_")[1])
+    user = admin_connect.get_user_by_id(user_id)
+    results = admin_connect.get_results_by_user_id(user_id)
+    keyboard = keyboard_builder.create_user_keyboard()
+    await callback.message.edit_text(
+        text=(
+            f"<b>{user.name} {user.surname}</b>\n\n"
+            f"Тестов пройдено: {results['completed']}/{results['total']}"
+        ),
+        reply_markup=keyboard,
+    )
+
+
 # ?============================================================================
 # *========== СОЗДАНИЕ, РЕДАКТИРОВАНИЕ И УДАЛЕНИЕ ТЕСТА И ВОПРОСОВ ============
 # ?============================================================================

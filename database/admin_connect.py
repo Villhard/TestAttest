@@ -6,6 +6,7 @@ from database.database import (
     IncorrectAnswer,
     Question,
     Result,
+    User,
     Test,
     engine,
 )
@@ -117,3 +118,31 @@ def get_statistics_by_test_id(test_id: int) -> dict[str, int]:
         statistics = {"total": total, "completed": completed}
 
         return statistics
+
+
+def get_users() -> list[User]:
+    """Получение всех пользователей из базы данных."""
+    with Session() as session:
+        users = session.query(User).all()
+        return users
+
+
+def get_user_by_id(user_id: int) -> User:
+    """Получение пользователя по id."""
+    with Session() as session:
+        user = session.query(User).filter(User.id == user_id).first()
+        return user
+
+
+def get_results_by_user_id(user_id: int) -> dict[str, int]:
+    """Получение результатов пользователя по id."""
+    with Session() as session:
+        total_tests = session.query(Test).count()
+        completed_tests = (
+            session.query(Result)
+            .filter(Result.user_id == user_id)
+            .group_by(Result.test_id)
+            .filter(Result.score >= config.pass_score)
+            .count()
+        )
+        return {"total": total_tests, "completed": completed_tests}

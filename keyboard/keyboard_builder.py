@@ -2,7 +2,7 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from database.database import Question, Test
+from database.database import Question, Test, User
 
 
 def create_main_menu_keyboard(is_admin: bool) -> InlineKeyboardMarkup:
@@ -11,6 +11,9 @@ def create_main_menu_keyboard(is_admin: bool) -> InlineKeyboardMarkup:
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
         InlineKeyboardButton(text="Тесты", callback_data="tests")
+    )
+    keyboard_builder.row(
+        InlineKeyboardButton(text="Пользователи", callback_data="users")
     )
     return keyboard_builder.as_markup()
 
@@ -114,5 +117,30 @@ def create_after_test_keyboard() -> InlineKeyboardMarkup:
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
         InlineKeyboardButton(text="Главное меню", callback_data="main_menu"),
+    )
+    return keyboard_builder.as_markup()
+
+
+def create_users_keyboard(users: list[User]) -> InlineKeyboardMarkup:
+    """Создание клавиатуры для выбора пользователя."""
+    keyboard_builder = InlineKeyboardBuilder()
+    for button in users:
+        keyboard_builder.row(
+            InlineKeyboardButton(
+                text=f"{button.name} {button.surname}",
+                callback_data=f"user_{button.id}",
+            )
+        )
+    keyboard_builder.row(
+        InlineKeyboardButton(text="Назад", callback_data="main_menu")
+    )
+    return keyboard_builder.as_markup()
+
+
+def create_user_keyboard() -> InlineKeyboardMarkup:
+    """Создание клавиатуры просмотра пользователя."""
+    keyboard_builder = InlineKeyboardBuilder()  # TODO: Добавить функционал
+    keyboard_builder.row(
+        InlineKeyboardButton(text="Назад", callback_data="users")
     )
     return keyboard_builder.as_markup()
