@@ -212,6 +212,24 @@ async def call_delete_test(callback: CallbackQuery) -> None:
 
 
 @router.callback_query(
+    lambda call: re.fullmatch(r"confirm_publish_test_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_confirm_publish_test(callback: CallbackQuery) -> None:
+    """Подтверждение публикации теста."""
+    test_id = int(callback.data.split("_")[3])
+    keyboard = keyboard_builder.create_confirm_keyboard(
+        callback_yes=f"publish_test_{test_id}",
+        callback_no=f"test_{test_id}",
+    )
+    await callback.message.edit_text(
+        text="Вы уверены, что хотите опубликовать тест?",
+        reply_markup=keyboard,
+    )
+    await callback.answer()
+
+
+@router.callback_query(
     lambda call: re.fullmatch(r"publish_test_\d+", call.data),
     StateFilter(default_state),
 )

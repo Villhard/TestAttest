@@ -71,7 +71,7 @@ def create_test_keyboard(
         keyboard_builder.row(
             InlineKeyboardButton(
                 text="Опубликовать тест",
-                callback_data=f"publish_test_{test.id}",
+                callback_data=f"confirm_publish_test_{test.id}",
             )
         )
     keyboard_builder.row(
