@@ -73,37 +73,26 @@ def publish_test_by_id(test_id: int) -> None:
         session.commit()
 
 
-def create_question(  # TODO: Оптимизировать создание вопроса с ответами.
-    test_id: int,
-    text: str,
-    answers: dict[str, bool],
-    image: str,
+def create_question(
+    test_id: int, text: str, answers: dict[str, bool], image: str | None = None
 ) -> None:
-    """Создание вопроса в базе данных."""
+    """Создание вопроса с ответами в базе данных."""
     with Session() as session:
-        question = Question(
-            test_id=test_id,
-            text=text,
-            image=image,
-        )
+        question = Question(test_id=test_id, text=text, image=image)
+
         session.add(question)
         session.commit()
-        create_answers(question_id=question.id, answers=answers)
 
-
-def create_answers(
-    question_id: int,
-    answers: dict[str, bool],
-) -> None:
-    """Создание ответов в базе данных."""
-    with Session() as session:
-        for text in answers:
-            answer = Answer(
-                question_id=question_id,
+        answer_objs = [
+            Answer(
+                question_id=question.id,
                 text=text,
-                is_correct=answers[text],
+                is_correct=is_correct,
             )
-            session.add(answer)
+            for text, is_correct in answers.items()
+        ]
+
+        session.add_all(answer_objs)
         session.commit()
 
 

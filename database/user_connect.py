@@ -71,32 +71,38 @@ def get_questions(test_id: int) -> list[Question]:
         return questions
 
 
-def save_result(  # TODO: Оптимизировать сохранение результата
+def save_result(
     user_id: int,
     test_id: int,
     result: dict[int, dict[int, bool]],
 ) -> None:
     """Сохранение результата теста в базу данных."""
 
-    incorrect_answers = {}
-    for question_id, answer in result.items():
-        if not next(iter(answer.values())):
-            incorrect_answers[question_id] = answer
+    incorrect_answers = [
+        (question_id, next(iter(answer)))
+        for question_id, answer in result.items()
+        if not next(iter(answer.values()))
+    ]
+
     score = round((len(result) - len(incorrect_answers)) / len(result) * 100)
 
     with Session() as session:
-        result = Result(user_id=user_id, test_id=test_id, score=score)
-        session.add(result)
-        session.commit()
-        result_id = result.id
+        result_obj = Result(user_id=user_id, test_id=test_id, score=score)
+        session.add(result_obj)
 
-    with Session() as session:
-        for question_id, answer in incorrect_answers.items():
-            incorrect_answer = IncorrectAnswer(
-                question_id=question_id,
-                answer_id=next(iter(answer)),
-                result_id=result_id,
-            )
-            session.add(incorrect_answer)
         session.commit()
+
+        incorrect_answer_objs = [
+            IncorrectAnswer(
+                question_id=question_id,
+                answer_id=answer_id,
+                result_id=result_obj.id,
+            )
+            for question_id, answer_id in incorrect_answers
+        ]
+
+        session.add_all(incorrect_answer_objs)
+
+        session.commit()
+
     return score

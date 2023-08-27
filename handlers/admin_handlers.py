@@ -346,13 +346,13 @@ async def process_input_image_question(
     number_image = admin_utils.get_next_number_image(test_id)
     await message.bot.download(
         photo_path,
-        destination=f"img/test_{test_id}/question_{number_image}.jpg",
+        destination=f"img/test_{test_id}/img_{number_image}.jpg",
     )
     admin_connect.create_question(
         test_id=test_id,
         text=question,
         answers=answers,
-        image=f"question_{number_image}.jpg",
+        image=f"img_{number_image}.jpg",
     )
     test = admin_connect.get_test_by_id(test_id)
     keyboard = keyboard_builder.create_test_keyboard(
@@ -381,7 +381,6 @@ async def process_skip_image_question(
         test_id=test_id,
         text=question,
         answers=answers,
-        image=None,
     )
     test = admin_connect.get_test_by_id(test_id)
     keyboard = keyboard_builder.create_test_keyboard(
