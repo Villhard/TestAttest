@@ -6,7 +6,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from config import config
-from handlers import admin_handlers, user_handlers  # noqa # FIXME
+from handlers import admin_handlers, user_handlers
 
 from keyboard.menu import set_menu
 
@@ -25,7 +25,7 @@ async def main() -> None:
 
     await set_menu(bot)
 
-    # dp.include_router(admin_handlers.router)
+    dp.include_router(admin_handlers.router)
     dp.include_router(user_handlers.router)
 
     await bot.delete_webhook(drop_pending_updates=True)

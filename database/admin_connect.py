@@ -9,6 +9,7 @@ from database.database import (
     Test,
     engine,
 )
+from config import config
 
 Session = sessionmaker(engine)
 
@@ -71,7 +72,7 @@ def publish_test_by_id(test_id: int) -> None:
         session.commit()
 
 
-def create_question(
+def create_question(  # TODO: Оптимизировать создание вопроса с ответами.
     test_id: int,
     text: str,
     answers: dict[str, bool],
@@ -103,3 +104,16 @@ def create_answers(
             )
             session.add(answer)
         session.commit()
+
+
+def get_statistics_by_test_id(test_id: int) -> dict[str, int]:
+    """Получение статистики по тесту."""
+    with Session() as session:
+        results = session.query(Result).filter(Result.test_id == test_id)
+
+        total = results.count()
+        completed = results.filter(Result.score >= config.pass_score).count()
+
+        statistics = {"total": total, "completed": completed}
+
+        return statistics

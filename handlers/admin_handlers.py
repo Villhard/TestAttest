@@ -108,12 +108,14 @@ async def call_test_with_id(callback: CallbackQuery) -> None:
         questions=admin_connect.get_questions_by_test_id(test_id),
         is_publish=is_publish,
     )
+    statistics = admin_connect.get_statistics_by_test_id(test_id)
     if is_publish:
         await callback.message.edit_text(
             text=(
                 f"<b>{test.title}</b>\n{test.description}"
                 "\n\n<b>Cтатистика:</b>\n"
-                "В процессе разработки"  # TODO: Добавить статистику
+                f"Тест запускали {statistics['total']} раз\n"
+                f"Тест прошли {statistics['completed']} раз\n"
             ),
             reply_markup=keyboard,
         )

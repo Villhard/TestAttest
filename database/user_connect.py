@@ -71,7 +71,7 @@ def get_questions(test_id: int) -> list[Question]:
         return questions
 
 
-def save_result(
+def save_result(  # TODO: Оптимизировать сохранение результата
     user_id: int,
     test_id: int,
     result: dict[int, dict[int, bool]],
