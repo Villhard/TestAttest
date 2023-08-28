@@ -20,11 +20,14 @@
         Создание клавиатуры для выбора пользователя.
     create_user_keyboard:
         Создание клавиатуры просмотра пользователя.
+    create_question_keyboard:
+        Создание клавиатуры для редактирования вопроса.
 """
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from database.database import Question, Test, User
+from database.database import Question, Test, User, Answer
+from database.admin_connect import get_test_id_by_question_id
 
 
 def create_main_menu_keyboard(is_admin: bool) -> InlineKeyboardMarkup:
@@ -165,5 +168,40 @@ def create_user_keyboard() -> InlineKeyboardMarkup:
     keyboard_builder = InlineKeyboardBuilder()  # TODO: Добавить функционал
     keyboard_builder.row(
         InlineKeyboardButton(text="Назад", callback_data="users")
+    )
+    return keyboard_builder.as_markup()
+
+
+def create_question_keyboard(answers: list[Answer]) -> InlineKeyboardMarkup:
+    """Создание клавиатуры для редактирования вопроса."""
+    keyboard_builder = InlineKeyboardBuilder()
+    for button in answers:
+        keyboard_builder.row(
+            InlineKeyboardButton(
+                text=f"{'✅' if button.is_correct else ''} {button.text}",
+                callback_data=(
+                    f"edit_correct_answer_{button.question_id}_{button.id}"
+                ),
+            )
+        )
+    keyboard_builder.row(
+        InlineKeyboardButton(
+            text="Редактировать вопрос",
+            callback_data=f"edit_question_{answers[0].question_id}",
+        ),
+    )
+    keyboard_builder.row(
+        InlineKeyboardButton(
+            text="Удалить вопрос",
+            callback_data=f"confirm_delete_question_{answers[0].question_id}",
+        ),
+    )  # TODO: Универсализировать функцию подтверждения
+    keyboard_builder.row(
+        InlineKeyboardButton(
+            text="Назад",
+            callback_data=(
+                f"test_{get_test_id_by_question_id(answers[0].question_id)}"
+            ),
+        )
     )
     return keyboard_builder.as_markup()

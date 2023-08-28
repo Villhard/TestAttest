@@ -21,6 +21,8 @@ Admin handlers.
         Просмотр всех тестов
     call_test_with_id:
         Просмотр теста
+    call_question_with_id:
+        Просмотр вопроса
     call_users:
         Просмотр пользователей
     call_user_with_id:
@@ -33,6 +35,12 @@ Admin handlers.
         Подтверждение удаления теста
     call_delete_test:
         Удаление теста
+    call_confirm_publish_test:
+        Подтверждение публикации теста
+    call_publish_test:
+        Публикация теста
+    call_edit_correct_answer:
+        Редактирование правильного ответа
 
 Процесс создания теста:
     process_input_title:
@@ -58,6 +66,7 @@ import re
 
 from aiogram import F, Router
 from aiogram.filters import Command, CommandStart, StateFilter
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
@@ -198,6 +207,24 @@ async def call_test_with_id(callback: CallbackQuery) -> None:
 
 
 @router.callback_query(
+    lambda call: re.fullmatch(r"question_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_question_with_id(callback: CallbackQuery) -> None:
+    """Просмотр вопроса."""
+    question_id = int(callback.data.split("_")[1])
+    question, answers = admin_connect.get_question_by_id(question_id)
+    keyboard = keyboard_builder.create_question_keyboard(
+        answers=answers,
+    )
+    await callback.message.edit_text(
+        text=question.text,
+        reply_markup=keyboard,
+    )
+    await callback.answer()
+
+
+@router.callback_query(
     F.data == "users",
     StateFilter(default_state),
 )
@@ -316,6 +343,28 @@ async def call_publish_test(callback: CallbackQuery) -> None:
     )
     await callback.answer()
 
+
+@router.callback_query(
+    lambda call: re.fullmatch(r"edit_correct_answer_\d+_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_edit_correct_answer(callback: CallbackQuery) -> None:
+    """Редактирование правильного ответа."""
+    question_id = int(callback.data.split("_")[3])
+    answer_id = int(callback.data.split("_")[4])
+    admin_connect.change_correct_answer(question_id, answer_id)
+    question, answers = admin_connect.get_question_by_id(question_id)
+    keyboard = keyboard_builder.create_question_keyboard(
+        answers=answers,
+    )
+    try:
+        await callback.message.edit_text(
+            text=question.text,
+            reply_markup=keyboard,
+        )
+    except TelegramBadRequest:
+        pass
+    await callback.answer()
 
 # ?============================================================================
 # *========== ПРОЦЕСС СОЗДАНИЯ ТЕСТА ==========================================

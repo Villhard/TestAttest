@@ -28,6 +28,12 @@
         Получение пользователя по id.
     get_results_by_user_id:
         Получение результатов пользователя по id.
+    get_question_by_id:
+        Получение вопроса по id.
+    change_correct_answer:
+        Изменение правильного ответа.
+    get_test_id_by_question_id:
+        Получение id теста по id вопроса.
 """
 from sqlalchemy.orm import sessionmaker
 
@@ -253,3 +259,70 @@ def get_results_by_user_id(user_id: int) -> dict[str, int]:
             .count()
         )
         return {"total": total_tests, "completed": completed_tests}
+
+
+def get_question_by_id(question_id: int) -> Question:
+    """
+    Получение вопроса по id.
+
+    Args:
+        question_id:
+            id вопроса.
+
+    Returns:
+        Вопрос.
+    """
+    with Session() as session:
+        question = (
+            session.query(Question).filter(Question.id == question_id).first()
+        )
+        answers = (
+            session.query(Answer)
+            .filter(Answer.question_id == question.id)
+            .all()
+        )
+        return question, answers
+
+
+def change_correct_answer(
+        question_id: int,
+        answer_id: int,
+) -> None:
+    """
+    Изменение правильного ответа.
+
+    Args:
+        question_id:
+            id вопроса.
+        answer_id:
+            id ответа.
+    """
+    with Session() as session:
+        session.query(Answer).filter(Answer.question_id == question_id).update(
+            {"is_correct": False}
+        )
+        session.query(Answer).filter(Answer.id == answer_id).update(
+            {"is_correct": True}
+        )
+        session.commit()
+
+
+def get_test_id_by_question_id(question_id: int) -> int:
+    """
+    Получение id теста по id вопроса.
+
+    Args:
+        question_id:
+            id вопроса.
+
+    Returns:
+        id теста.
+    """
+    with Session() as session:
+        test_id = (
+            session.query(Question)
+            .filter(Question.id == question_id)
+            .first()
+            .test_id
+        )
+        return test_id
