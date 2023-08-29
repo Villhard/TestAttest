@@ -531,3 +531,5 @@ async def process_skip_image_question(
     )
     await state.clear()
     await state.set_state(default_state)
+
+# TODO: Проверить код на чистый код
