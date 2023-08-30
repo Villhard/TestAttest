@@ -19,13 +19,13 @@ Admin handlers.
         Главное меню
     call_tests:
         Просмотр всех тестов
-    call_test_with_id:
+    call_test_by_id:
         Просмотр теста
-    call_question_with_id:
+    call_question_by_id:
         Просмотр вопроса
     call_users:
         Просмотр пользователей
-    call_user_with_id:
+    call_user_by_id:
         Просмотр пользователя
 
 Создание, редактирование и удаление теста и вопросов:
@@ -179,7 +179,7 @@ async def call_tests(callback: CallbackQuery) -> None:
     lambda call: re.fullmatch(r"test_\d+", call.data),
     StateFilter(default_state),
 )
-async def call_test_with_id(callback: CallbackQuery) -> None:
+async def call_test_by_id(callback: CallbackQuery) -> None:
     """Просмотр теста."""
     test_id = int(callback.data.split("_")[1])
     test = admin_connect.get_test_by_id(test_id)
@@ -212,7 +212,7 @@ async def call_test_with_id(callback: CallbackQuery) -> None:
     lambda call: re.fullmatch(r"question_\d+", call.data),
     StateFilter(default_state),
 )
-async def call_question_with_id(callback: CallbackQuery) -> None:
+async def call_question_by_id(callback: CallbackQuery) -> None:
     """Просмотр вопроса."""
     question_id = int(callback.data.split("_")[1])
     question, answers = admin_connect.get_question_by_id(question_id)
@@ -245,7 +245,7 @@ async def call_users(callback: CallbackQuery) -> None:
     lambda call: re.fullmatch(r"user_\d+", call.data),
     StateFilter(default_state),
 )
-async def call_user_with_id(callback: CallbackQuery) -> None:
+async def call_user_by_id(callback: CallbackQuery) -> None:
     """Просмотр пользователя."""
     user_id = int(callback.data.split("_")[1])
     user = admin_connect.get_user_by_id(user_id)
