@@ -34,6 +34,10 @@
         Изменение правильного ответа.
     get_test_id_by_question_id:
         Получение id теста по id вопроса.
+    get_test_by_question_id:
+        Получение теста по id вопроса.
+    delete_question_by_id:
+        Удаление вопроса по id.
 """
 from sqlalchemy.orm import sessionmaker
 
@@ -285,8 +289,8 @@ def get_question_by_id(question_id: int) -> Question:
 
 
 def change_correct_answer(
-        question_id: int,
-        answer_id: int,
+    question_id: int,
+    answer_id: int,
 ) -> None:
     """
     Изменение правильного ответа.
@@ -326,3 +330,39 @@ def get_test_id_by_question_id(question_id: int) -> int:
             .test_id
         )
         return test_id
+
+
+def get_test_by_question_id(question_id: int) -> Test:
+    """
+    Получение теста по id вопроса.
+
+    Args:
+        question_id:
+            id вопроса.
+
+    Returns:
+        Тест.
+    """
+    with Session() as session:
+        test = (
+            session.query(Test)
+            .filter(Test.id == get_test_id_by_question_id(question_id))
+            .first()
+        )
+        return test
+
+
+def delete_question_by_id(question_id: int) -> None:
+    """
+    Удаление вопроса по id.
+
+    Args:
+        question_id:
+            id вопроса.
+    """
+    with Session() as session:
+        session.query(Answer).filter(
+            Answer.question_id == question_id
+        ).delete()
+        session.query(Question).filter(Question.id == question_id).delete()
+        session.commit()

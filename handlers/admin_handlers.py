@@ -41,6 +41,8 @@ Admin handlers.
         Публикация теста
     call_edit_correct_answer:
         Редактирование правильного ответа
+    call_delete_question:
+        Удаление вопроса
 
 Процесс создания теста:
     process_input_title:
@@ -366,6 +368,30 @@ async def call_edit_correct_answer(callback: CallbackQuery) -> None:
         pass
     await callback.answer()
 
+
+@router.callback_query(
+    lambda call: re.fullmatch(r"delete_question_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_delete_question(callback: CallbackQuery) -> None:
+    """Удаление вопроса."""
+    question_id = int(callback.data.split("_")[2])
+    test = admin_connect.get_test_by_question_id(question_id)
+    admin_connect.delete_question_by_id(question_id)
+    keyboard = keyboard_builder.create_test_keyboard(
+        test=test,
+        questions=admin_connect.get_questions_by_test_id(test.id),
+        is_publish=test.is_publish,
+    )
+    await callback.answer(
+        text="Вопрос успешно удален!",
+    )
+    await callback.message.edit_text(
+        text=f"<b>{test.title}</b>\n{test.description}",
+        reply_markup=keyboard,
+    )
+
+
 # ?============================================================================
 # *========== ПРОЦЕСС СОЗДАНИЯ ТЕСТА ==========================================
 # ?============================================================================
@@ -531,5 +557,3 @@ async def process_skip_image_question(
     )
     await state.clear()
     await state.set_state(default_state)
-
-# TODO: Проверить код на чистый код

@@ -280,5 +280,3 @@ async def call_answering(callback: CallbackQuery, state: FSMContext):
             reply_markup=keyboard,
         )
         await callback.message.delete()
-
-# TODO: Проверить код на чистый код

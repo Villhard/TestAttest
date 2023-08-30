@@ -193,7 +193,7 @@ def create_question_keyboard(answers: list[Answer]) -> InlineKeyboardMarkup:
     keyboard_builder.row(
         InlineKeyboardButton(
             text="Удалить вопрос",
-            callback_data=f"confirm_delete_question_{answers[0].question_id}",
+            callback_data=f"delete_question_{answers[0].question_id}",
         ),
     )  # TODO: Универсализировать функцию подтверждения
     keyboard_builder.row(
