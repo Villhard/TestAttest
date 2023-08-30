@@ -111,8 +111,7 @@ def create_test_keyboard(
 
 
 def create_answers_keyboard(
-    answers: list[str],
-    for_test: bool = False,
+    answers: list[str] | dict[str, bool],
 ) -> InlineKeyboardMarkup:
     """Создание клавиатуры для выбора правильного ответа."""
     keyboard_builder = InlineKeyboardBuilder()
@@ -195,7 +194,7 @@ def create_question_keyboard(answers: list[Answer]) -> InlineKeyboardMarkup:
             text="Удалить вопрос",
             callback_data=f"delete_question_{answers[0].question_id}",
         ),
-    )  # TODO: Универсализировать функцию подтверждения
+    )
     keyboard_builder.row(
         InlineKeyboardButton(
             text="Назад",

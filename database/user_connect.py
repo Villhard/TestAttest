@@ -80,7 +80,7 @@ def get_tests(tg_id: int) -> list[Test]:
         Список тестов.
     """
     with Session() as session:
-        user_id = session.query(User.id).filter(User.tg_id == tg_id).first()[0]
+        user_id = session.query(User.id).filter(User.tg_id == tg_id).scalar()
         tests = (
             session.query(Test)
             .outerjoin(

@@ -210,7 +210,9 @@ async def call_start_test(
         for answer in question.answers
     }
     await state.update_data(answers=answers)
-    keyboard = keyboard_builder.create_answers_keyboard(answers)
+    keyboard = keyboard_builder.create_answers_keyboard(
+        answers=answers,
+    )
     if question.image:
         image = FSInputFile(f"img/test_{test_id}/{question.image}")
         await callback.message.answer_photo(
@@ -246,7 +248,9 @@ async def call_answering(callback: CallbackQuery, state: FSMContext):
             for answer in question.answers
         }
         await state.update_data(answers=answers)
-        keyboard = keyboard_builder.create_answers_keyboard(answers)
+        keyboard = keyboard_builder.create_answers_keyboard(
+            answers=answers,
+        )
         if question.image:
             image = FSInputFile(f"img/test_{data['test_id']}/{question.image}")
             await callback.message.answer_photo(
