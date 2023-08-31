@@ -250,8 +250,8 @@ async def call_user_by_id(callback: CallbackQuery) -> None:
     """Просмотр пользователя."""
     user_id = int(callback.data.split("_")[1])
     user = admin_connect.get_user_by_id(user_id)
-    results = admin_connect.get_results_by_user_id(user_id)
-    keyboard = keyboard_builder.create_user_menu_keyboard()
+    results = admin_connect.get_count_results_by_user_id(user_id)
+    keyboard = keyboard_builder.create_user_menu_keyboard(user)
     await callback.message.edit_text(
         text=(
             f"<b>{user.name} {user.surname}</b>\n\n"

@@ -28,8 +28,14 @@ from random import shuffle
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from config import config
 from database.database import Question, Test, User, Answer
-from database.admin_connect import get_test_id_by_question_id
+from database.admin_connect import (
+    get_test_id_by_question_id,
+    get_count_results_by_user_id,
+    get_results_by_user_id,
+    get_test_by_id,
+)
 
 
 def create_main_menu_keyboard(
@@ -166,9 +172,13 @@ def create_users_menu_keyboard(users: list[User]) -> InlineKeyboardMarkup:
     """Создание клавиатуры для выбора пользователя."""
     keyboard_builder = InlineKeyboardBuilder()
     for button in users:
+        result = get_count_results_by_user_id(button.id)
         keyboard_builder.row(
             InlineKeyboardButton(
-                text=f"{button.name} {button.surname}",
+                text=(
+                    f"{button.name} {button.surname}"
+                    f" {result['completed']}/{result['total']}"
+                ),
                 callback_data=f"user_{button.id}",
             )
         )
@@ -178,9 +188,23 @@ def create_users_menu_keyboard(users: list[User]) -> InlineKeyboardMarkup:
     return keyboard_builder.as_markup()
 
 
-def create_user_menu_keyboard() -> InlineKeyboardMarkup:
+def create_user_menu_keyboard(
+    user: User,
+) -> InlineKeyboardMarkup:
     """Создание клавиатуры просмотра пользователя."""
     keyboard_builder = InlineKeyboardBuilder()  # TODO: Добавить функционал
+    results = get_results_by_user_id(user_id=user.id)
+    for button in results:
+        test = get_test_by_id(button.test_id)
+        keyboard_builder.row(
+            InlineKeyboardButton(
+                text=(
+                    f"{'✅' if button.score >= config.pass_score else '❌'}"
+                    f" {test.title} - {button.score}"
+                ),
+                callback_data=f"result_{button.id}",
+            )
+        )
     keyboard_builder.row(
         InlineKeyboardButton(text="Назад", callback_data="users")
     )

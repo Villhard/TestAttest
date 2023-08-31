@@ -26,7 +26,7 @@
         Получение всех пользователей из базы данных.
     get_user_by_id:
         Получение пользователя по id.
-    get_results_by_user_id:
+    get_count_results_by_user_id:
         Получение результатов пользователя по id.
     get_question_by_id:
         Получение вопроса по id.
@@ -38,6 +38,8 @@
         Получение теста по id вопроса.
     delete_question_by_id:
         Удаление вопроса по id.
+    get_results_by_user_id
+        Получение результатов пользователя по id.
 """
 from sqlalchemy.orm import sessionmaker
 
@@ -242,7 +244,7 @@ def get_user_by_id(user_id: int) -> User:
         return user
 
 
-def get_results_by_user_id(user_id: int) -> dict[str, int]:
+def get_count_results_by_user_id(user_id: int) -> dict[str, int]:
     """
     Получение результатов пользователя по id.
 
@@ -366,3 +368,19 @@ def delete_question_by_id(question_id: int) -> None:
         ).delete()
         session.query(Question).filter(Question.id == question_id).delete()
         session.commit()
+
+
+def get_results_by_user_id(user_id: int) -> list[Result]:
+    """
+    Получение результатов пользователя по id.
+
+    Args:
+        user_id:
+            id пользователя.
+
+    Returns:
+        Список результатов.
+    """
+    with Session() as session:
+        results = session.query(Result).filter(Result.user_id == user_id).all()
+        return results
