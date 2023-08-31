@@ -16,6 +16,10 @@
         Получение вопросов из базы данных.
     save_result:
         Сохранение результата теста в базу данных.
+    get_answers_by_question_id:
+        Получение ответов по id вопроса из базы данных.
+    get_answer_by_id:
+        Получение ответа по id ответа из базы данных.
 """
 
 from sqlalchemy import and_
@@ -28,6 +32,7 @@ from database.database import (
     Result,
     Test,
     User,
+    Answer,
     engine,
 )
 
@@ -180,3 +185,44 @@ def save_result(
         session.commit()
 
     return score
+
+
+def get_answers_by_question_id(
+    question_id: int,
+) -> list[Answer]:
+    """
+    Получение ответов по id вопроса из базы данных.
+
+    Args:
+        question_id:
+            Идентификатор вопроса.
+
+    Returns:
+        Список ответов.
+    """
+    with Session() as session:
+        answers = (
+            session.query(Answer)
+            .filter(Answer.question_id == question_id)
+            .order_by(Answer.id)
+            .all()
+        )
+        return answers
+
+
+def get_answer_by_id(
+    answer_id: int,
+) -> Answer:
+    """
+    Получение ответа по id из базы данных.
+
+    Args:
+        answer_id:
+            Идентификатор ответа.
+
+    Returns:
+        Ответ.
+    """
+    with Session() as session:
+        answer = session.query(Answer).filter(Answer.id == answer_id).first()
+        return answer

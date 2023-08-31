@@ -205,10 +205,11 @@ async def call_start_test(
     await state.update_data(result={})
     question = questions.pop(0)
     await state.update_data(question_id=question.id)
-    answers = {
-        answer.text: (answer.is_correct, answer.id)
-        for answer in question.answers
-    }
+    answers = user_connect.get_answers_by_question_id(question.id)
+    # answers = {
+    #     answer.text: (answer.is_correct, answer.id)
+    #     for answer in question.answers
+    # }
     await state.update_data(answers=answers)
     keyboard = keyboard_builder.create_choice_answer_keyboard(
         answers=answers,
@@ -235,18 +236,16 @@ async def call_answering(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     answers = data["answers"]
     result = data["result"]
-    if answers[callback.data][0]:
-        result[data["question_id"]] = {answers[callback.data][1]: True}
+    answer = user_connect.get_answer_by_id(callback.data)
+    if answer.is_correct:
+        result[data["question_id"]] = {answer.text: True}
     else:
-        result[data["question_id"]] = {answers[callback.data][1]: False}
+        result[data["question_id"]] = {answer.text: False}
 
     if data["questions"]:
         question = data["questions"].pop(0)
         await state.update_data(question_id=question.id)
-        answers = {
-            answer.text: (answer.is_correct, answer.id)
-            for answer in question.answers
-        }
+        answers = user_connect.get_answers_by_question_id(question.id)
         await state.update_data(answers=answers)
         keyboard = keyboard_builder.create_choice_answer_keyboard(
             answers=answers,

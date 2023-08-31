@@ -23,6 +23,8 @@
     create_question_menu_keyboard:
         Создание клавиатуры для редактирования вопроса.
 """
+from random import shuffle
+
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
@@ -30,7 +32,9 @@ from database.database import Question, Test, User, Answer
 from database.admin_connect import get_test_id_by_question_id
 
 
-def create_main_menu_keyboard(is_admin: bool) -> InlineKeyboardMarkup:
+def create_main_menu_keyboard(
+    is_admin: bool,
+) -> InlineKeyboardMarkup:
     """Создание главного меню."""
     # TODO: Добавлять меню по мере добавления новых функций
     keyboard_builder = InlineKeyboardBuilder()
@@ -45,7 +49,8 @@ def create_main_menu_keyboard(is_admin: bool) -> InlineKeyboardMarkup:
 
 
 def create_tests_menu_keyboard(
-    tests: list[Test], is_admin: bool
+    tests: list[Test],
+    is_admin: bool,
 ) -> InlineKeyboardMarkup:
     """Создание клавиатуры."""
     keyboard_builder = InlineKeyboardBuilder()
@@ -111,14 +116,25 @@ def create_test_menu_keyboard(
 
 
 def create_choice_answer_keyboard(
-    answers: list[str] | dict[str, bool],
+    answers: list[str | Answer],
 ) -> InlineKeyboardMarkup:
     """Создание клавиатуры для выбора правильного ответа."""
     keyboard_builder = InlineKeyboardBuilder()
+    if isinstance(answers[0], Answer):
+        shuffle(answers)
     for button in answers:
-        keyboard_builder.row(
-            InlineKeyboardButton(text=f"{button}", callback_data=f"{button}")
-        )
+        if isinstance(button, str):
+            keyboard_builder.row(
+                InlineKeyboardButton(
+                    text=f"{button}", callback_data=f"{button}"
+                )
+            )
+        elif isinstance(button, Answer):
+            keyboard_builder.row(
+                InlineKeyboardButton(
+                    text=f"{button.text}", callback_data=f"{button.id}"
+                )
+            )
     return keyboard_builder.as_markup()
 
 
