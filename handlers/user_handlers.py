@@ -113,7 +113,7 @@ async def call_main_menu(callback: CallbackQuery) -> None:
 async def call_tests(callback: CallbackQuery) -> None:
     """Переход к списку тестов."""
     user_tg_id = callback.from_user.id
-    keyboard = keyboard_builder.create_tests_keyboard(
+    keyboard = keyboard_builder.create_tests_menu_keyboard(
         tests=user_connect.get_tests(
             tg_id=user_tg_id,
         ),
@@ -210,7 +210,7 @@ async def call_start_test(
         for answer in question.answers
     }
     await state.update_data(answers=answers)
-    keyboard = keyboard_builder.create_answers_keyboard(
+    keyboard = keyboard_builder.create_choice_answer_keyboard(
         answers=answers,
     )
     if question.image:
@@ -248,7 +248,7 @@ async def call_answering(callback: CallbackQuery, state: FSMContext):
             for answer in question.answers
         }
         await state.update_data(answers=answers)
-        keyboard = keyboard_builder.create_answers_keyboard(
+        keyboard = keyboard_builder.create_choice_answer_keyboard(
             answers=answers,
         )
         if question.image:

@@ -6,21 +6,21 @@
 Функции:
     create_main_menu_keyboard:
         Создание главного меню.
-    create_tests_keyboard:
+    create_tests_menu_keyboard:
         Создание клавиатуры для списка тестов.
-    create_test_keyboard:
+    create_test_menu_keyboard:
         Создание клавиатуры для меню теста.
-    create_answers_keyboard:
+    create_choice_answer_keyboard:
         Создание клавиатуры для выбора правильного ответа.
     create_confirm_keyboard:
         Создание клавиатуры для подтверждения действия.
     create_after_test_keyboard:
         Создание клавиатуры после прохождения теста.
-    create_users_keyboard:
+    create_users_menu_keyboard:
         Создание клавиатуры для выбора пользователя.
-    create_user_keyboard:
+    create_user_menu_keyboard:
         Создание клавиатуры просмотра пользователя.
-    create_question_keyboard:
+    create_question_menu_keyboard:
         Создание клавиатуры для редактирования вопроса.
 """
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -44,7 +44,7 @@ def create_main_menu_keyboard(is_admin: bool) -> InlineKeyboardMarkup:
     return keyboard_builder.as_markup()
 
 
-def create_tests_keyboard(
+def create_tests_menu_keyboard(
     tests: list[Test], is_admin: bool
 ) -> InlineKeyboardMarkup:
     """Создание клавиатуры."""
@@ -72,7 +72,7 @@ def create_tests_keyboard(
     return keyboard_builder.as_markup()
 
 
-def create_test_keyboard(
+def create_test_menu_keyboard(
     test: Test,
     questions: list[Question],
     is_publish: bool,
@@ -110,7 +110,7 @@ def create_test_keyboard(
     return keyboard_builder.as_markup()
 
 
-def create_answers_keyboard(
+def create_choice_answer_keyboard(
     answers: list[str] | dict[str, bool],
 ) -> InlineKeyboardMarkup:
     """Создание клавиатуры для выбора правильного ответа."""
@@ -146,7 +146,7 @@ def create_after_test_keyboard() -> InlineKeyboardMarkup:
     return keyboard_builder.as_markup()
 
 
-def create_users_keyboard(users: list[User]) -> InlineKeyboardMarkup:
+def create_users_menu_keyboard(users: list[User]) -> InlineKeyboardMarkup:
     """Создание клавиатуры для выбора пользователя."""
     keyboard_builder = InlineKeyboardBuilder()
     for button in users:
@@ -162,7 +162,7 @@ def create_users_keyboard(users: list[User]) -> InlineKeyboardMarkup:
     return keyboard_builder.as_markup()
 
 
-def create_user_keyboard() -> InlineKeyboardMarkup:
+def create_user_menu_keyboard() -> InlineKeyboardMarkup:
     """Создание клавиатуры просмотра пользователя."""
     keyboard_builder = InlineKeyboardBuilder()  # TODO: Добавить функционал
     keyboard_builder.row(
@@ -171,7 +171,9 @@ def create_user_keyboard() -> InlineKeyboardMarkup:
     return keyboard_builder.as_markup()
 
 
-def create_question_keyboard(answers: list[Answer]) -> InlineKeyboardMarkup:
+def create_question_menu_keyboard(
+    answers: list[Answer],
+) -> InlineKeyboardMarkup:
     """Создание клавиатуры для редактирования вопроса."""
     keyboard_builder = InlineKeyboardBuilder()
     for button in answers:
