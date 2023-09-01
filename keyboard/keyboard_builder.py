@@ -22,6 +22,8 @@
         Создание клавиатуры просмотра пользователя.
     create_question_menu_keyboard:
         Создание клавиатуры для редактирования вопроса.
+    create_back_button_keyboard:
+        Создание клавиатуры с кнопкой назад.
 """
 from random import shuffle
 
@@ -244,5 +246,17 @@ def create_question_menu_keyboard(
                 f"test_{get_test_id_by_question_id(answers[0].question_id)}"
             ),
         )
+    )
+    return keyboard_builder.as_markup()
+
+
+def create_back_button_keyboard(
+    callback_data: str,
+    mgs: str = "Назад",
+) -> InlineKeyboardMarkup:
+    """Создание клавиатуры с кнопкой назад."""
+    keyboard_builder = InlineKeyboardBuilder()
+    keyboard_builder.row(
+        InlineKeyboardButton(text=mgs, callback_data=callback_data)
     )
     return keyboard_builder.as_markup()

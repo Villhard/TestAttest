@@ -40,8 +40,12 @@
         Удаление вопроса по id.
     get_results_by_user_id
         Получение результатов пользователя по id.
+    get_result_by_id:
+        Получение результата по id.
+    get_result_data_by_result:
+        Получение данных результата.
 """
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, aliased
 
 from database.database import (
     Answer,
@@ -384,3 +388,52 @@ def get_results_by_user_id(user_id: int) -> list[Result]:
     with Session() as session:
         results = session.query(Result).filter(Result.user_id == user_id).all()
         return results
+
+
+def get_result_by_id(result_id: int) -> Result:
+    """
+    Получение результата по id.
+
+    Args:
+        result_id:
+            id результата.
+
+    Returns:
+        Результат.
+    """
+    with Session() as session:
+        result = session.query(Result).filter(Result.id == result_id).first()
+        return result
+
+
+def get_result_data_by_result(result: Result) -> list[tuple[str, str, str]]:
+    """
+    Получение данных результата.
+
+    Args:
+        result:
+            Результат.
+
+    Returns:
+        Данные результата.
+    """
+    with Session() as session:
+        q = aliased(Question)
+        ia = aliased(IncorrectAnswer)
+        a_user = aliased(Answer)
+        a_correct = aliased(Answer)
+
+        data = (
+            session.query(
+                q.text,
+                a_correct.text,
+                a_user.text,
+            )
+            .join(ia, ia.question_id == q.id)
+            .join(a_user, a_user.id == ia.answer_id)
+            .join(a_correct, a_correct.question_id == q.id)
+            .filter(a_correct.is_correct, Result.id == result.id)
+            .filter(ia.result_id == result.id)
+            .all()
+        )
+        return data

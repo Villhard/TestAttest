@@ -27,6 +27,8 @@ Admin handlers.
         Просмотр пользователей
     call_user_by_id:
         Просмотр пользователя
+    call_result_by_id:
+        Просмотр результата
 
 Создание, редактирование и удаление теста и вопросов:
     call_add_test:
@@ -257,6 +259,32 @@ async def call_user_by_id(callback: CallbackQuery) -> None:
             f"<b>{user.name} {user.surname}</b>\n\n"
             f"Тестов пройдено: {results['completed']}/{results['total']}"
         ),
+        reply_markup=keyboard,
+    )
+
+
+@router.callback_query(
+    lambda call: re.fullmatch(r"result_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_result_by_id(callback: CallbackQuery) -> None:
+    """Просмотр результата."""
+    result_id = int(callback.data.split("_")[1])
+    result = admin_connect.get_result_by_id(result_id)
+    test = admin_connect.get_test_by_id(result.test_id)
+    result_data = admin_connect.get_result_data_by_result(result)
+    text = ""
+    for data in result_data:
+        text += (
+            f"<u>{data[0]}</u>\n"
+            f"<s>{data[2]}</s>\n"
+            f"{data[1]}\n\n"
+        )
+    keyboard = keyboard_builder.create_back_button_keyboard(
+        callback_data=f"user_{result.user_id}",
+    )
+    await callback.message.edit_text(
+        text=(f"<b>{test.title}</b>\n\n {text}"),
         reply_markup=keyboard,
     )
 
