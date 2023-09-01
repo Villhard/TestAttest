@@ -386,7 +386,12 @@ def get_results_by_user_id(user_id: int) -> list[Result]:
         Список результатов.
     """
     with Session() as session:
-        results = session.query(Result).filter(Result.user_id == user_id).all()
+        results = (
+            session.query(Result)
+            .filter(Result.user_id == user_id)
+            .order_by(Result.id.desc())
+            .all()
+        )
         return results
 
 

@@ -4,7 +4,12 @@ from aiogram.types import BotCommand
 
 
 async def set_menu(bot: Bot) -> None:
-    """Настройка меню бота."""
+    """
+    Настройка меню бота.
+
+    Args:
+        bot: Бот.
+    """
     menu_commands = [
         BotCommand(command="/start", description="Старт"),
         BotCommand(command="/help", description="Помощь"),

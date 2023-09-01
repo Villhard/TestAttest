@@ -206,10 +206,6 @@ async def call_start_test(
     question = questions.pop(0)
     await state.update_data(question_id=question.id)
     answers = user_connect.get_answers_by_question_id(question.id)
-    # answers = {
-    #     answer.text: (answer.is_correct, answer.id)
-    #     for answer in question.answers
-    # }
     await state.update_data(answers=answers)
     keyboard = keyboard_builder.create_choice_answer_keyboard(
         answers=answers,
