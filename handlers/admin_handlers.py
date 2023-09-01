@@ -83,9 +83,9 @@ from aiogram.types import (
 )
 
 from config import config
-from database import admin_connect
-from keyboard import keyboard_builder
-from utils import admin_utils
+from database import admin_connect as db
+from keyboard import keyboard_builder as kb
+from utils import admin_utils as utils
 
 router = Router()
 
@@ -137,7 +137,7 @@ class FSMCreateQuestions(StatesGroup):
 @router.message(CommandStart(), StateFilter(default_state))
 async def cmd_start(message: Message) -> None:
     """Приветствие админа."""
-    keyboard = keyboard_builder.create_main_menu_keyboard(
+    keyboard = kb.create_main_menu_keyboard(
         is_admin=True,
     )
     await message.answer(
@@ -155,7 +155,7 @@ async def cmd_help(message: Message) -> None:
 @router.callback_query(F.data == "main_menu", StateFilter(default_state))
 async def call_main_menu(callback: CallbackQuery) -> None:
     """Главное меню."""
-    keyboard = keyboard_builder.create_main_menu_keyboard(
+    keyboard = kb.create_main_menu_keyboard(
         is_admin=True,
     )
     await callback.message.edit_text(
@@ -168,8 +168,8 @@ async def call_main_menu(callback: CallbackQuery) -> None:
 @router.callback_query(F.data == "tests", StateFilter(default_state))
 async def call_tests(callback: CallbackQuery) -> None:
     """Просмотр всех тестов."""
-    keyboard = keyboard_builder.create_tests_menu_keyboard(
-        tests=admin_connect.get_tests(),
+    keyboard = kb.create_tests_menu_keyboard(
+        tests=db.get_tests(),
         is_admin=True,
     )
     await callback.message.edit_text(
@@ -185,14 +185,14 @@ async def call_tests(callback: CallbackQuery) -> None:
 async def call_test_by_id(callback: CallbackQuery) -> None:
     """Просмотр теста."""
     test_id = int(callback.data.split("_")[1])
-    test = admin_connect.get_test_by_id(test_id)
+    test = db.get_test_by_id(test_id)
     is_publish = test.is_publish
-    keyboard = keyboard_builder.create_test_menu_keyboard(
+    keyboard = kb.create_test_menu_keyboard(
         test=test,
-        questions=admin_connect.get_questions_by_test_id(test_id),
+        questions=db.get_questions_by_test_id(test_id),
         is_publish=is_publish,
     )
-    statistics = admin_connect.get_statistics_by_test_id(test_id)
+    statistics = db.get_statistics_by_test_id(test_id)
     if is_publish:
         await callback.message.edit_text(
             text=(
@@ -218,8 +218,8 @@ async def call_test_by_id(callback: CallbackQuery) -> None:
 async def call_question_by_id(callback: CallbackQuery) -> None:
     """Просмотр вопроса."""
     question_id = int(callback.data.split("_")[1])
-    question, answers = admin_connect.get_question_by_id(question_id)
-    keyboard = keyboard_builder.create_question_menu_keyboard(
+    question, answers = db.get_question_by_id(question_id)
+    keyboard = kb.create_question_menu_keyboard(
         answers=answers,
     )
     await callback.message.edit_text(
@@ -235,8 +235,8 @@ async def call_question_by_id(callback: CallbackQuery) -> None:
 )
 async def call_users(callback: CallbackQuery) -> None:
     """Просмотр пользователей."""
-    users = admin_connect.get_users()
-    keyboard = keyboard_builder.create_users_menu_keyboard(users)
+    users = db.get_users()
+    keyboard = kb.create_users_menu_keyboard(users)
     await callback.message.edit_text(
         text="Все пользователи",
         reply_markup=keyboard,
@@ -251,9 +251,9 @@ async def call_users(callback: CallbackQuery) -> None:
 async def call_user_by_id(callback: CallbackQuery) -> None:
     """Просмотр пользователя."""
     user_id = int(callback.data.split("_")[1])
-    user = admin_connect.get_user_by_id(user_id)
-    results = admin_connect.get_count_results_by_user_id(user_id)
-    keyboard = keyboard_builder.create_user_menu_keyboard(user)
+    user = db.get_user_by_id(user_id)
+    results = db.get_count_results_by_user_id(user_id)
+    keyboard = kb.create_user_menu_keyboard(user)
     await callback.message.edit_text(
         text=(
             f"<b>{user.name} {user.surname}</b>\n\n"
@@ -270,9 +270,9 @@ async def call_user_by_id(callback: CallbackQuery) -> None:
 async def call_result_by_id(callback: CallbackQuery) -> None:
     """Просмотр результата."""
     result_id = int(callback.data.split("_")[1])
-    result = admin_connect.get_result_by_id(result_id)
-    test = admin_connect.get_test_by_id(result.test_id)
-    result_data = admin_connect.get_result_data_by_result(result)
+    result = db.get_result_by_id(result_id)
+    test = db.get_test_by_id(result.test_id)
+    result_data = db.get_result_data_by_result(result)
     text = ""
     for data in result_data:
         text += (
@@ -280,7 +280,7 @@ async def call_result_by_id(callback: CallbackQuery) -> None:
             f"<s>{data[2]}</s>\n"
             f"{data[1]}\n\n"
         )
-    keyboard = keyboard_builder.create_back_button_keyboard(
+    keyboard = kb.create_back_button_keyboard(
         callback_data=f"user_{result.user_id}",
     )
     await callback.message.edit_text(
@@ -309,7 +309,7 @@ async def call_add_test(callback: CallbackQuery, state: FSMContext) -> None:
 async def call_confirm_delete_test(callback: CallbackQuery) -> None:
     """Подтверждение удаления теста."""
     test_id = int(callback.data.split("_")[3])
-    keyboard = keyboard_builder.create_confirm_keyboard(
+    keyboard = kb.create_confirm_keyboard(
         callback_yes=f"delete_test_{test_id}",
         callback_no=f"test_{test_id}",
     )
@@ -327,10 +327,10 @@ async def call_confirm_delete_test(callback: CallbackQuery) -> None:
 async def call_delete_test(callback: CallbackQuery) -> None:
     """Удаление теста."""
     test_id = int(callback.data.split("_")[2])
-    admin_utils.delete_test_dir(test_id)
-    admin_connect.delete_test_by_id(test_id)
-    keyboard = keyboard_builder.create_tests_menu_keyboard(
-        tests=admin_connect.get_tests(),
+    utils.delete_test_dir(test_id)
+    db.delete_test_by_id(test_id)
+    keyboard = kb.create_tests_menu_keyboard(
+        tests=db.get_tests(),
         is_admin=True,
     )
     await callback.message.edit_text(
@@ -346,7 +346,7 @@ async def call_delete_test(callback: CallbackQuery) -> None:
 async def call_confirm_publish_test(callback: CallbackQuery) -> None:
     """Подтверждение публикации теста."""
     test_id = int(callback.data.split("_")[3])
-    keyboard = keyboard_builder.create_confirm_keyboard(
+    keyboard = kb.create_confirm_keyboard(
         callback_yes=f"publish_test_{test_id}",
         callback_no=f"test_{test_id}",
     )
@@ -364,9 +364,9 @@ async def call_confirm_publish_test(callback: CallbackQuery) -> None:
 async def call_publish_test(callback: CallbackQuery) -> None:
     """Публикация теста."""
     test_id = int(callback.data.split("_")[2])
-    admin_connect.publish_test_by_id(test_id)
-    keyboard = keyboard_builder.create_tests_menu_keyboard(
-        tests=admin_connect.get_tests(),
+    db.publish_test_by_id(test_id)
+    keyboard = kb.create_tests_menu_keyboard(
+        tests=db.get_tests(),
         is_admin=True,
     )
     await callback.message.edit_text(
@@ -383,9 +383,9 @@ async def call_edit_correct_answer(callback: CallbackQuery) -> None:
     """Редактирование правильного ответа."""
     question_id = int(callback.data.split("_")[3])
     answer_id = int(callback.data.split("_")[4])
-    admin_connect.change_correct_answer(question_id, answer_id)
-    question, answers = admin_connect.get_question_by_id(question_id)
-    keyboard = keyboard_builder.create_question_menu_keyboard(
+    db.change_correct_answer(question_id, answer_id)
+    question, answers = db.get_question_by_id(question_id)
+    keyboard = kb.create_question_menu_keyboard(
         answers=answers,
     )
     try:
@@ -405,11 +405,11 @@ async def call_edit_correct_answer(callback: CallbackQuery) -> None:
 async def call_delete_question(callback: CallbackQuery) -> None:
     """Удаление вопроса."""
     question_id = int(callback.data.split("_")[2])
-    test = admin_connect.get_test_by_question_id(question_id)
-    admin_connect.delete_question_by_id(question_id)
-    keyboard = keyboard_builder.create_test_menu_keyboard(
+    test = db.get_test_by_question_id(question_id)
+    db.delete_question_by_id(question_id)
+    keyboard = kb.create_test_menu_keyboard(
         test=test,
-        questions=admin_connect.get_questions_by_test_id(test.id),
+        questions=db.get_questions_by_test_id(test.id),
         is_publish=test.is_publish,
     )
     await callback.answer(
@@ -441,10 +441,10 @@ async def process_input_description(
     """Создание теста. Получение описания теста."""
     await state.update_data(description=message.text)
     test = await state.get_data()
-    admin_connect.create_test(test["title"], test["description"])
-    admin_utils.create_test_dir(admin_connect.get_tests()[-1].id)
-    keyboard = keyboard_builder.create_tests_menu_keyboard(
-        tests=admin_connect.get_tests(),
+    db.create_test(test["title"], test["description"])
+    utils.create_test_dir(db.get_tests()[-1].id)
+    keyboard = kb.create_tests_menu_keyboard(
+        tests=db.get_tests(),
         is_admin=True,
     )
     await message.answer(text="Тест успешно создан!", reply_markup=keyboard)
@@ -493,7 +493,7 @@ async def process_input_answers_text(
     if len(answers) < 4:
         await message.answer(text=f"Введите текст ответа №{len(answers) + 1}")
     else:
-        keyboard = keyboard_builder.create_choice_answer_keyboard(answers)
+        keyboard = kb.create_choice_answer_keyboard(answers)
         await message.answer(
             text="Выберите правильный ответ",
             reply_markup=keyboard,
@@ -535,21 +535,21 @@ async def process_input_image_question(
     answers = data["answers"]
     photo: PhotoSize = message.photo[-1]
     photo_path = photo.file_id
-    number_image = admin_utils.get_next_number_image(test_id)
+    number_image = utils.get_next_number_image(test_id)
     await message.bot.download(
         photo_path,
         destination=f"img/test_{test_id}/img_{number_image}.jpg",
     )
-    admin_connect.create_question(
+    db.create_question(
         test_id=test_id,
         text=question,
         answers=answers,
         image=f"img_{number_image}.jpg",
     )
-    test = admin_connect.get_test_by_id(test_id)
-    keyboard = keyboard_builder.create_test_menu_keyboard(
+    test = db.get_test_by_id(test_id)
+    keyboard = kb.create_test_menu_keyboard(
         test=test,
-        questions=admin_connect.get_questions_by_test_id(test_id),
+        questions=db.get_questions_by_test_id(test_id),
         is_publish=test.is_publish,
     )
     await message.answer(
@@ -569,15 +569,15 @@ async def process_skip_image_question(
     test_id = data["test_id"]
     question = data["text"]
     answers = data["answers"]
-    admin_connect.create_question(
+    db.create_question(
         test_id=test_id,
         text=question,
         answers=answers,
     )
-    test = admin_connect.get_test_by_id(test_id)
-    keyboard = keyboard_builder.create_test_menu_keyboard(
+    test = db.get_test_by_id(test_id)
+    keyboard = kb.create_test_menu_keyboard(
         test=test,
-        questions=admin_connect.get_questions_by_test_id(test_id),
+        questions=db.get_questions_by_test_id(test_id),
         is_publish=test.is_publish,
     )
     await callback.message.edit_text(

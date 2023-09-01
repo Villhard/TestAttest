@@ -41,8 +41,8 @@ from aiogram.fsm.state import default_state
 from aiogram.types import CallbackQuery, FSInputFile, Message
 
 from config import config
-from database import user_connect
-from keyboard import keyboard_builder
+from database import user_connect as db
+from keyboard import keyboard_builder as kb
 
 router = Router()
 
@@ -72,9 +72,9 @@ class FSMTesting(StatesGroup):
 @router.message(CommandStart(), StateFilter(default_state))
 async def cmd_start(message: Message, state: FSMContext) -> None:
     """Приветствие пользователя или запрос имени и фамилии."""
-    user = user_connect.get_user(message.from_user.id)
+    user = db.get_user(message.from_user.id)
     if user:
-        keyboard = keyboard_builder.create_main_menu_keyboard(
+        keyboard = kb.create_main_menu_keyboard(
             is_admin=False,
         )
         await message.answer(
@@ -100,7 +100,7 @@ async def cmd_help(message: Message) -> None:
 @router.callback_query(F.data == "main_menu", StateFilter(default_state))
 async def call_main_menu(callback: CallbackQuery) -> None:
     """Переход к главному меню."""
-    keyboard = keyboard_builder.create_main_menu_keyboard(
+    keyboard = kb.create_main_menu_keyboard(
         is_admin=False,
     )
     await callback.message.edit_text(
@@ -113,8 +113,8 @@ async def call_main_menu(callback: CallbackQuery) -> None:
 async def call_tests(callback: CallbackQuery) -> None:
     """Переход к списку тестов."""
     user_tg_id = callback.from_user.id
-    keyboard = keyboard_builder.create_tests_menu_keyboard(
-        tests=user_connect.get_tests(
+    keyboard = kb.create_tests_menu_keyboard(
+        tests=db.get_tests(
             tg_id=user_tg_id,
         ),
         is_admin=False,
@@ -132,8 +132,8 @@ async def call_tests(callback: CallbackQuery) -> None:
 async def call_test(callback: CallbackQuery) -> None:
     """Переход к тесту."""
     test_id = int(callback.data.split("_")[1])
-    test = user_connect.get_test(test_id)
-    keyboard = keyboard_builder.create_confirm_keyboard(
+    test = db.get_test(test_id)
+    keyboard = kb.create_confirm_keyboard(
         callback_yes=f"start_test_{test_id}",
         callback_no="tests",
         text_yes="Начать",
@@ -159,8 +159,8 @@ async def call_test(callback: CallbackQuery) -> None:
 async def process_input_name(message: Message, state: FSMContext) -> None:
     """Получение имени и фамилии пользователя."""
     name, surname = message.text.title().split()
-    user_connect.create_user(message.from_user.id, name, surname)
-    keyboard = keyboard_builder.create_main_menu_keyboard(
+    db.create_user(message.from_user.id, name, surname)
+    keyboard = kb.create_main_menu_keyboard(
         is_admin=False,
     )
     await message.answer(
@@ -200,14 +200,14 @@ async def call_start_test(
     await state.set_state(FSMTesting.testing)
     test_id = int(callback.data.split("_")[2])
     await state.update_data(test_id=test_id)
-    questions = user_connect.get_questions(test_id)
+    questions = db.get_questions(test_id)
     await state.update_data(questions=questions)
     await state.update_data(result={})
     question = questions.pop(0)
     await state.update_data(question_id=question.id)
-    answers = user_connect.get_answers_by_question_id(question.id)
+    answers = db.get_answers_by_question_id(question.id)
     await state.update_data(answers=answers)
-    keyboard = keyboard_builder.create_choice_answer_keyboard(
+    keyboard = kb.create_choice_answer_keyboard(
         answers=answers,
     )
     if question.image:
@@ -232,7 +232,7 @@ async def call_answering(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     answers = data["answers"]
     result = data["result"]
-    answer = user_connect.get_answer_by_id(callback.data)
+    answer = db.get_answer_by_id(callback.data)
     if answer.is_correct:
         result[data["question_id"]] = {answer.text: True}
     else:
@@ -241,9 +241,9 @@ async def call_answering(callback: CallbackQuery, state: FSMContext):
     if data["questions"]:
         question = data["questions"].pop(0)
         await state.update_data(question_id=question.id)
-        answers = user_connect.get_answers_by_question_id(question.id)
+        answers = db.get_answers_by_question_id(question.id)
         await state.update_data(answers=answers)
-        keyboard = keyboard_builder.create_choice_answer_keyboard(
+        keyboard = kb.create_choice_answer_keyboard(
             answers=answers,
         )
         if question.image:
@@ -261,14 +261,14 @@ async def call_answering(callback: CallbackQuery, state: FSMContext):
             )
             await callback.message.delete()
     else:
-        score = user_connect.save_result(
-            user_id=user_connect.get_user(callback.from_user.id).id,
+        score = db.save_result(
+            user_id=db.get_user(callback.from_user.id).id,
             test_id=data["test_id"],
             result=result,
         )
         await state.clear()
         await state.set_state(default_state)
-        keyboard = keyboard_builder.create_after_test_keyboard()
+        keyboard = kb.create_after_test_keyboard()
         await callback.message.answer(
             text=(
                 f"Тест пройден!\nВы набрали: {score} баллов"
