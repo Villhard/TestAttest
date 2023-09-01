@@ -88,7 +88,7 @@ def get_tests() -> list[Test]:
         Список тестов.
     """
     with Session() as session:
-        tests = session.query(Test).all()
+        tests = session.query(Test).order_by(Test.id.desc()).all()
         return tests
 
 

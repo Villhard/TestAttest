@@ -24,7 +24,6 @@
         Создание клавиатуры для редактирования вопроса.
     create_back_button_keyboard:
         Создание клавиатуры с кнопкой назад.
-# TODO: Универсализировать клавиатуры со списками.
 # TODO: Добавить пагинацию для клавиатур со списками.
 """
 from random import shuffle
@@ -64,15 +63,15 @@ def create_tests_menu_keyboard(
 ) -> InlineKeyboardMarkup:
     """Создание клавиатуры."""
     keyboard_builder = InlineKeyboardBuilder()
-    for button in tests:
+    for test in tests:
         keyboard_builder.row(
             InlineKeyboardButton(
                 text=(
-                    f"{'🔒' if button.is_publish else '✏️'}" f" {button.title}"
+                    f"{'🔒' if test.is_publish else '✏️'}" f" {test.title}"
                     if is_admin
-                    else f"{button.title}"
+                    else f"{test.title}"
                 ),
-                callback_data=f"test_{button.id}",
+                callback_data=f"test_{test.id}",
             )
         )
     if is_admin:
@@ -95,11 +94,13 @@ def create_test_menu_keyboard(
     """Создание клавиатуры для меню теста."""
     keyboard_builder = InlineKeyboardBuilder()
     if not is_publish:
-        for button in questions:
+        for question in questions:
             keyboard_builder.row(
                 InlineKeyboardButton(
-                    text=(f"{'🖼' if button.image else ''}" f" {button.text}"),
-                    callback_data=f"question_{button.id}",
+                    text=(
+                        f"{'🖼' if question.image else ''}" f" {question.text}"
+                    ),
+                    callback_data=f"question_{question.id}",
                 )
             )
         keyboard_builder.row(
@@ -132,17 +133,17 @@ def create_choice_answer_keyboard(
     keyboard_builder = InlineKeyboardBuilder()
     if isinstance(answers[0], Answer):
         shuffle(answers)
-    for button in answers:
-        if isinstance(button, str):
+    for answer in answers:
+        if isinstance(answer, str):
             keyboard_builder.row(
                 InlineKeyboardButton(
-                    text=f"{button}", callback_data=f"{button}"
+                    text=f"{answer}", callback_data=f"{answer}"
                 )
             )
-        elif isinstance(button, Answer):
+        elif isinstance(answer, Answer):
             keyboard_builder.row(
                 InlineKeyboardButton(
-                    text=f"{button.text}", callback_data=f"{button.id}"
+                    text=f"{answer.text}", callback_data=f"{answer.id}"
                 )
             )
     return keyboard_builder.as_markup()
@@ -175,15 +176,15 @@ def create_after_test_keyboard() -> InlineKeyboardMarkup:
 def create_users_menu_keyboard(users: list[User]) -> InlineKeyboardMarkup:
     """Создание клавиатуры для выбора пользователя."""
     keyboard_builder = InlineKeyboardBuilder()
-    for button in users:
-        result = get_count_results_by_user_id(button.id)
+    for user in users:
+        result = get_count_results_by_user_id(user.id)
         keyboard_builder.row(
             InlineKeyboardButton(
                 text=(
-                    f"{button.name} {button.surname}"
+                    f"{user.name} {user.surname}"
                     f" {result['completed']}/{result['total']}"
                 ),
-                callback_data=f"user_{button.id}",
+                callback_data=f"user_{user.id}",
             )
         )
     keyboard_builder.row(
@@ -198,15 +199,15 @@ def create_user_menu_keyboard(
     """Создание клавиатуры просмотра пользователя."""
     keyboard_builder = InlineKeyboardBuilder()  # TODO: Добавить функционал
     results = get_results_by_user_id(user_id=user.id)
-    for button in results:
-        test = get_test_by_id(button.test_id)
+    for result in results:
+        test = get_test_by_id(result.test_id)
         keyboard_builder.row(
             InlineKeyboardButton(
                 text=(
-                    f"{'✅' if button.score >= config.pass_score else '❌'}"
-                    f" {test.title} - {button.score}"
+                    f"{'✅' if result.score >= config.pass_score else '❌'}"
+                    f" {test.title} - {result.score}"
                 ),
-                callback_data=f"result_{button.id}",
+                callback_data=f"result_{result.id}",
             )
         )
     keyboard_builder.row(
@@ -220,12 +221,12 @@ def create_question_menu_keyboard(
 ) -> InlineKeyboardMarkup:
     """Создание клавиатуры для редактирования вопроса."""
     keyboard_builder = InlineKeyboardBuilder()
-    for button in answers:
+    for answer in answers:
         keyboard_builder.row(
             InlineKeyboardButton(
-                text=f"{'✅' if button.is_correct else ''} {button.text}",
+                text=f"{'✅' if answer.is_correct else ''} {answer.text}",
                 callback_data=(
-                    f"edit_correct_answer_{button.question_id}_{button.id}"
+                    f"edit_correct_answer_{answer.question_id}_{answer.id}"
                 ),
             )
         )
