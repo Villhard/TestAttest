@@ -137,9 +137,7 @@ class FSMCreateQuestions(StatesGroup):
 @router.message(CommandStart(), StateFilter(default_state))
 async def cmd_start(message: Message) -> None:
     """Приветствие админа."""
-    keyboard = kb.create_main_menu_keyboard(
-        is_admin=True,
-    )
+    keyboard = kb.create_main_menu_keyboard(is_admin=True)
     await message.answer(
         text="Привет, админ!",
         reply_markup=keyboard,
@@ -155,27 +153,24 @@ async def cmd_help(message: Message) -> None:
 @router.callback_query(F.data == "main_menu", StateFilter(default_state))
 async def call_main_menu(callback: CallbackQuery) -> None:
     """Главное меню."""
-    keyboard = kb.create_main_menu_keyboard(
-        is_admin=True,
-    )
+    keyboard = kb.create_main_menu_keyboard(is_admin=True)
     await callback.message.edit_text(
         text="Главное меню",
         reply_markup=keyboard,
     )
-    await callback.answer()
 
 
 @router.callback_query(F.data == "tests", StateFilter(default_state))
 async def call_tests(callback: CallbackQuery) -> None:
     """Просмотр всех тестов."""
+    tests = db.get_tests()
     keyboard = kb.create_tests_menu_keyboard(
-        tests=db.get_tests(),
+        tests=tests,
         is_admin=True,
     )
     await callback.message.edit_text(
         text="Список тестов", reply_markup=keyboard
     )
-    await callback.answer()
 
 
 @router.callback_query(
@@ -186,29 +181,26 @@ async def call_test_by_id(callback: CallbackQuery) -> None:
     """Просмотр теста."""
     test_id = int(callback.data.split("_")[1])
     test = db.get_test_by_id(test_id)
-    is_publish = test.is_publish
+    questions = db.get_questions_by_test_id(test_id)
     keyboard = kb.create_test_menu_keyboard(
         test=test,
-        questions=db.get_questions_by_test_id(test_id),
-        is_publish=is_publish,
+        questions=questions,
+        is_publish=test.is_publish,
     )
     statistics = db.get_statistics_by_test_id(test_id)
-    if is_publish:
-        await callback.message.edit_text(
-            text=(
-                f"<b>{test.title}</b>\n{test.description}"
-                "\n\n<b>Cтатистика:</b>\n"
-                "Успех/Всего: "
-                f"{statistics['completed']}/{statistics['total']}"
-            ),
-            reply_markup=keyboard,
+
+    text = f"<b>{test.title}</b>\n{test.description}"
+    if test.is_publish:
+        text += (
+            f"\n\n<b>Статистика:</b>\n"
+            "Успех/Всего: "
+            f"{statistics['completed']}/{statistics['total']}"
         )
-    else:
-        await callback.message.edit_text(
-            text=f"<b>{test.title}</b>\n{test.description}",
-            reply_markup=keyboard,
-        )
-    await callback.answer()
+
+    await callback.message.edit_text(
+        text=text,
+        reply_markup=keyboard,
+    )
 
 
 @router.callback_query(
@@ -222,11 +214,11 @@ async def call_question_by_id(callback: CallbackQuery) -> None:
     keyboard = kb.create_question_menu_keyboard(
         answers=answers,
     )
+
     await callback.message.edit_text(
         text=question.text,
         reply_markup=keyboard,
     )
-    await callback.answer()
 
 
 @router.callback_query(
@@ -237,11 +229,11 @@ async def call_users(callback: CallbackQuery) -> None:
     """Просмотр пользователей."""
     users = db.get_users()
     keyboard = kb.create_users_menu_keyboard(users)
+
     await callback.message.edit_text(
         text="Все пользователи",
         reply_markup=keyboard,
     )
-    await callback.answer()
 
 
 @router.callback_query(
@@ -254,6 +246,7 @@ async def call_user_by_id(callback: CallbackQuery) -> None:
     user = db.get_user_by_id(user_id)
     results = db.get_count_results_by_user_id(user_id)
     keyboard = kb.create_user_menu_keyboard(user)
+
     await callback.message.edit_text(
         text=(
             f"<b>{user.name} {user.surname}</b>\n\n"
@@ -273,18 +266,19 @@ async def call_result_by_id(callback: CallbackQuery) -> None:
     result = db.get_result_by_id(result_id)
     test = db.get_test_by_id(result.test_id)
     result_data = db.get_result_data_by_result(result)
-    text = ""
-    for data in result_data:
-        text += (
-            f"<u>{data[0]}</u>\n"
-            f"<s>{data[2]}</s>\n"
-            f"{data[1]}\n\n"
-        )
+    text = f"<b>{test.title}</b>\n\n"
+    text += "\n".join(
+        [
+            f"<u>{data[0]}</u>\n<s>{data[2]}</s>\n{data[1]}\n"
+            for data in result_data
+        ]
+    )
     keyboard = kb.create_back_button_keyboard(
         callback_data=f"user_{result.user_id}",
     )
+
     await callback.message.edit_text(
-        text=(f"<b>{test.title}</b>\n\n {text}"),
+        text=text,
         reply_markup=keyboard,
     )
 
@@ -298,7 +292,6 @@ async def call_result_by_id(callback: CallbackQuery) -> None:
 async def call_add_test(callback: CallbackQuery, state: FSMContext) -> None:
     """Создание теста."""
     await callback.message.edit_text(text="Введите название теста")
-    await callback.answer()
     await state.set_state(FSMCreateTest.title)
 
 
@@ -313,11 +306,11 @@ async def call_confirm_delete_test(callback: CallbackQuery) -> None:
         callback_yes=f"delete_test_{test_id}",
         callback_no=f"test_{test_id}",
     )
+
     await callback.message.edit_text(
         text="Вы уверены, что хотите удалить тест?",
         reply_markup=keyboard,
     )
-    await callback.answer()
 
 
 @router.callback_query(
@@ -333,10 +326,10 @@ async def call_delete_test(callback: CallbackQuery) -> None:
         tests=db.get_tests(),
         is_admin=True,
     )
+
     await callback.message.edit_text(
         text="Тест успешно удален!", reply_markup=keyboard
     )
-    await callback.answer()
 
 
 @router.callback_query(
@@ -350,11 +343,11 @@ async def call_confirm_publish_test(callback: CallbackQuery) -> None:
         callback_yes=f"publish_test_{test_id}",
         callback_no=f"test_{test_id}",
     )
+
     await callback.message.edit_text(
         text="Вы уверены, что хотите опубликовать тест?",
         reply_markup=keyboard,
     )
-    await callback.answer()
 
 
 @router.callback_query(
@@ -369,10 +362,10 @@ async def call_publish_test(callback: CallbackQuery) -> None:
         tests=db.get_tests(),
         is_admin=True,
     )
+
     await callback.message.edit_text(
         text="Тест успешно опубликован!", reply_markup=keyboard
     )
-    await callback.answer()
 
 
 @router.callback_query(
@@ -388,14 +381,14 @@ async def call_edit_correct_answer(callback: CallbackQuery) -> None:
     keyboard = kb.create_question_menu_keyboard(
         answers=answers,
     )
+
     try:
         await callback.message.edit_text(
             text=question.text,
             reply_markup=keyboard,
         )
     except TelegramBadRequest:
-        pass
-    await callback.answer()
+        await callback.answer()
 
 
 @router.callback_query(
@@ -412,6 +405,7 @@ async def call_delete_question(callback: CallbackQuery) -> None:
         questions=db.get_questions_by_test_id(test.id),
         is_publish=test.is_publish,
     )
+
     await callback.answer(
         text="Вопрос успешно удален!",
     )

@@ -143,7 +143,6 @@ async def call_test(callback: CallbackQuery) -> None:
         text=f"<b>{test.title}</b>\n\n{test.description}",
         reply_markup=keyboard,
     )
-    await callback.answer()
 
 
 # ?============================================================================
@@ -223,7 +222,6 @@ async def call_start_test(
             text=question.text,
             reply_markup=keyboard,
         )
-        await callback.answer()
 
 
 @router.callback_query(F.data, StateFilter(FSMTesting.testing))
