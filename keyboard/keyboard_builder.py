@@ -11,7 +11,10 @@
     create_test_menu_keyboard:
         Создание клавиатуры для меню теста.
     create_choice_answer_keyboard:
-        Создание клавиатуры для выбора правильного ответа.
+        Создание клавиатуры для выбора правильного ответа
+        при создании теста.
+    create_test_answers_keyboard:
+        Создания клавиатуры выбора ответа для теста.
     create_confirm_keyboard:
         Создание клавиатуры для подтверждения действия.
     create_after_test_keyboard:
@@ -127,25 +130,35 @@ def create_test_menu_keyboard(
 
 
 def create_choice_answer_keyboard(
-    answers: list[str | Answer],
+    answers: list[str],
 ) -> InlineKeyboardMarkup:
-    """Создание клавиатуры для выбора правильного ответа."""
+    """
+    Создание клавиатуры для выбора правильного ответа
+    при создании вопроса."""
     keyboard_builder = InlineKeyboardBuilder()
-    if isinstance(answers[0], Answer):
-        shuffle(answers)
+
     for answer in answers:
-        if isinstance(answer, str):
-            keyboard_builder.row(
-                InlineKeyboardButton(
-                    text=f"{answer}", callback_data=f"{answer}"
-                )
+        keyboard_builder.row(
+            InlineKeyboardButton(
+                text=f"{answer}", callback_data=f"{answer}"
             )
-        elif isinstance(answer, Answer):
-            keyboard_builder.row(
-                InlineKeyboardButton(
-                    text=f"{answer.text}", callback_data=f"{answer.id}"
-                )
+        )
+    return keyboard_builder.as_markup()
+
+
+def create_test_answers_keyboard(
+    answers: list[Answer],
+) -> InlineKeyboardMarkup:
+    """Создания клавиатуры выбора ответа для теста."""
+    keyboard_builder = InlineKeyboardBuilder()
+
+    shuffle(answers)
+    for answer in answers:
+        keyboard_builder.row(
+            InlineKeyboardButton(
+                text=f"{answer.text}", callback_data=f"{answer.id}"
             )
+        )
     return keyboard_builder.as_markup()
 
 

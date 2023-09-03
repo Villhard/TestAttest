@@ -206,7 +206,7 @@ async def call_start_test(
     await state.update_data(question_id=question.id)
     answers = db.get_answers_by_question_id(question.id)
     await state.update_data(answers=answers)
-    keyboard = kb.create_choice_answer_keyboard(
+    keyboard = kb.create_test_answers_keyboard(
         answers=answers,
     )
     if question.image:
@@ -241,7 +241,7 @@ async def call_answering(callback: CallbackQuery, state: FSMContext):
         await state.update_data(question_id=question.id)
         answers = db.get_answers_by_question_id(question.id)
         await state.update_data(answers=answers)
-        keyboard = kb.create_choice_answer_keyboard(
+        keyboard = kb.create_test_answers_keyboard(
             answers=answers,
         )
         if question.image:
