@@ -51,7 +51,7 @@ def get_user(tg_id: int) -> User | None:
         Пользователь.
     """
     with Session() as session:
-        user = session.query(User).filter(User.tg_id == tg_id).first()
+        user = session.query(User).filter(User.tg_id == tg_id).one()
         return user
 
 
@@ -115,7 +115,7 @@ def get_test(test_id: int) -> Test:
         Тест.
     """
     with Session() as session:
-        test = session.query(Test).filter(Test.id == test_id).first()
+        test = session.query(Test).filter(Test.id == test_id).one()
         return test
 
 
@@ -224,5 +224,5 @@ def get_answer_by_id(
         Ответ.
     """
     with Session() as session:
-        answer = session.query(Answer).filter(Answer.id == answer_id).first()
+        answer = session.query(Answer).filter(Answer.id == answer_id).one()
         return answer

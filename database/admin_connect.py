@@ -104,7 +104,7 @@ def get_test_by_id(test_id: int) -> Test:
         Тест.
     """
     with Session() as session:
-        test = session.query(Test).filter(Test.id == test_id).first()
+        test = session.query(Test).filter(Test.id == test_id).one()
         return test
 
 
@@ -244,7 +244,7 @@ def get_user_by_id(user_id: int) -> User:
         Пользователь.
     """
     with Session() as session:
-        user = session.query(User).filter(User.id == user_id).first()
+        user = session.query(User).filter(User.id == user_id).one()
         return user
 
 
@@ -284,7 +284,7 @@ def get_question_by_id(question_id: int) -> Question:
     """
     with Session() as session:
         question = (
-            session.query(Question).filter(Question.id == question_id).first()
+            session.query(Question).filter(Question.id == question_id).one()
         )
         answers = (
             session.query(Answer)
@@ -332,7 +332,7 @@ def get_test_id_by_question_id(question_id: int) -> int:
         test_id = (
             session.query(Question)
             .filter(Question.id == question_id)
-            .first()
+            .one()
             .test_id
         )
         return test_id
@@ -353,7 +353,7 @@ def get_test_by_question_id(question_id: int) -> Test:
         test = (
             session.query(Test)
             .filter(Test.id == get_test_id_by_question_id(question_id))
-            .first()
+            .one()
         )
         return test
 
@@ -407,7 +407,7 @@ def get_result_by_id(result_id: int) -> Result:
         Результат.
     """
     with Session() as session:
-        result = session.query(Result).filter(Result.id == result_id).first()
+        result = session.query(Result).filter(Result.id == result_id).one()
         return result
 
 

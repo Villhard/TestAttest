@@ -436,7 +436,7 @@ async def process_input_description(
     await state.update_data(description=message.text)
     test = await state.get_data()
     db.create_test(test["title"], test["description"])
-    utils.create_test_dir(db.get_tests()[-1].id)
+    utils.create_test_dir(db.get_tests()[0].id)
     keyboard = kb.create_tests_menu_keyboard(
         tests=db.get_tests(),
         is_admin=True,
