@@ -139,9 +139,7 @@ def create_choice_answer_keyboard(
 
     for answer in answers:
         keyboard_builder.row(
-            InlineKeyboardButton(
-                text=f"{answer}", callback_data=f"{answer}"
-            )
+            InlineKeyboardButton(text=f"{answer}", callback_data=f"{answer}")
         )
     return keyboard_builder.as_markup()
 

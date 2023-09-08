@@ -43,7 +43,7 @@ class Config:
     pass_score: int
 
 
-def load_config(path: str = None) -> BotConfig:
+def load_config(path: str = None) -> Config:
     """Читает переменные окружения и возвращает конфигурацию приложения."""
     env = Env()
     env.read_env(path)

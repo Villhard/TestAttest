@@ -9,3 +9,4 @@ database.db
 img/
 .vscode/
 .pytest_cache/
+.idea/
