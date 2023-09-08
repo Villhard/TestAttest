@@ -1,5 +1,5 @@
 """
-Модуль для работы с базой данных для админов.
+Модуль для работы с базой данных для админа.
 
 Содержит функции для создания, удаления, публикации тестов,
 создания вопросов с ответами, получения статистики по тестам,
@@ -47,6 +47,7 @@
 """
 from sqlalchemy.orm import sessionmaker, aliased
 
+from config import config
 from database.database import (
     Answer,
     IncorrectAnswer,
@@ -56,7 +57,6 @@ from database.database import (
     Test,
     engine,
 )
-from config import config
 
 Session = sessionmaker(engine)
 

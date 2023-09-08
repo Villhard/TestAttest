@@ -13,8 +13,7 @@ sqlalchemy = "^2.0.20"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
-flake8-bugbear = "^23.7.10"
-flake8-pyproject = "^1.2.3"
+ruff = "^0.0.287"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
@@ -25,8 +24,3 @@ line-length = 79
 
 [tool.isort]
 profile = "black"
-
-[tool.flake8]
-exclude = ".venv,.git,.__pycache__"
-ignore = "I201,D401,I100,W503"
-max-line-length = 79

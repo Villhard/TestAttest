@@ -144,7 +144,7 @@ def save_result(
     user_id: int,
     test_id: int,
     result: dict[int, dict[int, bool]],
-) -> None:
+) -> int:
     """
     Сохранение результата теста в базу данных.
 
@@ -184,7 +184,7 @@ def save_result(
 
         session.commit()
 
-    return score
+        return score
 
 
 def get_answers_by_question_id(

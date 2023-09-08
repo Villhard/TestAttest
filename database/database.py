@@ -178,4 +178,9 @@ class IncorrectAnswer(Base):
     answer_id = mapped_column(ForeignKey("answers.id"), nullable=False)
 
 
-Base.metadata.create_all(engine)
+def create_tables() -> None:
+    """Создание таблиц."""
+    Base.metadata.create_all(engine)
+
+
+create_tables()

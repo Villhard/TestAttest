@@ -228,7 +228,6 @@ async def call_start_test(
 async def call_answering(callback: CallbackQuery, state: FSMContext):
     """Процесс прохождения теста."""
     data = await state.get_data()
-    answers = data["answers"]
     result = data["result"]
     answer = db.get_answer_by_id(callback.data)
     if answer.is_correct:

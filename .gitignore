@@ -10,3 +10,4 @@ img/
 .vscode/
 .pytest_cache/
 .idea/
+.ruff_cache/
