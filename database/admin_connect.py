@@ -442,3 +442,9 @@ def get_result_data_by_result(result: Result) -> list[tuple[str, str, str]]:
             .all()
         )
         return data
+
+
+# TODO: Добавить валидацию данных
+# TODO: Обработка исключений
+# TODO: Оптимизация запросов
+# TODO: Рефакторинг кода
