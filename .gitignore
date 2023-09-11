@@ -3,6 +3,7 @@
 .flake8
 .DS_Store
 database.db
+machinet.conf
 
 .venv/
 **/__pycache__/
