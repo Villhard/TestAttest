@@ -2,6 +2,8 @@ from sqlalchemy import Column, String, Boolean
 from sqlalchemy.orm import relationship
 
 from .base import BaseModel
+from .question import Question
+from .incorrect_answer import IncorrectAnswer
 
 
 class Answer(BaseModel):
@@ -16,12 +18,12 @@ class Answer(BaseModel):
 
     __tablename__ = "answers"
 
-    text = Column(String, nullable=False)
-    is_correct = Column(Boolean, nullable=False)
+    text: str = Column(String, nullable=False)
+    is_correct: bool = Column(Boolean, nullable=False)
 
-    question = relationship(
+    question: Question = relationship(
         "Question", back_populates="answers", uselist=False
     )
-    incorrect_answers = relationship(
+    incorrect_answers: list[IncorrectAnswer] = relationship(
         "IncorrectAnswer", back_populates="answer", uselist=True
     )

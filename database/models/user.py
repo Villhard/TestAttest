@@ -2,6 +2,7 @@ from sqlalchemy import Column, String, BigInteger
 from sqlalchemy.orm import relationship
 
 from .base import BaseModel
+from .result import Result
 
 
 class User(BaseModel):
@@ -16,8 +17,10 @@ class User(BaseModel):
 
     __tablename__ = "users"
 
-    tg_id = Column(BigInteger, unique=True, nullable=False)
-    name = Column(String, nullable=False)
-    surname = Column(String, nullable=False)
+    tg_id: int = Column(BigInteger, unique=True, nullable=False)
+    name: str = Column(String, nullable=False)
+    surname: str = Column(String, nullable=False)
 
-    results = relationship("Result", back_populates="user", uselist=True)
+    results: list[Result] = relationship(
+        "Result", back_populates="user", uselist=True
+    )

@@ -1,7 +1,9 @@
-from sqlalchemy import Column, String, Boolean
+from sqlalchemy import Column, String, Boolean, Text
 from sqlalchemy.orm import relationship
 
 from .base import BaseModel
+from .question import Question
+from .result import Result
 
 
 class Test(BaseModel):
@@ -17,9 +19,13 @@ class Test(BaseModel):
 
     __tablename__ = "tests"
 
-    title = Column(String, nullable=False)
-    description = Column(String, nullable=False)
-    is_published = Column(Boolean, default=False, nullable=False)
+    title: str = Column(String, nullable=False)
+    description: str = Column(Text, nullable=False)
+    is_published: bool = Column(Boolean, default=False, nullable=False)
 
-    questions = relationship("Question", back_populates="test", uselist=True)
-    results = relationship("Result", back_populates="test", uselist=True)
+    questions: list[Question] = relationship(
+        "Question", back_populates="test", uselist=True
+    )
+    results: list[Result] = relationship(
+        "Result", back_populates="test", uselist=True
+    )

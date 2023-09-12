@@ -2,6 +2,9 @@ from sqlalchemy import Column, Integer
 from sqlalchemy.orm import relationship
 
 from .base import BaseModel
+from .test import Test
+from .user import User
+from .incorrect_answer import IncorrectAnswer
 
 
 class Result(BaseModel):
@@ -16,10 +19,10 @@ class Result(BaseModel):
 
     __tablename__ = "results"
 
-    score = Column(Integer, nullable=False)
+    score: int = Column(Integer, nullable=False)
 
-    test = relationship("Test", back_populates="results", uselist=False)
-    user = relationship("User", back_populates="results", uselist=False)
-    incorrect_answers = relationship(
+    test: Test = relationship("Test", back_populates="results", uselist=False)
+    user: User = relationship("User", back_populates="results", uselist=False)
+    incorrect_answers: list[IncorrectAnswer] = relationship(
         "IncorrectAnswer", back_populates="result", uselist=True
     )

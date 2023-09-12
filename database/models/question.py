@@ -1,7 +1,10 @@
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Text
 from sqlalchemy.orm import relationship
 
 from .base import BaseModel
+from .test import Test
+from .answer import Answer
+from .incorrect_answer import IncorrectAnswer
 
 
 class Question(BaseModel):
@@ -17,11 +20,11 @@ class Question(BaseModel):
 
     __tablename__ = "questions"
 
-    text = Column(String, nullable=False)
-    image = Column(String)
+    text: str = Column(Text, nullable=False)
+    image: str = Column(String)
 
-    test = relationship("Test", back_populates="questions", uselist=False)
-    answers = relationship("Answer", back_populates="question", uselist=True)
-    incorrect_answers = relationship(
+    test: Test = relationship("Test", back_populates="questions", uselist=False)
+    answers: list[Answer] = relationship("Answer", back_populates="question", uselist=True)
+    incorrect_answers: list[IncorrectAnswer] = relationship(
         "IncorrectAnswer", back_populates="question", uselist=True
     )

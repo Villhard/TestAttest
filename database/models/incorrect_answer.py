@@ -1,6 +1,9 @@
 from sqlalchemy.orm import relationship
 
+from .answer import Answer
 from .base import BaseModel
+from .question import Question
+from .result import Result
 
 
 class IncorrectAnswer(BaseModel):
@@ -14,12 +17,12 @@ class IncorrectAnswer(BaseModel):
 
     __tablename__ = "incorrect_answers"
 
-    result = relationship(
+    result: Result = relationship(
         "Result", back_populates="incorrect_answers", uselist=False
     )
-    question = relationship(
+    question: Question = relationship(
         "Question", back_populates="incorrect_answers", uselist=False
     )
-    answer = relationship(
+    answer: Answer = relationship(
         "Answer", back_populates="incorrect_answers", uselist=False
     )
