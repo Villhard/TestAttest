@@ -5,45 +5,53 @@
 создания вопросов с ответами, получения статистики по тестам,
 получения пользователей и их результатов.
 
-Функции:
-    create_test:
-        Создание теста в базе данных.
-    get_tests:
-        Получение всех тестов из базы данных.
-    get_test_by_id:
-        Получение теста по id.
-    get_questions_by_test_id:
-        Получение вопросов по id теста.
-    delete_test_by_id:
-        Удаление теста и всех его связей по id.
-    publish_test_by_id:
-        Публикация теста по id.
-    create_question:
-        Создание вопроса с ответами в базе данных.
-    get_statistics_by_test_id:
-        Получение статистики по тесту.
-    get_users:
-        Получение всех пользователей из базы данных.
-    get_user_by_id:
-        Получение пользователя по id.
-    get_count_results_by_user_id:
-        Получение результатов пользователя по id.
-    get_question_by_id:
-        Получение вопроса по id.
-    change_correct_answer:
-        Изменение правильного ответа.
-    get_test_id_by_question_id:
-        Получение id теста по id вопроса.
-    get_test_by_question_id:
-        Получение теста по id вопроса.
-    delete_question_by_id:
-        Удаление вопроса по id.
+# TODO: Разделить на модули
+
+Функции для работы с тестами:
+    create_test
+        Создание теста
+    get_tests
+        Получение всех тестов
+    get_test_by_id
+        Получение теста по id
+    delete_test_by_id
+        Удаление теста по id
+    publish_test_by_id
+        Публикация теста по id
+    get_test_by_question_id
+        Получение теста по id вопроса
+    get_test_id_by_question_id
+        Получение id теста по id вопроса
+    get_statistics_by_test_id
+        Получение статистики по id теста
+
+Функции для работы с вопросами:
+    create_question
+        Создание вопроса с ответами
+    get_question_by_id
+        Получение вопроса по id
+    get_questions_by_test_id
+        Получение вопросов по id теста
+    delete_question_by_id
+        Удаление вопроса по id
+    change_correct_answer
+        Изменение правильного ответа
+
+Функции для работы с пользователями:
+    get_users
+        Получение всех пользователей
+    get_user_by_id
+        Получение пользователя по id
+
+Функции работы с результатами:
+    get_count_results_by_user_id
+        Получение количество результатов пользователя
     get_results_by_user_id
-        Получение результатов пользователя по id.
-    get_result_by_id:
-        Получение результата по id.
-    get_result_data_by_result:
-        Получение данных результата.
+        Получение результатов пользователя
+    get_result_by_id
+        Получение результата по id
+    get_result_data_by_result
+        Получение данных результата
 """
 from sqlalchemy.orm import sessionmaker, aliased
 
@@ -108,24 +116,6 @@ def get_test_by_id(test_id: int) -> Test:
         return test
 
 
-def get_questions_by_test_id(test_id: int) -> list[Question]:
-    """
-    Получение вопросов по id теста.
-
-    Args:
-        test_id:
-            id теста.
-
-    Returns:
-        Список вопросов.
-    """
-    with Session() as session:
-        questions = (
-            session.query(Question).filter(Question.test_id == test_id).all()
-        )
-        return questions
-
-
 def delete_test_by_id(test_id: int) -> None:
     """
     Удаление теста и всех его связей по id.
@@ -162,6 +152,87 @@ def publish_test_by_id(test_id: int) -> None:
         session.commit()
 
 
+def get_test_by_question_id(question_id: int) -> Test:
+    """
+    Получение теста по id вопроса.
+
+    Args:
+        question_id:
+            id вопроса.
+
+    Returns:
+        Тест.
+    """
+    with Session() as session:
+        test = (
+            session.query(Test)
+            .filter(Test.id == get_test_id_by_question_id(question_id))
+            .one()
+        )
+        return test
+
+
+def get_test_id_by_question_id(question_id: int) -> int:
+    """
+    Получение id теста по id вопроса.
+
+    Args:
+        question_id:
+            id вопроса.
+
+    Returns:
+        id теста.
+    """
+    with Session() as session:
+        test_id = (
+            session.query(Question)
+            .filter(Question.id == question_id)
+            .one()
+            .test_id
+        )
+        return test_id
+
+
+def get_statistics_by_test_id(test_id: int) -> dict[str, int]:
+    """
+    Получение статистики по тесту.
+
+    Args:
+        test_id:
+            id теста.
+
+    Returns:
+        Словарь со статистикой.
+    """
+    with Session() as session:
+        results = session.query(Result).filter(Result.test_id == test_id)
+
+        total = results.count()
+        completed = results.filter(Result.score >= config.pass_score).count()
+
+        statistics = {"total": total, "completed": completed}
+
+        return statistics
+
+
+def get_questions_by_test_id(test_id: int) -> list[Question]:
+    """
+    Получение вопросов по id теста.
+
+    Args:
+        test_id:
+            id теста.
+
+    Returns:
+        Список вопросов.
+    """
+    with Session() as session:
+        questions = (
+            session.query(Question).filter(Question.test_id == test_id).all()
+        )
+        return questions
+
+
 def create_question(
     test_id: int, text: str, answers: dict[str, bool], image: str | None = None
 ) -> None:
@@ -196,28 +267,6 @@ def create_question(
 
         session.add_all(answer_objs)
         session.commit()
-
-
-def get_statistics_by_test_id(test_id: int) -> dict[str, int]:
-    """
-    Получение статистики по тесту.
-
-    Args:
-        test_id:
-            id теста.
-
-    Returns:
-        Словарь со статистикой.
-    """
-    with Session() as session:
-        results = session.query(Result).filter(Result.test_id == test_id)
-
-        total = results.count()
-        completed = results.filter(Result.score >= config.pass_score).count()
-
-        statistics = {"total": total, "completed": completed}
-
-        return statistics
 
 
 def get_users() -> list[User]:
@@ -317,47 +366,6 @@ def change_correct_answer(
         session.commit()
 
 
-def get_test_id_by_question_id(question_id: int) -> int:
-    """
-    Получение id теста по id вопроса.
-
-    Args:
-        question_id:
-            id вопроса.
-
-    Returns:
-        id теста.
-    """
-    with Session() as session:
-        test_id = (
-            session.query(Question)
-            .filter(Question.id == question_id)
-            .one()
-            .test_id
-        )
-        return test_id
-
-
-def get_test_by_question_id(question_id: int) -> Test:
-    """
-    Получение теста по id вопроса.
-
-    Args:
-        question_id:
-            id вопроса.
-
-    Returns:
-        Тест.
-    """
-    with Session() as session:
-        test = (
-            session.query(Test)
-            .filter(Test.id == get_test_id_by_question_id(question_id))
-            .one()
-        )
-        return test
-
-
 def delete_question_by_id(question_id: int) -> None:
     """
     Удаление вопроса по id.
@@ -442,9 +450,3 @@ def get_result_data_by_result(result: Result) -> list[tuple[str, str, str]]:
             .all()
         )
         return data
-
-
-# TODO: Добавить валидацию данных
-# TODO: Обработка исключений
-# TODO: Оптимизация запросов
-# TODO: Рефакторинг кода

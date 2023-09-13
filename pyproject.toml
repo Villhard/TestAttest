@@ -13,7 +13,6 @@ sqlalchemy = "^2.0.20"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
-ruff = "^0.0.287"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"
@@ -21,6 +20,3 @@ requires = ["poetry-core"]
 
 [tool.black]
 line-length = 79
-
-[tool.isort]
-profile = "black"
