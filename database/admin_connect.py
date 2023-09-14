@@ -69,72 +69,84 @@ from database.database import (
 Session = sessionmaker(engine)
 
 
-def create_test(title: str, description: str) -> None:
+def get_session() -> Session:
+    """Получение сессии для работы с базой данных."""
+    with Session() as session:
+        return session
+
+
+def create_test(
+    title: str, description: str, session: Session = get_session()
+) -> None:
     """
     Создание теста в базе данных.
 
     Args:
         title:
-            Название теста.
+            Название теста
         description:
-            Описание теста.
+            Описание теста
+        session:
+            Сессия
     """
-    with Session() as session:
-        test = Test(
-            title=title,
-            description=description,
-        )
-        session.add(test)
-        session.commit()
+    test = Test(
+        title=title,
+        description=description,
+    )
+    session.add(test)
+    session.commit()
 
 
-def get_tests() -> list[Test]:
+def get_tests(session: Session = get_session()) -> list[Test]:
     """
     Получение всех тестов из базы данных.
 
+    Args:
+        session:
+            Сессия
+
     Returns:
-        Список тестов.
+        Список тестов
     """
-    with Session() as session:
-        tests = session.query(Test).order_by(Test.id.desc()).all()
-        return tests
+    tests = session.query(Test).order_by(Test.id.desc()).all()
+    return tests
 
 
-def get_test_by_id(test_id: int) -> Test:
+def get_test_by_id(test_id: int, session: Session = get_session()) -> Test:
     """
     Получение теста по id.
 
     Args:
         test_id:
-            id теста.
+            id теста
+        session:
+            Сессия
 
     Returns:
-        Тест.
+        Тест
     """
-    with Session() as session:
-        test = session.query(Test).filter(Test.id == test_id).one()
-        return test
+    test = session.query(Test).filter(Test.id == test_id).one()
+    return test
 
 
-def delete_test_by_id(test_id: int) -> None:
+def delete_test_by_id(test_id: int, session: Session = get_session()) -> None:
     """
     Удаление теста и всех его связей по id.
 
     Args:
         test_id:
-            id теста.
+            id теста
+        session:
+            Сессия
     """
-    with Session() as session:
-        session.query(IncorrectAnswer).filter(
-            IncorrectAnswer.result.has(test_id=test_id)
-        ).delete()
-        session.query(Result).filter(Result.test_id == test_id).delete()
-        session.query(Answer).filter(
-            Answer.question.has(test_id=test_id)
-        ).delete()
-        session.query(Question).filter(Question.test_id == test_id).delete()
-        session.query(Test).filter(Test.id == test_id).delete()
-        session.commit()
+    session.query(IncorrectAnswer).filter(
+        IncorrectAnswer.result.has(test_id=test_id)
+    ).delete()
+    session.query(Result).filter(Result.test_id == test_id).delete()
+    session.query(Answer).filter(Answer.question.has(test_id=test_id)).delete()
+    session.query(Question).filter(Question.test_id == test_id).delete()
+    session.query(Test).filter(Test.id == test_id).delete()
+    session.commit()
 
 
 def publish_test_by_id(test_id: int) -> None:
@@ -143,7 +155,7 @@ def publish_test_by_id(test_id: int) -> None:
 
     Args:
         test_id:
-            id теста.
+            id теста
     """
     with Session() as session:
         session.query(Test).filter(Test.id == test_id).update(
@@ -158,10 +170,10 @@ def get_test_by_question_id(question_id: int) -> Test:
 
     Args:
         question_id:
-            id вопроса.
+            id вопроса
 
     Returns:
-        Тест.
+        Тест
     """
     with Session() as session:
         test = (
@@ -178,10 +190,10 @@ def get_test_id_by_question_id(question_id: int) -> int:
 
     Args:
         question_id:
-            id вопроса.
+            id вопроса
 
     Returns:
-        id теста.
+        id теста
     """
     with Session() as session:
         test_id = (
@@ -199,10 +211,10 @@ def get_statistics_by_test_id(test_id: int) -> dict[str, int]:
 
     Args:
         test_id:
-            id теста.
+            id теста
 
     Returns:
-        Словарь со статистикой.
+        Словарь со статистикой
     """
     with Session() as session:
         results = session.query(Result).filter(Result.test_id == test_id)
@@ -215,24 +227,6 @@ def get_statistics_by_test_id(test_id: int) -> dict[str, int]:
         return statistics
 
 
-def get_questions_by_test_id(test_id: int) -> list[Question]:
-    """
-    Получение вопросов по id теста.
-
-    Args:
-        test_id:
-            id теста.
-
-    Returns:
-        Список вопросов.
-    """
-    with Session() as session:
-        questions = (
-            session.query(Question).filter(Question.test_id == test_id).all()
-        )
-        return questions
-
-
 def create_question(
     test_id: int, text: str, answers: dict[str, bool], image: str | None = None
 ) -> None:
@@ -241,14 +235,13 @@ def create_question(
 
     Args:
         test_id:
-            id теста.
+            id теста
         text:
-            Текст вопроса.
+            Текст вопроса
         answers:
-            Словарь с ответами.
+            Словарь с ответами
         image:
-            Ссылка на изображение.
-            По умолчанию None.
+            Ссылка на изображение (по умолчанию None)
     """
     with Session() as session:
         question = Question(test_id=test_id, text=text, image=image)
@@ -269,67 +262,16 @@ def create_question(
         session.commit()
 
 
-def get_users() -> list[User]:
-    """
-    Получение всех пользователей из базы данных.
-
-    Returns:
-        Список пользователей.
-    """
-    with Session() as session:
-        users = session.query(User).all()
-        return users
-
-
-def get_user_by_id(user_id: int) -> User:
-    """
-    Получение пользователя по id.
-
-    Args:
-        user_id:
-            id пользователя.
-
-    Returns:
-        Пользователь.
-    """
-    with Session() as session:
-        user = session.query(User).filter(User.id == user_id).one()
-        return user
-
-
-def get_count_results_by_user_id(user_id: int) -> dict[str, int]:
-    """
-    Получение результатов пользователя по id.
-
-    Args:
-        user_id:
-            id пользователя.
-
-    Returns:
-        Словарь с результатами.
-    """
-    with Session() as session:
-        total_tests = session.query(Test).count()
-        completed_tests = (
-            session.query(Result)
-            .filter(Result.user_id == user_id)
-            .group_by(Result.test_id)
-            .filter(Result.score >= config.pass_score)
-            .count()
-        )
-        return {"total": total_tests, "completed": completed_tests}
-
-
 def get_question_by_id(question_id: int) -> Question:
     """
     Получение вопроса по id.
 
     Args:
         question_id:
-            id вопроса.
+            id вопроса
 
     Returns:
-        Вопрос.
+        Вопрос
     """
     with Session() as session:
         question = (
@@ -343,6 +285,40 @@ def get_question_by_id(question_id: int) -> Question:
         return question, answers
 
 
+def get_questions_by_test_id(test_id: int) -> list[Question]:
+    """
+    Получение вопросов по id теста.
+
+    Args:
+        test_id:
+            id теста
+
+    Returns:
+        Список вопросов
+    """
+    with Session() as session:
+        questions = (
+            session.query(Question).filter(Question.test_id == test_id).all()
+        )
+        return questions
+
+
+def delete_question_by_id(question_id: int) -> None:
+    """
+    Удаление вопроса по id.
+
+    Args:
+        question_id:
+            id вопроса
+    """
+    with Session() as session:
+        session.query(Answer).filter(
+            Answer.question_id == question_id
+        ).delete()
+        session.query(Question).filter(Question.id == question_id).delete()
+        session.commit()
+
+
 def change_correct_answer(
     question_id: int,
     answer_id: int,
@@ -352,9 +328,9 @@ def change_correct_answer(
 
     Args:
         question_id:
-            id вопроса.
+            id вопроса
         answer_id:
-            id ответа.
+            id ответа
     """
     with Session() as session:
         session.query(Answer).filter(Answer.question_id == question_id).update(
@@ -366,20 +342,55 @@ def change_correct_answer(
         session.commit()
 
 
-def delete_question_by_id(question_id: int) -> None:
+def get_users() -> list[User]:
     """
-    Удаление вопроса по id.
+    Получение всех пользователей из базы данных.
 
-    Args:
-        question_id:
-            id вопроса.
+    Returns:
+        Список пользователей
     """
     with Session() as session:
-        session.query(Answer).filter(
-            Answer.question_id == question_id
-        ).delete()
-        session.query(Question).filter(Question.id == question_id).delete()
-        session.commit()
+        users = session.query(User).all()
+        return users
+
+
+def get_user_by_id(user_id: int) -> User:
+    """
+    Получение пользователя по id.
+
+    Args:
+        user_id:
+            id пользователя
+
+    Returns:
+        Пользователь
+    """
+    with Session() as session:
+        user = session.query(User).filter(User.id == user_id).one()
+        return user
+
+
+def get_count_results_by_user_id(user_id: int) -> dict[str, int]:
+    """
+    Получение результатов пользователя по id.
+
+    Args:
+        user_id:
+            id пользователя
+
+    Returns:
+        Словарь с результатами
+    """
+    with Session() as session:
+        total_tests = session.query(Test).count()
+        completed_tests = (
+            session.query(Result)
+            .filter(Result.user_id == user_id)
+            .group_by(Result.test_id)
+            .filter(Result.score >= config.pass_score)
+            .count()
+        )
+        return {"total": total_tests, "completed": completed_tests}
 
 
 def get_results_by_user_id(user_id: int) -> list[Result]:
@@ -388,10 +399,10 @@ def get_results_by_user_id(user_id: int) -> list[Result]:
 
     Args:
         user_id:
-            id пользователя.
+            id пользователя
 
     Returns:
-        Список результатов.
+        Список результатов
     """
     with Session() as session:
         results = (
@@ -409,10 +420,10 @@ def get_result_by_id(result_id: int) -> Result:
 
     Args:
         result_id:
-            id результата.
+            id результата
 
     Returns:
-        Результат.
+        Результат
     """
     with Session() as session:
         result = session.query(Result).filter(Result.id == result_id).one()
@@ -425,10 +436,10 @@ def get_result_data_by_result(result: Result) -> list[tuple[str, str, str]]:
 
     Args:
         result:
-            Результат.
+            Результат
 
     Returns:
-        Данные результата.
+        Данные результата
     """
     with Session() as session:
         q = aliased(Question)
