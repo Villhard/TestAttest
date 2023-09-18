@@ -149,22 +149,23 @@ def delete_test_by_id(test_id: int, session: Session = get_session()) -> None:
     session.commit()
 
 
-def publish_test_by_id(test_id: int) -> None:
+def publish_test_by_id(test_id: int, session: Session = get_session()) -> None:
     """
     Публикация теста по id.
 
     Args:
         test_id:
             id теста
+        session:
+            Сессия
     """
-    with Session() as session:
-        session.query(Test).filter(Test.id == test_id).update(
-            {"is_publish": True}
-        )
-        session.commit()
+    session.query(Test).filter(Test.id == test_id).update(
+        {"is_publish": True}
+    )
+    session.commit()
 
 
-def get_test_by_question_id(question_id: int) -> Test:
+def get_test_by_question_id(question_id: int, session: Session = get_session()) -> Test:
     """
     Получение теста по id вопроса.
 
@@ -175,13 +176,12 @@ def get_test_by_question_id(question_id: int) -> Test:
     Returns:
         Тест
     """
-    with Session() as session:
-        test = (
-            session.query(Test)
-            .filter(Test.id == get_test_id_by_question_id(question_id))
-            .one()
-        )
-        return test
+    test = (
+        session.query(Test)
+        .filter(Test.id == get_test_id_by_question_id(question_id))
+        .one()
+    )
+    return test
 
 
 def get_test_id_by_question_id(question_id: int) -> int:
@@ -228,7 +228,7 @@ def get_statistics_by_test_id(test_id: int) -> dict[str, int]:
 
 
 def create_question(
-    test_id: int, text: str, answers: dict[str, bool], image: str | None = None
+    test_id: int, text: str, answers: dict[str, bool], image: str | None = None, session: Session = get_session()
 ) -> None:
     """
     Создание вопроса с ответами в базе данных.
@@ -242,24 +242,25 @@ def create_question(
             Словарь с ответами
         image:
             Ссылка на изображение (по умолчанию None)
+        session:
+            Сессия
     """
-    with Session() as session:
-        question = Question(test_id=test_id, text=text, image=image)
+    question = Question(test_id=test_id, text=text, image=image)
 
-        session.add(question)
-        session.commit()
+    session.add(question)
+    session.commit()
 
-        answer_objs = [
-            Answer(
-                question_id=question.id,
-                text=text,
-                is_correct=is_correct,
-            )
-            for text, is_correct in answers.items()
-        ]
+    answer_objs = [
+        Answer(
+            question_id=question.id,
+            text=text,
+            is_correct=is_correct,
+        )
+        for text, is_correct in answers.items()
+    ]
 
-        session.add_all(answer_objs)
-        session.commit()
+    session.add_all(answer_objs)
+    session.commit()
 
 
 def get_question_by_id(question_id: int) -> Question:
@@ -285,22 +286,23 @@ def get_question_by_id(question_id: int) -> Question:
         return question, answers
 
 
-def get_questions_by_test_id(test_id: int) -> list[Question]:
+def get_questions_by_test_id(test_id: int, session: Session = get_session()) -> list[Question]:
     """
     Получение вопросов по id теста.
 
     Args:
         test_id:
             id теста
+        session:
+            Сессия
 
     Returns:
         Список вопросов
     """
-    with Session() as session:
-        questions = (
-            session.query(Question).filter(Question.test_id == test_id).all()
-        )
-        return questions
+    questions = (
+        session.query(Question).filter(Question.test_id == test_id).all()
+    )
+    return questions
 
 
 def delete_question_by_id(question_id: int) -> None:

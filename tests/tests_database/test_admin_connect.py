@@ -9,8 +9,11 @@ from database.admin_connect import (
     get_tests,
     get_test_by_id,
     delete_test_by_id,
+    publish_test_by_id,
+    get_questions_by_test_id,
+    create_question,
 )
-from database.database import Base, Test
+from database.database import Base, Test, Question
 
 
 class TestAdminConnect(unittest.TestCase):
@@ -134,13 +137,65 @@ class TestAdminConnect(unittest.TestCase):
                 )
 
     def test_publish_test_by_id(self):
-        pass
+        # Given
+        test1 = Test(
+            title="test1",
+            description="description for test1",
+        )
+        with self.Session() as session:
+            session.add(test1)
+            session.commit()
+            self.assertEqual(test1.is_publish, False)
+
+        # When
+        with self.Session() as session:
+            publish_test_by_id(1, session)
+
+        # Then
+        with self.Session() as session:
+            test1 = session.query(Test).filter(Test.id == 1).one()
+            self.assertEqual(test1.is_publish, True)
 
     def test_get_questions_by_test_id(self):
-        pass
+        # Given
+        question1 = Question(
+            test_id=1,
+            text="question1",
+        )
+        question2 = Question(
+            test_id=1,
+            text="question2",
+        )
+        with self.Session() as session:
+            session.add_all([question1, question2])
+            session.commit()
+
+        # When
+        with self.Session() as session:
+            questions = get_questions_by_test_id(1, session)
+
+        # Then
+        self.assertEqual(len(questions), 2)
+        self.assertEqual(questions[0].text, "question1")
+        self.assertEqual(questions[1].text, "question2")
 
     def test_create_question(self):
-        pass
+        # Given
+        answers = {
+            "answer1": True,
+            "answer2": False,
+            "answer3": False,
+            "answer4": False,
+        }
+
+        # When
+        with self.Session() as session:
+            create_question(text="question", test_id=1, answers=answers, session=session)
+
+        # Then
+        with self.Session() as session:
+            question = session.query(Question).filter(Question.id == 1).one()
+            self.assertEqual(question.text, "question")
 
     def test_get_statistics_by_test_id(self):
         pass
