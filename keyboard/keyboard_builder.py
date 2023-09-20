@@ -27,7 +27,7 @@
         Создание клавиатуры для редактирования вопроса.
     create_back_button_keyboard:
         Создание клавиатуры с кнопкой назад.
-# TODO: Добавить пагинацию для клавиатур со списками.
+# todo: Добавить пагинацию для клавиатур со списками.
 """
 from random import shuffle
 
@@ -48,7 +48,7 @@ def create_main_menu_keyboard(
     is_admin: bool,
 ) -> InlineKeyboardMarkup:
     """Создание главного меню."""
-    # TODO: Добавлять меню по мере добавления новых функций
+    # todo: Добавлять меню по мере добавления новых функций
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
         InlineKeyboardButton(text="Тесты", callback_data="tests")
@@ -97,15 +97,21 @@ def create_test_menu_keyboard(
     """Создание клавиатуры для меню теста."""
     keyboard_builder = InlineKeyboardBuilder()
     if not is_publish:
-        for question in questions:
-            keyboard_builder.row(
-                InlineKeyboardButton(
-                    text=(
-                        f"{'🖼' if question.image else ''}" f" {question.text}"
-                    ),
-                    callback_data=f"question_{question.id}",
-                )
+        keyboard_builder.row(
+            InlineKeyboardButton(
+                text=f"Вопросов: {len(questions) if questions else 0}",
+                callback_data="test_questions",  # todo: создать хендлер для получения вопросов
             )
+        )
+        # for question in questions:
+        #     keyboard_builder.row(
+        #         InlineKeyboardButton(
+        #             text=(
+        #                 f"{'🖼' if question.image else ''}" f" {question.text}"
+        #             ),
+        #             callback_data=f"question_{question.id}",
+        #         )
+        #     )
         keyboard_builder.row(
             InlineKeyboardButton(
                 text="Добавить вопрос",
@@ -208,7 +214,7 @@ def create_user_menu_keyboard(
     user: User,
 ) -> InlineKeyboardMarkup:
     """Создание клавиатуры просмотра пользователя."""
-    keyboard_builder = InlineKeyboardBuilder()  # TODO: Добавить функционал
+    keyboard_builder = InlineKeyboardBuilder()  # todo: Добавить функционал
     results = get_results_by_user_id(user_id=user.id)
     for result in results:
         test = get_test_by_id(result.test_id)

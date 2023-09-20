@@ -1,6 +1,6 @@
 """Основной файл бота."""
 import asyncio
-import logging
+from loguru import logger
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -10,12 +10,8 @@ from handlers import admin_handlers, user_handlers
 
 from keyboard.menu import set_menu
 
-logger = logging.getLogger(__name__)
-
-
 async def main() -> None:
     """Создание и запуск бота."""
-    logging.basicConfig(level=logging.INFO)
     logger.info("Starting bot")
 
     storage: MemoryStorage = MemoryStorage()

@@ -231,9 +231,9 @@ async def call_answering(callback: CallbackQuery, state: FSMContext):
     result = data["result"]
     answer = db.get_answer_by_id(callback.data)
     if answer.is_correct:
-        result[data["question_id"]] = {answer.text: True}
+        result[data["question_id"]] = {answer.id: True}
     else:
-        result[data["question_id"]] = {answer.text: False}
+        result[data["question_id"]] = {answer.id: False}
 
     if data["questions"]:
         question = data["questions"].pop(0)

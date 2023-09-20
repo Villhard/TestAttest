@@ -81,6 +81,7 @@ from aiogram.types import (
     Message,
     PhotoSize,
 )
+from loguru import logger
 
 from config import config
 from database import admin_connect as db
@@ -137,6 +138,7 @@ class FSMCreateQuestions(StatesGroup):
 @router.message(CommandStart(), StateFilter(default_state))
 async def cmd_start(message: Message) -> None:
     """Приветствие админа."""
+    logger.info(f"Admin: {message.from_user.id} started bot")
     keyboard = kb.create_main_menu_keyboard(is_admin=True)
     await message.answer(
         text="Привет, админ!",
@@ -187,10 +189,11 @@ async def call_test_by_id(callback: CallbackQuery) -> None:
         questions=questions,
         is_publish=test.is_publish,
     )
-    statistics = db.get_statistics_by_test_id(test_id)
 
     text = f"<b>{test.title}</b>\n{test.description}"
+
     if test.is_publish:
+        statistics = db.get_statistics_by_test_id(test_id)
         text += (
             f"\n\n<b>Статистика:</b>\n"
             "Успех/Всего: "

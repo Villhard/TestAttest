@@ -51,7 +51,7 @@ def get_user(tg_id: int) -> User | None:
         Пользователь.
     """
     with Session() as session:
-        user = session.query(User).filter(User.tg_id == tg_id).one()
+        user = session.query(User).filter(User.tg_id == tg_id).one_or_none()
         return user
 
 
