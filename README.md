@@ -56,3 +56,41 @@ The state class for creating questions.
 - `process_input_correct_answer`: Create question. Get correct answer
 - `process_input_image_question`: Create question. Get question image
 - `process_skip_image_question`: Create question. Skip question image
+
+___
+
+## User Handlers
+
+The `user_handlers.py` module contains command and callback handlers for the bot users.
+
+### State Machines
+
+#### FSMUserInputName
+
+The state class for user's name and surname input.
+
+- `fullname`: Input for user's full name
+
+#### FSMTesting
+
+The state class for test taking.
+
+- `testing`: Test taking state
+
+### Navigation
+
+- `cmd_start`: User greeting or request for name input
+- `cmd_help`: User help
+- `call_main_menu`: Go to the main menu
+- `call_tests`: Go to the test list
+- `call_test`: Go to a specific test
+
+### User Creation Process
+
+- `process_input_name`: Get user's name and surname
+- `process_incorrect_input_name`: Handle incorrect name input
+
+### Test Taking Process
+
+- `call_start_test`: Start the test
+- `call_answering`: Process test questions and answers
