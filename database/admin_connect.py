@@ -5,8 +5,6 @@
 создания вопросов с ответами, получения статистики по тестам,
 получения пользователей и их результатов.
 
-# TODO: Разделить на модули
-
 Функции для работы с тестами:
     create_test
         Создание теста
@@ -69,9 +67,7 @@ from database.database import (
 Session = sessionmaker(engine)
 
 
-def create_test(
-    title: str, description: str
-) -> None:
+def create_test(title: str, description: str) -> None:
     """
     Создание теста в базе данных.
 
@@ -131,7 +127,9 @@ def delete_test_by_id(test_id: int) -> None:
             IncorrectAnswer.result.has(test_id=test_id)
         ).delete()
         session.query(Result).filter(Result.test_id == test_id).delete()
-        session.query(Answer).filter(Answer.question.has(test_id=test_id)).delete()
+        session.query(Answer).filter(
+            Answer.question.has(test_id=test_id)
+        ).delete()
         session.query(Question).filter(Question.test_id == test_id).delete()
         session.query(Test).filter(Test.id == test_id).delete()
         session.commit()
