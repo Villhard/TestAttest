@@ -1,25 +1,24 @@
-"""Основной файл бота."""
+"""The bot."""
 import asyncio
-from loguru import logger
 
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
+from loguru import logger
 
 from config import config
+from data import lexicon_eng, lexicon_rus
 from handlers import admin_handlers, user_handlers
 
-from keyboard.menu import set_menu
 
 async def main() -> None:
-    """Создание и запуск бота."""
-    logger.info("Starting bot")
+    """Start the bot."""
+    lexicon = lexicon_rus if config.language == "rus" else lexicon_eng
+    logger.info(f"{lexicon.LOGS['starting bot']}")
 
     storage: MemoryStorage = MemoryStorage()
 
     bot = Bot(token=config.bot.token, parse_mode="HTML")
     dp = Dispatcher(storage=storage)
-
-    await set_menu(bot)
 
     dp.include_router(admin_handlers.router)
     dp.include_router(user_handlers.router)

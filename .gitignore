@@ -1,9 +1,6 @@
 .env
-.black
-.flake8
 .DS_Store
 database.db
-machinet.conf
 
 .venv/
 **/__pycache__/
@@ -11,3 +8,4 @@ img/
 .vscode/
 .pytest_cache/
 .idea/
+.ruff_cache

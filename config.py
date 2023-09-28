@@ -1,14 +1,14 @@
 """
-Модуль читает переменные окружения и возвращает конфигурацию приложения.
+The config module.
 
-Классы:
-    BotConfig - конфигурация бота.
-    DatabaseConfig - конфигурация базы данных.
-    Config - конфигурация приложения.
+Classes:
+    BotConfig - configuration of the bot.
+    DatabaseConfig - configuration of the database.
+    Config - configuration of the application.
 
-Функции:
+Functions:
     load_config:
-        Читает переменные окружения и возвращает конфигурацию приложения.
+        Reads the environment variables and returns the configuration.
 """
 from dataclasses import dataclass
 
@@ -17,7 +17,7 @@ from environs import Env
 
 @dataclass
 class BotConfig:
-    """Конфигурация бота."""
+    """Configuration of the bot."""
 
     token: str
     admin_ids: list[int]
@@ -25,7 +25,7 @@ class BotConfig:
 
 @dataclass
 class DatabaseConfig:
-    """Конфигурация базы данных."""
+    """Configuration of the database."""
 
     url: str
 
@@ -33,18 +33,23 @@ class DatabaseConfig:
 @dataclass
 class Config:
     """
-    Конфигурация приложения.
+    Configuration of the application.
 
-    Содержит в себе конфигурации бота и базы данных.
+    Attributes:
+        bot: BotConfig
+        database: DatabaseConfig
+        pass_score: int - minimum score to pass the test
+        language: str - language
     """
 
     bot: BotConfig
     database: DatabaseConfig
     pass_score: int
+    language: str
 
 
 def load_config(path: str = None) -> Config:
-    """Читает переменные окружения и возвращает конфигурацию приложения."""
+    """Reads the environment variables and returns the configuration."""
     env = Env()
     env.read_env(path)
 
@@ -55,6 +60,7 @@ def load_config(path: str = None) -> Config:
         ),
         database=DatabaseConfig(url=env("URL_DATABASE")),
         pass_score=env.int("PASS_SCORE"),
+        language=env("LANGUAGE"),
     )
 
 
