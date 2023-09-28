@@ -357,16 +357,7 @@ def get_user_by_id(user_id: int) -> User:
 
 
 def get_count_results_by_user_id(user_id: int) -> dict[str, int]:
-    """
-    Получение результатов пользователя по id.
-
-    Args:
-        user_id:
-            id пользователя
-
-    Returns:
-        Словарь с результатами
-    """
+    """Get dictionary of completed and total tests for user."""
     with Session() as session:
         total_tests = session.query(Test).count()
         completed_tests = (
@@ -376,7 +367,7 @@ def get_count_results_by_user_id(user_id: int) -> dict[str, int]:
             .filter(Result.score >= config.pass_score)
             .count()
         )
-        return {"total": total_tests, "completed": completed_tests}
+        return {"completed": completed_tests, "total": total_tests}
 
 
 def get_results_by_user_id(user_id: int) -> list[Result]:

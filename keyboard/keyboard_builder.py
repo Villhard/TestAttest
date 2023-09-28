@@ -199,7 +199,7 @@ def create_after_test_keyboard() -> InlineKeyboardMarkup:
 
 
 def create_users_menu_keyboard(users: list[User]) -> InlineKeyboardMarkup:
-    """Создание клавиатуры для выбора пользователя."""
+    """Create users menu keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
     for user in users:
         result = get_count_results_by_user_id(user.id)
@@ -209,11 +209,11 @@ def create_users_menu_keyboard(users: list[User]) -> InlineKeyboardMarkup:
                     f"{user.name} {user.surname}"
                     f" {result['completed']}/{result['total']}"
                 ),
-                callback_data=f"user_{user.id}",
+                callback_data=f"user {user.id}",
             )
         )
     keyboard_builder.row(
-        InlineKeyboardButton(text="Назад", callback_data="main_menu")
+        InlineKeyboardButton(text=f"{lexicon.BUTTONS['back']}", callback_data="main menu")
     )
     return keyboard_builder.as_markup()
 

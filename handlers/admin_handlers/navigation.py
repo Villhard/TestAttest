@@ -20,6 +20,7 @@ async def cmd_start(message: Message):
         f"{lexicon.LOGS['greeting admin'].format(admin_id=message.from_user.id)}"
     )
     keyboard = kb.create_main_menu_keyboard(is_admin=True)
+    await message.delete()
     return await message.answer(
         text=lexicon.MESSAGES["greeting admin"],
         reply_markup=keyboard,
@@ -45,5 +46,17 @@ async def call_tests(callback: CallbackQuery):
     keyboard = kb.create_tests_menu_keyboard(tests=tests, is_admin=True)
     return await callback.message.edit_text(
         text=lexicon.MESSAGES["tests"],
+        reply_markup=keyboard,
+    )
+
+
+@router.callback_query(F.data == "users", StateFilter(default_state))
+async def call_users(callback: CallbackQuery):
+    """Users menu."""
+    logger.debug(f"{lexicon.LOGS['users'].format(admin_id=callback.from_user.id)}")
+    users = db.get_users()
+    keyboard = kb.create_users_menu_keyboard(users=users)
+    return await callback.message.edit_text(
+        text=lexicon.MESSAGES["users"],
         reply_markup=keyboard,
     )

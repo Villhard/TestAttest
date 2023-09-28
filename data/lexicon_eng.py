@@ -2,6 +2,7 @@ MESSAGES = {
     "greeting admin": "Hello, admin!",
     "main menu": "Main menu",
     "tests": "List of tests",
+    "users": "List of users",
 }
 
 BUTTONS ={
@@ -19,4 +20,5 @@ LOGS = {
     "greeting admin": "Admin: {admin_id} started bot",
     "main menu": "Admin: {admin_id} go to main menu",
     "tests": "Admin: {admin_id} go to tests menu",
+    "users": "Admin: {admin_id} go to users menu",
 }

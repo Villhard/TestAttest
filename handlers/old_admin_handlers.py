@@ -135,19 +135,6 @@ class FSMCreateQuestions(StatesGroup):
 # =============================================================================
 
 
-@router.callback_query(F.data == "tests", StateFilter(default_state))
-async def call_tests(callback: CallbackQuery) -> None:
-    """Просмотр всех тестов."""
-    tests = db.get_tests()
-    keyboard = kb.create_tests_menu_keyboard(
-        tests=tests,
-        is_admin=True,
-    )
-    await callback.message.edit_text(
-        text="Список тестов", reply_markup=keyboard
-    )
-
-
 @router.callback_query(
     lambda call: re.fullmatch(r"test_\d+", call.data),
     StateFilter(default_state),
