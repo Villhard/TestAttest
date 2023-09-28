@@ -99,16 +99,7 @@ def get_tests() -> list[Test]:
 
 
 def get_test_by_id(test_id: int) -> Test:
-    """
-    Получение теста по id.
-
-    Args:
-        test_id:
-            id теста
-
-    Returns:
-        Тест
-    """
+    """Get test by id."""
     with Session() as session:
         test = session.query(Test).filter(Test.id == test_id).one()
         return test
@@ -208,7 +199,7 @@ def get_statistics_by_test_id(test_id: int) -> dict[str, int]:
         total = results.count()
         completed = results.filter(Result.score >= config.pass_score).count()
 
-        statistics = {"total": total, "completed": completed}
+        statistics = {"completed": completed, "total": total}
 
         return statistics
 

@@ -136,37 +136,6 @@ class FSMCreateQuestions(StatesGroup):
 
 
 @router.callback_query(
-    lambda call: re.fullmatch(r"test_\d+", call.data),
-    StateFilter(default_state),
-)
-async def call_test_by_id(callback: CallbackQuery) -> None:
-    """Просмотр теста."""
-    test_id = int(callback.data.split("_")[1])
-    test = db.get_test_by_id(test_id)
-    questions = db.get_questions_by_test_id(test_id)
-    keyboard = kb.create_test_menu_keyboard(
-        test=test,
-        questions=questions,
-        is_publish=test.is_publish,
-    )
-
-    text = f"<b>{test.title}</b>\n{test.description}"
-
-    if test.is_publish:
-        statistics = db.get_statistics_by_test_id(test_id)
-        text += (
-            f"\n\n<b>Статистика:</b>\n"
-            "Успех/Всего: "
-            f"{statistics['completed']}/{statistics['total']}"
-        )
-
-    await callback.message.edit_text(
-        text=text,
-        reply_markup=keyboard,
-    )
-
-
-@router.callback_query(
     lambda call: re.fullmatch(r"question_\d+", call.data),
     StateFilter(default_state),
 )
@@ -180,21 +149,6 @@ async def call_question_by_id(callback: CallbackQuery) -> None:
 
     await callback.message.edit_text(
         text=question.text,
-        reply_markup=keyboard,
-    )
-
-
-@router.callback_query(
-    F.data == "users",
-    StateFilter(default_state),
-)
-async def call_users(callback: CallbackQuery) -> None:
-    """Просмотр пользователей."""
-    users = db.get_users()
-    keyboard = kb.create_users_menu_keyboard(users)
-
-    await callback.message.edit_text(
-        text="Все пользователи",
         reply_markup=keyboard,
     )
 
