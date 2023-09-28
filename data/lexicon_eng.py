@@ -1,7 +1,11 @@
-MESSAGES = {}
+MESSAGES = {
+    "greeting admin": "Hello, admin!",
+}
 
 BUTTONS ={}
 
 LOGS = {
-    "starting bot": "starting bot",
+    # INFO
+    "starting bot": "Starting bot",
+    "greeting admin": "Admin: {message.from_user.id} started bot",
 }

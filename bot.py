@@ -7,7 +7,8 @@ from loguru import logger
 
 from config import config
 from data import lexicon_eng, lexicon_rus
-from handlers import admin_handlers, user_handlers
+from handlers import old_user_handlers
+from handlers import admin_handlers
 
 
 async def main() -> None:
@@ -21,7 +22,7 @@ async def main() -> None:
     dp = Dispatcher(storage=storage)
 
     dp.include_router(admin_handlers.router)
-    dp.include_router(user_handlers.router)
+    dp.include_router(old_user_handlers.router)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
