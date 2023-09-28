@@ -135,33 +135,6 @@ class FSMCreateQuestions(StatesGroup):
 # =============================================================================
 
 
-@router.message(CommandStart(), StateFilter(default_state))
-async def cmd_start(message: Message) -> None:
-    """Приветствие админа."""
-    logger.info(f"Admin: {message.from_user.id} started bot")
-    keyboard = kb.create_main_menu_keyboard(is_admin=True)
-    await message.answer(
-        text="Привет, админ!",
-        reply_markup=keyboard,
-    )
-
-
-@router.message(Command(commands="help"), StateFilter(default_state))
-async def cmd_help(message: Message) -> None:
-    """Помощь админу."""
-    pass
-
-
-@router.callback_query(F.data == "main_menu", StateFilter(default_state))
-async def call_main_menu(callback: CallbackQuery) -> None:
-    """Главное меню."""
-    keyboard = kb.create_main_menu_keyboard(is_admin=True)
-    await callback.message.edit_text(
-        text="Главное меню",
-        reply_markup=keyboard,
-    )
-
-
 @router.callback_query(F.data == "tests", StateFilter(default_state))
 async def call_tests(callback: CallbackQuery) -> None:
     """Просмотр всех тестов."""

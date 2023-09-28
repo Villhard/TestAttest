@@ -36,6 +36,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from config import config
 from database.database import Question, Test, User, Answer
+from data import lexicon_eng, lexicon_rus
 from database.admin_connect import (
     get_test_id_by_question_id,
     get_count_results_by_user_id,
@@ -43,48 +44,54 @@ from database.admin_connect import (
     get_test_by_id,
 )
 
+lexicon = lexicon_rus if config.language == "rus" else lexicon_eng
+
 
 def create_main_menu_keyboard(
-    is_admin: bool,
+    is_admin: bool = False,
 ) -> InlineKeyboardMarkup:
-    """Создание главного меню."""
+    """Create main menu keyboard."""
     # todo: Добавлять меню по мере добавления новых функций
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
-        InlineKeyboardButton(text="Тесты", callback_data="tests")
+        InlineKeyboardButton(
+            text=f"{lexicon.BUTTONS['tests']}", callback_data="tests"
+        )
     )
     if is_admin:
         keyboard_builder.row(
-            InlineKeyboardButton(text="Пользователи", callback_data="users")
+            InlineKeyboardButton(
+                text=f"{lexicon.BUTTONS['users']}", callback_data="users"
+            )
         )
     return keyboard_builder.as_markup()
 
 
 def create_tests_menu_keyboard(
     tests: list[Test],
-    is_admin: bool,
+    is_admin: bool = False,
 ) -> InlineKeyboardMarkup:
-    """Создание клавиатуры."""
+    """Create tests menu keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
     for test in tests:
         keyboard_builder.row(
             InlineKeyboardButton(
                 text=(
-                    f"{'🔒' if test.is_publish else '✏️'}" f" {test.title}"
+                    f"{'🟢' if test.is_publish else '🔴'} {test.title}"
                     if is_admin
                     else f"{test.title}"
                 ),
-                callback_data=f"test_{test.id}",
+                callback_data=f"test {test.id}",
             )
         )
     if is_admin:
         keyboard_builder.row(
             InlineKeyboardButton(
-                text="Добавить тест", callback_data="add_test"
+                text=f"{lexicon.BUTTONS['add test']}", callback_data="add test"
             )
         )
     keyboard_builder.row(
-        InlineKeyboardButton(text="Назад", callback_data="main_menu")
+        InlineKeyboardButton(text=f"{lexicon.BUTTONS['back']}", callback_data="main menu")
     )
     return keyboard_builder.as_markup()
 
@@ -104,15 +111,15 @@ def create_test_menu_keyboard(
                 callback_data="test_questions",
             )
         )
-    # for question in questions:
-    #     keyboard_builder.row(
-    #         InlineKeyboardButton(
-    #             text=(
-    #                 f"{'🖼' if question.image else ''}" f" {question.text}"
-    #             ),
-    #             callback_data=f"question_{question.id}",
-    #         )
-    #     )
+        # for question in questions:
+        #     keyboard_builder.row(
+        #         InlineKeyboardButton(
+        #             text=(
+        #                 f"{'🖼' if question.image else ''}" f" {question.text}"
+        #             ),
+        #             callback_data=f"question_{question.id}",
+        #         )
+        #     )
         keyboard_builder.row(
             InlineKeyboardButton(
                 text="Добавить вопрос",
