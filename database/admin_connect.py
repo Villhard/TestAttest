@@ -239,17 +239,8 @@ def create_question(
         session.commit()
 
 
-def get_question_by_id(question_id: int) -> Question:
-    """
-    Получение вопроса по id.
-
-    Args:
-        question_id:
-            id вопроса
-
-    Returns:
-        Вопрос
-    """
+def get_question_by_id(question_id: int) -> tuple[Question, list[Answer]]:
+    """Get question and answers by question id."""
     with Session() as session:
         question = (
             session.query(Question).filter(Question.id == question_id).one()

@@ -11,6 +11,8 @@ BUTTONS = {
     "users": "Пользователи",
     "add test": "Добавить тест",
     "back": "Назад",
+    "edit question": "Редактировать вопрос",
+    "delete question": "Удалить вопрос",
 }
 
 LOGS = {
@@ -22,4 +24,5 @@ LOGS = {
     "tests": "Админ: {admin_id} перешел в меню тестов",
     "users": "Админ: {admin_id} перешел в меню пользователей",
     "test": "Админ: {admin_id} перешел в тест {test_id}",
+    "question": "Админ: {admin_id} перешел в вопрос {question_id}",
 }

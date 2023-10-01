@@ -95,3 +95,24 @@ async def call_test(callback: CallbackQuery):
         text=text,
         reply_markup=keyboard,
     )
+
+
+@router.callback_query(
+    lambda call: re.fullmatch(r"question_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_question(callback: CallbackQuery):
+    """Question menu"""
+    question_id = int(callback.data.split("_")[1])
+    logger.debug(
+        f"{lexicon.LOGS['question'].format(admin_id=callback.from_user.id, question_id=question_id)}"
+    )
+    question, answers = db.get_question_by_id(question_id=question_id)
+    keyboard = kb.create_question_menu_keyboard(
+        answers=answers,
+    )
+
+    return await callback.message.edit_text(
+        text=question.text,
+        reply_markup=keyboard,
+    )

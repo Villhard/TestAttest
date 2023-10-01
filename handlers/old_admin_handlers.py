@@ -95,62 +95,8 @@ router.message.filter(F.from_user.id.in_(config.bot.admin_ids))
 
 
 # =============================================================================
-# =========== МАШИНЫ СОСТОЯНИЙ ================================================
-# =============================================================================
-
-
-class FSMCreateTest(StatesGroup):
-    """
-    Класс состояния создания теста.
-
-    title:
-        Ввод названия теста
-    description:
-        Ввод описания теста
-    """
-
-    title = State()
-    description = State()
-
-
-class FSMCreateQuestions(StatesGroup):
-    """
-    Класс состояния создания вопросов.
-
-    text:
-        Ввод текста вопроса
-    answers:
-        Ввод текста ответов
-    image:
-        Ввод изображения вопроса
-    """
-
-    text = State()
-    answers = State()
-    image = State()
-
-
-# =============================================================================
 # =========== НАВИГАЦИЯ =======================================================
 # =============================================================================
-
-
-@router.callback_query(
-    lambda call: re.fullmatch(r"question_\d+", call.data),
-    StateFilter(default_state),
-)
-async def call_question_by_id(callback: CallbackQuery) -> None:
-    """Просмотр вопроса."""
-    question_id = int(callback.data.split("_")[1])
-    question, answers = db.get_question_by_id(question_id)
-    keyboard = kb.create_question_menu_keyboard(
-        answers=answers,
-    )
-
-    await callback.message.edit_text(
-        text=question.text,
-        reply_markup=keyboard,
-    )
 
 
 @router.callback_query(

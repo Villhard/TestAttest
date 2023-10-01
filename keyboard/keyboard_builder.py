@@ -244,7 +244,7 @@ def create_user_menu_keyboard(
 def create_question_menu_keyboard(
     answers: list[Answer],
 ) -> InlineKeyboardMarkup:
-    """Создание клавиатуры для редактирования вопроса."""
+    """Create question menu keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
     for answer in answers:
         keyboard_builder.row(
@@ -257,19 +257,19 @@ def create_question_menu_keyboard(
         )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text="Редактировать вопрос",
+            text=f"{lexicon.BUTTONS['edit question']}",
             callback_data=f"edit_question_{answers[0].question_id}",
         ),
     )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text="Удалить вопрос",
+            text=f"{lexicon.BUTTONS['delete question']}",
             callback_data=f"delete_question_{answers[0].question_id}",
         ),
     )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text="Назад",
+            text=f"{lexicon.BUTTONS['back']}",
             callback_data=(
                 f"test_{get_test_id_by_question_id(answers[0].question_id)}"
             ),

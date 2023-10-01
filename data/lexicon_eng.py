@@ -11,6 +11,8 @@ BUTTONS = {
     "users": "Users",
     "add test": "Add test",
     "back": "Back",
+    "edit question": "Edit question",
+    "delete question": "Delete question",
 }
 
 LOGS = {
@@ -22,4 +24,5 @@ LOGS = {
     "tests": "Admin: {admin_id} go to tests menu",
     "users": "Admin: {admin_id} go to users menu",
     "test": "Admin: {admin_id} got to test {test_id}",
+    "question": "Admin: {admin_id} got to question {question_id}",
 }
