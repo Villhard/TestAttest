@@ -3,7 +3,10 @@ MESSAGES = {
     "main menu": "Главное меню",
     "tests": "Список тестов",
     "users": "Список пользователей",
-    "test statistics": "\n\n<b>Статистика:</b>\nУспех/Всего: {statistics['completed']}/{statistics['total']}",
+    "test statistics": """\n\n<b>Статистика:</b>
+                Успех/Всего: {statistics['completed']}/{statistics['total']}""",
+    "users statistics": """<b>{user.name} {user.surname}</b>\n
+                Тестов пройдено: {results['completed']}/{results['total']}""",
 }
 
 BUTTONS = {
@@ -25,4 +28,5 @@ LOGS = {
     "users": "Админ: {admin_id} перешел в меню пользователей",
     "test": "Админ: {admin_id} перешел в тест {test_id}",
     "question": "Админ: {admin_id} перешел в вопрос {question_id}",
+    "user": "Админ: {admin_id} перешел в пользователь {user_id}",
 }

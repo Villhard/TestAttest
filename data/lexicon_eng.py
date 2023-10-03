@@ -3,7 +3,10 @@ MESSAGES = {
     "main menu": "Main menu",
     "tests": "List of tests",
     "users": "List of users",
-    "test statistics": "\n\n<b>Statistics:</b>\nSuccess/Total: {statistics['completed']}/{statistics['total']}",
+    "test statistics": """\n\n<b>Statistics:</b>
+                Success/Total: {statistics['completed']}/{statistics['total']}""",
+    "users statistics": """<b>{user.name} {user.surname}</b>\n
+                Tests passed: {results['completed']}/{results['total']}""",
 }
 
 BUTTONS = {
@@ -20,9 +23,10 @@ LOGS = {
     "starting bot": "Starting bot",
     # DEBUG
     "greeting admin": "Admin: {admin_id} started bot",
-    "main menu": "Admin: {admin_id} go to main menu",
-    "tests": "Admin: {admin_id} go to tests menu",
-    "users": "Admin: {admin_id} go to users menu",
+    "main menu": "Admin: {admin_id} got to main menu",
+    "tests": "Admin: {admin_id} got to tests menu",
+    "users": "Admin: {admin_id} got to users menu",
     "test": "Admin: {admin_id} got to test {test_id}",
     "question": "Admin: {admin_id} got to question {question_id}",
+    "user": "Admin: {admin_id} got to user {user_id}",
 }

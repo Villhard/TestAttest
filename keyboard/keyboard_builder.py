@@ -91,7 +91,9 @@ def create_tests_menu_keyboard(
             )
         )
     keyboard_builder.row(
-        InlineKeyboardButton(text=f"{lexicon.BUTTONS['back']}", callback_data="main menu")
+        InlineKeyboardButton(
+            text=f"{lexicon.BUTTONS['back']}", callback_data="main menu"
+        )
     )
     return keyboard_builder.as_markup()
 
@@ -213,7 +215,9 @@ def create_users_menu_keyboard(users: list[User]) -> InlineKeyboardMarkup:
             )
         )
     keyboard_builder.row(
-        InlineKeyboardButton(text=f"{lexicon.BUTTONS['back']}", callback_data="main menu")
+        InlineKeyboardButton(
+            text=f"{lexicon.BUTTONS['back']}", callback_data="main menu"
+        )
     )
     return keyboard_builder.as_markup()
 

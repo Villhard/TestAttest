@@ -94,58 +94,6 @@ router.message.filter(F.from_user.id.in_(config.bot.admin_ids))
 
 
 # =============================================================================
-# =========== НАВИГАЦИЯ =======================================================
-# =============================================================================
-
-
-@router.callback_query(
-    lambda call: re.fullmatch(r"user_\d+", call.data),
-    StateFilter(default_state),
-)
-async def call_user_by_id(callback: CallbackQuery) -> None:
-    """Просмотр пользователя."""
-    user_id = int(callback.data.split("_")[1])
-    user = db.get_user_by_id(user_id)
-    results = db.get_count_results_by_user_id(user_id)
-    keyboard = kb.create_user_menu_keyboard(user)
-
-    await callback.message.edit_text(
-        text=(
-            f"<b>{user.name} {user.surname}</b>\n\n"
-            f"Тестов пройдено: {results['completed']}/{results['total']}"
-        ),
-        reply_markup=keyboard,
-    )
-
-
-@router.callback_query(
-    lambda call: re.fullmatch(r"result_\d+", call.data),
-    StateFilter(default_state),
-)
-async def call_result_by_id(callback: CallbackQuery) -> None:
-    """Просмотр результата."""
-    result_id = int(callback.data.split("_")[1])
-    result = db.get_result_by_id(result_id)
-    test = db.get_test_by_id(result.test_id)
-    result_data = db.get_result_data_by_result(result)
-    text = f"<b>{test.title}</b>\n\n"
-    text += "\n".join(
-        [
-            f"<u>{data[0]}</u>\n<s>{data[2]}</s>\n{data[1]}\n"
-            for data in result_data
-        ]
-    )
-    keyboard = kb.create_back_button_keyboard(
-        callback_data=f"user_{result.user_id}",
-    )
-
-    await callback.message.edit_text(
-        text=text,
-        reply_markup=keyboard,
-    )
-
-
-# =============================================================================
 # =========== СОЗДАНИЕ, РЕДАКТИРОВАНИЕ И УДАЛЕНИЕ ТЕСТА И ВОПРОСОВ ============
 # =============================================================================
 
