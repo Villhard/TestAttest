@@ -1,35 +1,4 @@
 """
-Admin handlers.
-
-Машины состояний:
-    FSMCreateTest:
-        title - ввод названия теста
-        description - ввод описания теста
-    FSMCreateQuestions:
-        text - ввод текста вопроса
-        answers - ввод текста ответов
-        image - ввод изображения вопроса
-
-Навигация:
-    cmd_start:
-        Приветствие админа
-    cmd_help:
-        Помощь админу
-    call_main_menu:
-        Главное меню
-    call_tests:
-        Просмотр всех тестов
-    call_test_by_id:
-        Просмотр теста
-    call_question_by_id:
-        Просмотр вопроса
-    call_users:
-        Просмотр пользователей
-    call_user_by_id:
-        Просмотр пользователя
-    call_result_by_id:
-        Просмотр результата
-
 Создание, редактирование и удаление теста и вопросов:
     call_add_test:
         Создание теста
