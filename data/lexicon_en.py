@@ -21,6 +21,7 @@ BUTTONS = {
 LOGS = {
     # INFO
     "starting bot": "Starting bot",
+    "stopping bot": "Stopping bot",
     # DEBUG
     "greeting admin": "Admin: {admin_id} started bot",
     "main menu": "Admin: {admin_id} got to main menu",
