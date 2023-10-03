@@ -5,12 +5,9 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from loguru import logger
 
-from config import config
-from data import lexicon_en, lexicon_ru
+from config import config, lexicon
 from handlers import old_user_handlers
 from handlers import admin_handlers
-
-lexicon = lexicon_ru if config.language == "ru" else lexicon_en
 
 
 async def main() -> None:

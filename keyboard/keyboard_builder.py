@@ -34,17 +34,14 @@ from random import shuffle
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from config import config
+from config import config, lexicon
 from database.database import Question, Test, User, Answer
-from data import lexicon_en, lexicon_ru
 from database.admin_connect import (
     get_test_id_by_question_id,
     get_count_results_by_user_id,
     get_results_by_user_id,
     get_test_by_id,
 )
-
-lexicon = lexicon_ru if config.language == "ru" else lexicon_en
 
 
 def create_main_menu_keyboard(

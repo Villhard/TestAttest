@@ -14,6 +14,8 @@ from dataclasses import dataclass
 
 from environs import Env
 
+from data import lexicon_en, lexicon_ru
+
 
 @dataclass
 class BotConfig:
@@ -65,3 +67,4 @@ def load_config(path: str = None) -> Config:
 
 
 config = load_config()
+lexicon = lexicon_en if config.language == "en" else lexicon_ru
