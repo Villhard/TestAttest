@@ -24,11 +24,11 @@ async def cmd_start(message: Message):
     )
 
     keyboard = kb.create_main_menu_keyboard(is_admin=True)
-    await message.delete()
-    return await message.answer(
+    await message.answer(
         text=lexicon.MESSAGES["greeting admin"],
         reply_markup=keyboard,
     )
+    await message.delete()
 
 
 @router.callback_query(F.data == "main menu", StateFilter(default_state))
@@ -42,7 +42,7 @@ async def call_main_menu(callback: CallbackQuery):
     )
 
     keyboard = kb.create_main_menu_keyboard(is_admin=True)
-    return await callback.message.edit_text(
+    await callback.message.edit_text(
         text=lexicon.MESSAGES["main menu"],
         reply_markup=keyboard,
     )
@@ -60,7 +60,7 @@ async def call_tests(callback: CallbackQuery):
 
     tests = db.get_tests()
     keyboard = kb.create_tests_menu_keyboard(tests=tests, is_admin=True)
-    return await callback.message.edit_text(
+    await callback.message.edit_text(
         text=lexicon.MESSAGES["tests"],
         reply_markup=keyboard,
     )
@@ -78,7 +78,7 @@ async def call_users(callback: CallbackQuery):
 
     users = db.get_users()
     keyboard = kb.create_users_menu_keyboard(users=users)
-    return await callback.message.edit_text(
+    await callback.message.edit_text(
         text=lexicon.MESSAGES["users"],
         reply_markup=keyboard,
     )
@@ -109,7 +109,7 @@ async def call_test(callback: CallbackQuery):
         statistics = db.get_statistics_by_test_id(test_id=test_id)
         text += f"{lexicon.MESSAGES['test statistics'].format(statistics=statistics)}"
 
-    return await callback.message.edit_text(
+    await callback.message.edit_text(
         text=text,
         reply_markup=keyboard,
     )
@@ -134,7 +134,7 @@ async def call_question(callback: CallbackQuery):
         answers=answers,
     )
 
-    return await callback.message.edit_text(
+    await callback.message.edit_text(
         text=question.text,
         reply_markup=keyboard,
     )
@@ -158,7 +158,7 @@ async def call_user(callback: CallbackQuery):
     results = db.get_results_by_user_id(user_id=user_id)
     keyboard = kb.create_user_menu_keyboard(user=user)
 
-    return await callback.message.edit_text(
+    await callback.message.edit_text(
         text=lexicon.MESSAGES["user statistics"].format(user=user, results=results),
         reply_markup=keyboard,
     )
@@ -192,7 +192,7 @@ async def call_result(call: CallbackQuery):
         callback_data=f"user_{result.user_id}",
     )
 
-    return await call.message.edit_text(
+    await call.message.edit_text(
         text=text,
         reply_markup=keyboard,
     )
