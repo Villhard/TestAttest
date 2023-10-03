@@ -7,12 +7,12 @@ from aiogram.types import Message, CallbackQuery
 from loguru import logger
 
 from config import config
-from data import lexicon_eng, lexicon_rus
+from data import lexicon_en, lexicon_ru
 from keyboard import keyboard_builder as kb
 from database import admin_connect as db
 
 router = Router()
-lexicon = lexicon_rus if config.language == "rus" else lexicon_eng
+lexicon = lexicon_ru if config.language == "ru" else lexicon_en
 
 
 @router.message(CommandStart(), StateFilter(default_state))

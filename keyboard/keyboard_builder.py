@@ -36,7 +36,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from config import config
 from database.database import Question, Test, User, Answer
-from data import lexicon_eng, lexicon_rus
+from data import lexicon_en, lexicon_ru
 from database.admin_connect import (
     get_test_id_by_question_id,
     get_count_results_by_user_id,
@@ -44,7 +44,7 @@ from database.admin_connect import (
     get_test_by_id,
 )
 
-lexicon = lexicon_rus if config.language == "rus" else lexicon_eng
+lexicon = lexicon_ru if config.language == "ru" else lexicon_en
 
 
 def create_main_menu_keyboard(
@@ -103,7 +103,7 @@ def create_test_menu_keyboard(
     questions: list[Question],
     is_publish: bool,
 ) -> InlineKeyboardMarkup:
-    """Создание клавиатуры для меню теста."""
+    """Create test menu keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
     if not is_publish:
         keyboard_builder.row(
@@ -148,9 +148,7 @@ def create_test_menu_keyboard(
 def create_choice_answer_keyboard(
     answers: list[str],
 ) -> InlineKeyboardMarkup:
-    """
-    Создание клавиатуры для выбора правильного ответа
-    при создании вопроса."""
+    """Create choice answer keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
 
     for answer in answers:
@@ -163,7 +161,7 @@ def create_choice_answer_keyboard(
 def create_test_answers_keyboard(
     answers: list[Answer],
 ) -> InlineKeyboardMarkup:
-    """Создания клавиатуры выбора ответа для теста."""
+    """Create test answers keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
 
     shuffle(answers)
@@ -182,7 +180,7 @@ def create_confirm_keyboard(
     text_yes: str = "Да",
     text_no: str = "Нет",
 ) -> InlineKeyboardMarkup:
-    """Создание клавиатуры для подтверждения действия."""
+    """Create confirm keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
         InlineKeyboardButton(text=text_yes, callback_data=callback_yes),
@@ -192,7 +190,7 @@ def create_confirm_keyboard(
 
 
 def create_after_test_keyboard() -> InlineKeyboardMarkup:
-    """Создание клавиатуры после прохождения теста."""
+    """Create after test keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
         InlineKeyboardButton(text="Главное меню", callback_data="main_menu"),
@@ -225,7 +223,7 @@ def create_users_menu_keyboard(users: list[User]) -> InlineKeyboardMarkup:
 def create_user_menu_keyboard(
     user: User,
 ) -> InlineKeyboardMarkup:
-    """Создание клавиатуры просмотра пользователя."""
+    """Create user menu keyboard."""
     keyboard_builder = InlineKeyboardBuilder()  # todo: Добавить функционал
     results = get_results_by_user_id(user_id=user.id)
     for result in results:
@@ -286,7 +284,7 @@ def create_back_button_keyboard(
     callback_data: str,
     mgs: str = "Назад",
 ) -> InlineKeyboardMarkup:
-    """Создание клавиатуры с кнопкой назад."""
+    """Create back button keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
         InlineKeyboardButton(text=mgs, callback_data=callback_data)
