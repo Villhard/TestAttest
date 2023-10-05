@@ -67,13 +67,6 @@ router.message.filter(F.from_user.id.in_(config.bot.admin_ids))
 # =============================================================================
 
 
-@router.callback_query(F.data == "add_test", StateFilter(default_state))
-async def call_add_test(callback: CallbackQuery, state: FSMContext) -> None:
-    """Создание теста."""
-    await callback.message.edit_text(text="Введите название теста")
-    await state.set_state(FSMCreateTest.title)
-
-
 @router.callback_query(
     lambda call: re.fullmatch(r"confirm_delete_test_\d+", call.data),
     StateFilter(default_state),

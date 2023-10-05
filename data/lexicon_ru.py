@@ -7,6 +7,7 @@ MESSAGES = {
                 Успех/Всего: {statistics['completed']}/{statistics['total']}""",
     "users statistics": """<b>{user.name} {user.surname}</b>\n
                 Тестов пройдено: {results['completed']}/{results['total']}""",
+    "add test": "Введите название теста",
 }
 
 BUTTONS = {
@@ -30,4 +31,5 @@ LOGS = {
     "test": "Админ: {admin_id} перешел в тест {test_id}",
     "question": "Админ: {admin_id} перешел в вопрос {question_id}",
     "user": "Админ: {admin_id} перешел в пользователь {user_id}",
+    "add test": "Админ: {admin_id} начал создание нового теста",
 }
