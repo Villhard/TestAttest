@@ -8,6 +8,8 @@ MESSAGES = {
     "users statistics": """<b>{user.name} {user.surname}</b>\n
                 Tests passed: {results['completed']}/{results['total']}""",
     "add test": "Enter test name",
+    "confirm delete test": "Are you sure you want to delete this test?",
+    "delete test": "Test successfully deleted",
 }
 
 BUTTONS = {
@@ -17,6 +19,8 @@ BUTTONS = {
     "back": "Back",
     "edit question": "Edit question",
     "delete question": "Delete question",
+    "yes": "Yes",
+    "no": "No",
 }
 
 LOGS = {
@@ -32,4 +36,6 @@ LOGS = {
     "question": "Admin: {admin_id} got to question {question_id}",
     "user": "Admin: {admin_id} got to user {user_id}",
     "add test": "Admin: {admin_id} started creating new test",
+    "confirm delete test": "Admin: {admin_id} asked to delete test {test_id}",
+    "delete test": "Admin: {admin_id} deleted test {test_id}",
 }

@@ -1,7 +1,5 @@
 """
 Создание, редактирование и удаление теста и вопросов:
-    call_add_test:
-        Создание теста
     call_confirm_delete_test:
         Подтверждение удаления теста
     call_delete_test:
@@ -65,43 +63,6 @@ router.message.filter(F.from_user.id.in_(config.bot.admin_ids))
 # =============================================================================
 # =========== СОЗДАНИЕ, РЕДАКТИРОВАНИЕ И УДАЛЕНИЕ ТЕСТА И ВОПРОСОВ ============
 # =============================================================================
-
-
-@router.callback_query(
-    lambda call: re.fullmatch(r"confirm_delete_test_\d+", call.data),
-    StateFilter(default_state),
-)
-async def call_confirm_delete_test(callback: CallbackQuery) -> None:
-    """Подтверждение удаления теста."""
-    test_id = int(callback.data.split("_")[3])
-    keyboard = kb.create_confirm_keyboard(
-        callback_yes=f"delete_test_{test_id}",
-        callback_no=f"test_{test_id}",
-    )
-
-    await callback.message.edit_text(
-        text="Вы уверены, что хотите удалить тест?",
-        reply_markup=keyboard,
-    )
-
-
-@router.callback_query(
-    lambda call: re.fullmatch(r"delete_test_\d+", call.data),
-    StateFilter(default_state),
-)
-async def call_delete_test(callback: CallbackQuery) -> None:
-    """Удаление теста."""
-    test_id = int(callback.data.split("_")[2])
-    utils.delete_test_dir(test_id)
-    db.delete_test_by_id(test_id)
-    keyboard = kb.create_tests_menu_keyboard(
-        tests=db.get_tests(),
-        is_admin=True,
-    )
-
-    await callback.message.edit_text(
-        text="Тест успешно удален!", reply_markup=keyboard
-    )
 
 
 @router.callback_query(

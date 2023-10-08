@@ -174,8 +174,8 @@ def create_test_answers_keyboard(
 def create_confirm_keyboard(
     callback_yes: str = "yes",
     callback_no: str = "no",
-    text_yes: str = "Да",
-    text_no: str = "Нет",
+    text_yes: str = f"{lexicon.BUTTONS['yes']}",
+    text_no: str = f"{lexicon.BUTTONS['no']}",
 ) -> InlineKeyboardMarkup:
     """Create confirm keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
