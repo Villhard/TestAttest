@@ -1,6 +1,7 @@
 import re
 
 from aiogram import F, Router
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
@@ -119,5 +120,62 @@ async def call_publish_test(callback: CallbackQuery):
 
     await callback.message.edit_text(
         text=f"{lexicon.MESSAGES['publish test']}",
+        reply_markup=keyboard,
+    )
+
+
+@router.callback_query(
+    lambda call: re.fullmatch(r"edit_correct_answer_\d+_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_edit_correct_answer(callback: CallbackQuery):
+    """Edit correct answer"""
+    question_id = int(callback.data.split("_")[3])
+    answer_id = int(callback.data.split("_")[4])
+    db.change_correct_answer(question_id, answer_id)
+    question, answers = db.get_question_by_id(question_id)
+    keyboard = kb.create_question_menu_keyboard(
+        answers=answers,
+    )
+
+    # DEBUG LOG
+    logger.debug(
+        f"{lexicon.LOGS['edit correct answer'].format(admin_id=callback.from_user.id, question_id=question_id)}"
+    )
+
+    try:
+        await callback.message.edit_text(
+            text=question.text,
+            reply_markup=keyboard,
+        )
+    except TelegramBadRequest:
+        await callback.answer()
+
+
+@router.callback_query(
+    lambda call: re.fullmatch(r"delete_question_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_delete_question(callback: CallbackQuery):
+    """Delete question"""
+    question_id = int(callback.data.split("_")[2])
+    test = db.get_test_by_question_id(question_id)
+    db.delete_question_by_id(question_id)
+    keyboard = kb.create_test_menu_keyboard(
+        test=test,
+        questions=db.get_questions_by_test_id(test.id),
+        is_publish=test.is_publish,
+    )
+
+    # DEBUG LOG
+    logger.debug(
+        f"{lexicon.LOGS['delete question'].format(admin_id=callback.from_user.id, question_id=question_id)}"
+    )
+
+    await callback.answer(
+        text=f"{lexicon.MESSAGES['delete question']}",
+    )
+    await callback.message.edit_text(
+        text=f"<b>{test.title}</b>\n{test.description}",
         reply_markup=keyboard,
     )

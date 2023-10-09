@@ -1,18 +1,4 @@
 """
-Создание, редактирование и удаление теста и вопросов:
-    call_confirm_delete_test:
-        Подтверждение удаления теста
-    call_delete_test:
-        Удаление теста
-    call_confirm_publish_test:
-        Подтверждение публикации теста
-    call_publish_test:
-        Публикация теста
-    call_edit_correct_answer:
-        Редактирование правильного ответа
-    call_delete_question:
-        Удаление вопроса
-
 Процесс создания теста:
     process_input_title:
         Создание теста. Получение названия теста
@@ -36,7 +22,6 @@
 import re
 
 from aiogram import F, Router
-from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
@@ -50,66 +35,14 @@ from aiogram.types import (
 
 from config import config
 from database import admin_connect as db
+from handlers.admin_handlers.states import FSMCreateTest, FSMCreateQuestions
 from keyboard import keyboard_builder as kb
 from utils import admin_utils as utils
-from handlers.admin_handlers.states import FSMCreateTest, FSMCreateQuestions
 
 router = Router()
 
 router.callback_query.filter(F.from_user.id.in_(config.bot.admin_ids))
 router.message.filter(F.from_user.id.in_(config.bot.admin_ids))
-
-
-# =============================================================================
-# =========== СОЗДАНИЕ, РЕДАКТИРОВАНИЕ И УДАЛЕНИЕ ТЕСТА И ВОПРОСОВ ============
-# =============================================================================
-
-
-@router.callback_query(
-    lambda call: re.fullmatch(r"edit_correct_answer_\d+_\d+", call.data),
-    StateFilter(default_state),
-)
-async def call_edit_correct_answer(callback: CallbackQuery) -> None:
-    """Редактирование правильного ответа."""
-    question_id = int(callback.data.split("_")[3])
-    answer_id = int(callback.data.split("_")[4])
-    db.change_correct_answer(question_id, answer_id)
-    question, answers = db.get_question_by_id(question_id)
-    keyboard = kb.create_question_menu_keyboard(
-        answers=answers,
-    )
-
-    try:
-        await callback.message.edit_text(
-            text=question.text,
-            reply_markup=keyboard,
-        )
-    except TelegramBadRequest:
-        await callback.answer()
-
-
-@router.callback_query(
-    lambda call: re.fullmatch(r"delete_question_\d+", call.data),
-    StateFilter(default_state),
-)
-async def call_delete_question(callback: CallbackQuery) -> None:
-    """Удаление вопроса."""
-    question_id = int(callback.data.split("_")[2])
-    test = db.get_test_by_question_id(question_id)
-    db.delete_question_by_id(question_id)
-    keyboard = kb.create_test_menu_keyboard(
-        test=test,
-        questions=db.get_questions_by_test_id(test.id),
-        is_publish=test.is_publish,
-    )
-
-    await callback.answer(
-        text="Вопрос успешно удален!",
-    )
-    await callback.message.edit_text(
-        text=f"<b>{test.title}</b>\n{test.description}",
-        reply_markup=keyboard,
-    )
 
 
 # =============================================================================
