@@ -10,6 +10,8 @@ MESSAGES = {
     "add test": "Enter test name",
     "confirm delete test": "Are you sure you want to delete this test?",
     "delete test": "Test successfully deleted",
+    "confirm publish test": "Are you sure you want to publish this test?",
+    "publish test": "Test published",
 }
 
 BUTTONS = {
@@ -38,4 +40,6 @@ LOGS = {
     "add test": "Admin: {admin_id} started creating new test",
     "confirm delete test": "Admin: {admin_id} asked to delete test {test_id}",
     "delete test": "Admin: {admin_id} deleted test {test_id}",
+    "confirm publish test": "Admin: {admin_id} asked to publish test {test_id}",
+    "publish test": "Admin: {admin_id} published test {test_id}",
 }

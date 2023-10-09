@@ -66,42 +66,6 @@ router.message.filter(F.from_user.id.in_(config.bot.admin_ids))
 
 
 @router.callback_query(
-    lambda call: re.fullmatch(r"confirm_publish_test_\d+", call.data),
-    StateFilter(default_state),
-)
-async def call_confirm_publish_test(callback: CallbackQuery) -> None:
-    """Подтверждение публикации теста."""
-    test_id = int(callback.data.split("_")[3])
-    keyboard = kb.create_confirm_keyboard(
-        callback_yes=f"publish_test_{test_id}",
-        callback_no=f"test_{test_id}",
-    )
-
-    await callback.message.edit_text(
-        text="Вы уверены, что хотите опубликовать тест?",
-        reply_markup=keyboard,
-    )
-
-
-@router.callback_query(
-    lambda call: re.fullmatch(r"publish_test_\d+", call.data),
-    StateFilter(default_state),
-)
-async def call_publish_test(callback: CallbackQuery) -> None:
-    """Публикация теста."""
-    test_id = int(callback.data.split("_")[2])
-    db.publish_test_by_id(test_id)
-    keyboard = kb.create_tests_menu_keyboard(
-        tests=db.get_tests(),
-        is_admin=True,
-    )
-
-    await callback.message.edit_text(
-        text="Тест успешно опубликован!", reply_markup=keyboard
-    )
-
-
-@router.callback_query(
     lambda call: re.fullmatch(r"edit_correct_answer_\d+_\d+", call.data),
     StateFilter(default_state),
 )

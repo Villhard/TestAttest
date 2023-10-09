@@ -10,6 +10,8 @@ MESSAGES = {
     "add test": "Введите название теста",
     "confirm delete test": "Вы уверены, что хотите удалить этот тест?",
     "delete test": "Тест успешно удален",
+    "confirm publish test": "Вы уверены, что хотите опубликовать этот тест?",
+    "publish test": "Тест опубликован",
 }
 
 BUTTONS = {
@@ -38,4 +40,6 @@ LOGS = {
     "add test": "Админ: {admin_id} начал создание нового теста",
     "confirm delete test": "Админ: {admin_id} запросил удалить этот тест {test_id}",
     "delete test": "Админ: {admin_id} удалил тест {test_id}",
+    "confirm publish test": "Админ: {admin_id} запросил опубликовать этот тест {test_id}",
+    "publish test": "Админ: {admin_id} опубликовал тест {test_id}",
 }
