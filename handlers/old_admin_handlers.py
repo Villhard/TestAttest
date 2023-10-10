@@ -46,37 +46,6 @@ router.message.filter(F.from_user.id.in_(config.bot.admin_ids))
 
 
 # =============================================================================
-# =========== ПРОЦЕСС СОЗДАНИЯ ТЕСТА ==========================================
-# =============================================================================
-
-
-@router.message(F.text, StateFilter(FSMCreateTest.title))
-async def process_input_title(message: Message, state: FSMContext) -> None:
-    """Создание теста. Получение названия теста."""
-    await state.update_data(title=message.text)
-    await message.answer(text="Введите описание теста")
-    await state.set_state(FSMCreateTest.description)
-
-
-@router.message(F.text, StateFilter(FSMCreateTest.description))
-async def process_input_description(
-    message: Message, state: FSMContext
-) -> None:
-    """Создание теста. Получение описания теста."""
-    await state.update_data(description=message.text)
-    test = await state.get_data()
-    db.create_test(test["title"], test["description"])
-    utils.create_test_dir(db.get_tests()[0].id)
-    keyboard = kb.create_tests_menu_keyboard(
-        tests=db.get_tests(),
-        is_admin=True,
-    )
-    await message.answer(text="Тест успешно создан!", reply_markup=keyboard)
-    await state.clear()
-    await state.set_state(default_state)
-
-
-# =============================================================================
 # =========== ПРОЦЕСС СОЗДАНИЯ ВОПРОСА ========================================
 # =============================================================================
 

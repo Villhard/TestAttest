@@ -85,12 +85,12 @@ async def call_users(callback: CallbackQuery):
 
 
 @router.callback_query(
-    lambda call: re.fullmatch(r"test_\d+", call.data),
+    lambda call: re.fullmatch(r"test \d+", call.data),
     StateFilter(default_state),
 )
 async def call_test(callback: CallbackQuery):
     """Test menu."""
-    test_id = int(callback.data.split("_")[1])
+    test_id = int(callback.data.split()[1])
     admin_id = callback.from_user.id
 
     # DEBUG LOG

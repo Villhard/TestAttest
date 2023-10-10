@@ -5,7 +5,7 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, Message
 from loguru import logger
 
 from config import lexicon
@@ -17,7 +17,7 @@ from utils import admin_utils as utils
 router = Router()
 
 
-@router.callback_query(F.data == "add_test", StateFilter(default_state))
+@router.callback_query(F.data == "add test", StateFilter(default_state))
 async def call_add_test(callback: CallbackQuery, state: FSMContext):
     """Start create test"""
 
@@ -179,3 +179,45 @@ async def call_delete_question(callback: CallbackQuery):
         text=f"<b>{test.title}</b>\n{test.description}",
         reply_markup=keyboard,
     )
+
+
+# CREATE TEST
+
+
+@router.message(F.text, StateFilter(FSMCreateTest.title))
+async def process_input_title(message: Message, state: FSMContext):
+    """Create test. Test title."""
+    await state.update_data(title=message.text)
+
+    # DEBUG LOG
+    logger.debug(
+        f"{lexicon.LOGS['add test title'].format(admin_id=message.from_user.id, title=message.text)}"
+    )
+
+    await message.answer(text=f"{lexicon.MESSAGES['add test description']}")
+    await state.set_state(FSMCreateTest.description)
+
+
+@router.message(F.text, StateFilter(FSMCreateTest.description))
+async def process_input_description(message: Message, state: FSMContext):
+    """Create test. Test description."""
+    await state.update_data(description=message.text)
+    test = await state.get_data()
+
+    # DEBUG LOG
+    logger.debug(
+        f"{lexicon.LOGS['add test description'].format(admin_id=message.from_user.id, title=test['title'], description=test['description'])}"
+    )
+
+    db.create_test(test["title"], test["description"])
+    utils.create_test_dir(db.get_tests()[0].id)
+    keyboard = kb.create_tests_menu_keyboard(
+        tests=db.get_tests(),
+        is_admin=True,
+    )
+    await message.answer(
+        text=f"{lexicon.MESSAGES['success create test']}",
+        reply_markup=keyboard,
+    )
+    await state.clear()
+    await state.set_state(default_state)

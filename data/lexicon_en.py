@@ -8,11 +8,13 @@ MESSAGES = {
     "users statistics": """<b>{user.name} {user.surname}</b>\n
                 Tests passed: {results['completed']}/{results['total']}""",
     "add test": "Enter test name",
+    "add test description": "Enter test description",
     "confirm delete test": "Are you sure you want to delete this test?",
     "delete test": "Test successfully deleted",
     "confirm publish test": "Are you sure you want to publish this test?",
     "publish test": "Test published",
     "delete question": "Question successfully deleted",
+    "success create test": "Test successfully created!",
 }
 
 BUTTONS = {
@@ -45,4 +47,6 @@ LOGS = {
     "publish test": "Admin: {admin_id} published test {test_id}",
     "edit correct answer": "Admin: {admin_id} edited correct answer on question {question_id}",
     "delete question": "Admin: {admin_id} deleted question {question_id}",
+    "add test title": "Admin: {admin_id} is creating test {title}",
+    "add test description": "Admin: {admin_id} is creating description {description} for test {title}",
 }
