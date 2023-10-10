@@ -15,6 +15,12 @@ MESSAGES = {
     "publish test": "Тест опубликован",
     "delete question": "Вопрос успешно удален",
     "success create test": "Тест успешно создан!",
+    "add question": "Введите текст вопроса",
+    "add question answer 1": "Введите текст ответа номер 1",
+    "add question answer n": "Введите текст ответа номер {n}",
+    "confirm correct answer": "Выберите правильный ответ",
+    "add question image": "Загрузите изображение или нажмите пропустить",
+    "question created": "Вопрос успешно создан",
 }
 
 BUTTONS = {
@@ -26,6 +32,7 @@ BUTTONS = {
     "delete question": "Удалить вопрос",
     "yes": "Да",
     "no": "Нет",
+    "skip": "Пропустить",
 }
 
 LOGS = {
@@ -49,4 +56,5 @@ LOGS = {
     "delete question": "Админ: {admin_id} удалил вопрос {question_id}",
     "add test title": "Админ: {admin_id} создает тест {title}",
     "add test description": "Админ: {admin_id} создает описание {description} для теста {title}",
+    "add question": "Админ: {admin_id} начал создание нового вопроса в тесте {test_id}",
 }

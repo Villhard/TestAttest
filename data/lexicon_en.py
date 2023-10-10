@@ -15,6 +15,12 @@ MESSAGES = {
     "publish test": "Test published",
     "delete question": "Question successfully deleted",
     "success create test": "Test successfully created!",
+    "add question": "Enter question text",
+    "add question answer 1": "Enter answer text 1",
+    "add-question answer n": "Enter answer text {n}",
+    "confirm correct answer": "Select correct answer",
+    "add question image": "Upload image or skip it",
+    "question created": "Question successfully created",
 }
 
 BUTTONS = {
@@ -26,6 +32,7 @@ BUTTONS = {
     "delete question": "Delete question",
     "yes": "Yes",
     "no": "No",
+    "skip": "Skip",
 }
 
 LOGS = {
@@ -49,4 +56,5 @@ LOGS = {
     "delete question": "Admin: {admin_id} deleted question {question_id}",
     "add test title": "Admin: {admin_id} is creating test {title}",
     "add test description": "Admin: {admin_id} is creating description {description} for test {title}",
+    "add question": "Admin: {admin_id} started creating new question in test {test_id}",
 }
