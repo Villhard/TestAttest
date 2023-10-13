@@ -1,36 +1,3 @@
-"""
-User handlers.
-
-Машины состояний:
-    FSMUserInputName:
-        fullname - ввод имени и фамилии пользователя
-    FSMTesting:
-        testing - прохождение теста
-
-Навигация:
-    cmd_start:
-        Приветствие пользователя или запрос имени и фамилии
-    cmd_help:
-        Помощь пользователю
-    call_main_menu:
-        Переход к главному меню
-    call_tests:
-        Переход к списку тестов
-    call_test:
-        Переход к тесту
-
-Процесс создания пользователя:
-    process_input_name:
-        Получение имени и фамилии пользователя
-    process_incorrect_input_name:
-        Обработка некорректного ввода имени и фамилии
-
-Процесс прохождения теста:
-    call_start_test:
-        Начало теста
-    call_answering:
-        Процесс прохождения теста
-"""
 import re
 
 from aiogram import F, Router
@@ -46,67 +13,9 @@ from keyboard import keyboard_builder as kb
 
 router = Router()
 
-
-# =============================================================================
-# =========== МАШИНЫ СОСТОЯНИЙ ================================================
-# =============================================================================
-
-
-class FSMUserInputName(StatesGroup):
-    """Класс состояния ввода имени пользователя."""
-
-    fullname = State()
-
-
-class FSMTesting(StatesGroup):
-    """Класс состояния прохождения теста."""
-
-    testing = State()
-
-
 # =============================================================================
 # =========== НАВИГАЦИЯ =======================================================
 # =============================================================================
-
-
-@router.message(CommandStart(), StateFilter(default_state))
-async def cmd_start(message: Message, state: FSMContext) -> None:
-    """Приветствие пользователя или запрос имени и фамилии."""
-    user = db.get_user(message.from_user.id)
-    if user:
-        keyboard = kb.create_main_menu_keyboard(
-            is_admin=False,
-        )
-        await message.answer(
-            text=f"Здравствуйте, {user.name}!",
-            reply_markup=keyboard,
-        )
-    else:
-        await message.answer(
-            text=(
-                "Добро пожаловать в бота для тестирования!\n\n"
-                "Введите ваше имя и фалимию"
-            )
-        )
-        await state.set_state(FSMUserInputName.fullname)
-
-
-@router.message(Command(commands="help"), StateFilter(default_state))
-async def cmd_help(message: Message) -> None:
-    """Помощь пользователю."""
-    pass
-
-
-@router.callback_query(F.data == "main_menu", StateFilter(default_state))
-async def call_main_menu(callback: CallbackQuery) -> None:
-    """Переход к главному меню."""
-    keyboard = kb.create_main_menu_keyboard(
-        is_admin=False,
-    )
-    await callback.message.edit_text(
-        text="Главное меню",
-        reply_markup=keyboard,
-    )
 
 
 @router.callback_query(F.data == "tests", StateFilter(default_state))

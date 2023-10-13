@@ -3,10 +3,14 @@ MESSAGES = {
     "main menu": "Main menu",
     "tests": "List of tests",
     "users": "List of users",
-    "test statistics": """\n\n<b>Statistics:</b>
-                Success/Total: {statistics['completed']}/{statistics['total']}""",
-    "users statistics": """<b>{user.name} {user.surname}</b>\n
-                Tests passed: {results['completed']}/{results['total']}""",
+    "test statistics": (
+        """\n\n<b>Statistics:</b>
+        Success/Total: {statistics['completed']}/{statistics['total']}"""
+    ),
+    "users statistics": (
+        """<b>{user.name} {user.surname}</b>\n
+        Tests passed: {results['completed']}/{results['total']}"""
+    ),
     "add test": "Enter test name",
     "add test description": "Enter test description",
     "confirm delete test": "Are you sure you want to delete this test?",
@@ -21,6 +25,11 @@ MESSAGES = {
     "confirm correct answer": "Select correct answer",
     "add question image": "Upload image or skip it",
     "question created": "Question successfully created",
+    "greeting user": "Hello, {name}!",
+    "greeting stranger": (
+        """Welcome to the bot for testing!
+        Enter your name and surname"""
+    )
 }
 
 BUTTONS = {

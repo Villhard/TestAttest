@@ -3,10 +3,14 @@ MESSAGES = {
     "main menu": "Главное меню",
     "tests": "Список тестов",
     "users": "Список пользователей",
-    "test statistics": """\n\n<b>Статистика:</b>
-                Успех/Всего: {statistics['completed']}/{statistics['total']}""",
-    "users statistics": """<b>{user.name} {user.surname}</b>\n
-                Тестов пройдено: {results['completed']}/{results['total']}""",
+    "test statistics": (
+        """\n\n<b>Статистика:</b>
+        Успех/Всего: {statistics['completed']}/{statistics['total']}"""
+    ),
+    "users statistics": (
+        """<b>{user.name} {user.surname}</b>\n
+        Тестов пройдено: {results['completed']}/{results['total']}"""
+    ),
     "add test": "Введите название теста",
     "add test description": "Введите описание теста",
     "confirm delete test": "Вы уверены, что хотите удалить этот тест?",
@@ -21,6 +25,11 @@ MESSAGES = {
     "confirm correct answer": "Выберите правильный ответ",
     "add question image": "Загрузите изображение или нажмите пропустить",
     "question created": "Вопрос успешно создан",
+    "greeting user": "Привет, {name}!",
+    "greeting stranger": (
+        """Добро пожаловать в бота для тестирования!
+        Введите ваше имя и фамилию"""
+    ),
 }
 
 BUTTONS = {
