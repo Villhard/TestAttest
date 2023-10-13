@@ -6,8 +6,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from loguru import logger
 
 from config import config, lexicon
-from handlers import old_user_handlers
-from handlers import admin_handlers
+from handlers import admin_handlers, user_handlers
 
 
 async def main() -> None:
@@ -18,13 +17,13 @@ async def main() -> None:
     dp = Dispatcher(storage=storage)
 
     dp.include_router(admin_handlers.router)
-    dp.include_router(old_user_handlers.router)
+    dp.include_router(user_handlers.router)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
-    logger.info(f"{lexicon.LOGS['starting bot']}")
+    logger.info(lexicon.LOGS['starting bot'])
     asyncio.run(main())
-    logger.info(f"{lexicon.LOGS['stopping bot']}")
+    logger.info(lexicon.LOGS['stopping bot'])

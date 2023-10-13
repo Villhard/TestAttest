@@ -44,6 +44,19 @@ MESSAGES = {
         \nTry again
         """
     ),
+    "finish test success": (
+        """
+        Test passed!
+        Your score: {score} points.
+        """
+    ),
+    "finish test fail": (
+        """
+        Test failed!
+        Your score: {score} points.
+        \nTry again.
+        """
+    ),
 }
 
 BUTTONS = {

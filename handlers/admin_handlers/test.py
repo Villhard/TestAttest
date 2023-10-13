@@ -23,10 +23,10 @@ async def call_add_test(callback: CallbackQuery, state: FSMContext):
 
     # DEBUG LOG
     logger.debug(
-        f"{lexicon.LOGS['add test'].format(admin_id=callback.from_user.id)}"
+        lexicon.LOGS['add test'].format(admin_id=callback.from_user.id)
     )
 
-    await callback.message.edit_text(text=f"{lexicon.MESSAGES['add test']}")
+    await callback.message.edit_text(text=lexicon.MESSAGES['add test'])
     await state.set_state(FSMCreateTest.title)
 
 
@@ -44,11 +44,11 @@ async def call_confirm_delete_test(callback: CallbackQuery):
 
     # DEBUG LOG
     logger.debug(
-        f"{lexicon.LOGS['confirm delete test'].format(admin_id=callback.from_user.id, test_id=test_id)}"
+        lexicon.LOGS['confirm delete test'].format(admin_id=callback.from_user.id, test_id=test_id)
     )
 
     await callback.message.edit_text(
-        text=f"{lexicon.MESSAGES['confirm delete test']}",
+        text=lexicon.MESSAGES['confirm delete test'],
         reply_markup=keyboard,
     )
 
@@ -69,11 +69,11 @@ async def call_delete_test(callback: CallbackQuery):
 
     # DEBUG LOG
     logger.debug(
-        f"{lexicon.LOGS['delete test'].format(admin_id=callback.from_user.id, test_id=test_id)}"
+        lexicon.LOGS['delete test'].format(admin_id=callback.from_user.id, test_id=test_id)
     )
 
     await callback.message.edit_text(
-        text=f"{lexicon.MESSAGES['delete test']}", reply_markup=keyboard
+        text=lexicon.MESSAGES['delete test'], reply_markup=keyboard
     )
 
 
@@ -91,11 +91,11 @@ async def call_confirm_publish_test(callback: CallbackQuery):
 
     # DEBUG LOG
     logger.debug(
-        f"{lexicon.LOGS['confirm publish test'].format(admin_id=callback.from_user.id, test_id=test_id)}"
+        lexicon.LOGS['confirm publish test'].format(admin_id=callback.from_user.id, test_id=test_id)
     )
 
     await callback.message.edit_text(
-        text=f"{lexicon.MESSAGES['confirm publish test']}",
+        text=lexicon.MESSAGES['confirm publish test'],
         reply_markup=keyboard,
     )
 
@@ -115,11 +115,11 @@ async def call_publish_test(callback: CallbackQuery):
 
     # DEBUG LOG
     logger.debug(
-        f"{lexicon.LOGS['publish test'].format(admin_id=callback.from_user.id, test_id=test_id)}"
+        lexicon.LOGS['publish test'].format(admin_id=callback.from_user.id, test_id=test_id)
     )
 
     await callback.message.edit_text(
-        text=f"{lexicon.MESSAGES['publish test']}",
+        text=lexicon.MESSAGES['publish test'],
         reply_markup=keyboard,
     )
 
@@ -140,7 +140,7 @@ async def call_edit_correct_answer(callback: CallbackQuery):
 
     # DEBUG LOG
     logger.debug(
-        f"{lexicon.LOGS['edit correct answer'].format(admin_id=callback.from_user.id, question_id=question_id)}"
+        lexicon.LOGS['edit correct answer'].format(admin_id=callback.from_user.id, question_id=question_id)
     )
 
     try:
@@ -169,11 +169,11 @@ async def call_delete_question(callback: CallbackQuery):
 
     # DEBUG LOG
     logger.debug(
-        f"{lexicon.LOGS['delete question'].format(admin_id=callback.from_user.id, question_id=question_id)}"
+        lexicon.LOGS['delete question'].format(admin_id=callback.from_user.id, question_id=question_id)
     )
 
     await callback.answer(
-        text=f"{lexicon.MESSAGES['delete question']}",
+        text=lexicon.MESSAGES['delete question'],
     )
     await callback.message.edit_text(
         text=f"<b>{test.title}</b>\n{test.description}",
@@ -191,10 +191,10 @@ async def process_input_title(message: Message, state: FSMContext):
 
     # DEBUG LOG
     logger.debug(
-        f"{lexicon.LOGS['add test title'].format(admin_id=message.from_user.id, title=message.text)}"
+        lexicon.LOGS['add test title'].format(admin_id=message.from_user.id, title=message.text)
     )
 
-    await message.answer(text=f"{lexicon.MESSAGES['add test description']}")
+    await message.answer(text=lexicon.MESSAGES['add test description'])
     await state.set_state(FSMCreateTest.description)
 
 
@@ -206,7 +206,9 @@ async def process_input_description(message: Message, state: FSMContext):
 
     # DEBUG LOG
     logger.debug(
-        f"{lexicon.LOGS['add test description'].format(admin_id=message.from_user.id, title=test['title'], description=test['description'])}"
+        lexicon.LOGS['add test description'].format(admin_id=message.from_user.id,
+                                                    title=test['title'],
+                                                    description=test['description'])
     )
 
     db.create_test(test["title"], test["description"])
@@ -216,7 +218,7 @@ async def process_input_description(message: Message, state: FSMContext):
         is_admin=True,
     )
     await message.answer(
-        text=f"{lexicon.MESSAGES['success create test']}",
+        text=lexicon.MESSAGES['success create test'],
         reply_markup=keyboard,
     )
     await state.clear()

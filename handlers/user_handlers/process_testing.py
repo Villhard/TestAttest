@@ -1,22 +1,17 @@
 import re
 
-from aiogram import F, Router
-from aiogram.filters import Command, CommandStart, StateFilter
-from aiogram.filters.state import State, StatesGroup
+from aiogram import Router, F
+from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import default_state
-from aiogram.types import CallbackQuery, FSInputFile, Message
+from aiogram.types import CallbackQuery, FSInputFile
 
-from config import config
+from handlers.user_handlers.states import FSMTesting
 from database import user_connect as db
 from keyboard import keyboard_builder as kb
+from config import lexicon, config
 
 router = Router()
-
-
-# =============================================================================
-# =========== ПРОЦЕСС ПРОХОЖДЕНИЯ ТЕСТА =======================================
-# =============================================================================
 
 
 @router.callback_query(
@@ -26,8 +21,8 @@ router = Router()
 async def call_start_test(
     callback: CallbackQuery,
     state: FSMContext,
-) -> None:
-    """Начало теста."""
+):
+    """Start test"""
     await state.set_state(FSMTesting.testing)
     test_id = int(callback.data.split("_")[2])
     await state.update_data(test_id=test_id)
@@ -58,7 +53,7 @@ async def call_start_test(
 
 @router.callback_query(F.data, StateFilter(FSMTesting.testing))
 async def call_answering(callback: CallbackQuery, state: FSMContext):
-    """Процесс прохождения теста."""
+    """Process testing"""
     data = await state.get_data()
     result = data["result"]
     answer = db.get_answer_by_id(callback.data)
@@ -100,10 +95,9 @@ async def call_answering(callback: CallbackQuery, state: FSMContext):
         keyboard = kb.create_after_test_keyboard()
         await callback.message.answer(
             text=(
-                f"Тест пройден!\nВы набрали: {score} баллов"
+                lexicon.MESSAGES["finish test success"].format(score=score)
                 if score >= config.pass_score
-                else f"Тест не пройден!\nВы набрали: {score} баллов\n\n"
-                "Попробуйте еще раз"
+                else lexicon.MESSAGES["finish test fail"].format(score=score)
             ),
             reply_markup=keyboard,
         )

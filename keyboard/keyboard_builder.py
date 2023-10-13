@@ -52,13 +52,13 @@ def create_main_menu_keyboard(
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
         InlineKeyboardButton(
-            text=f"{lexicon.BUTTONS['tests']}", callback_data="tests"
+            text=lexicon.BUTTONS['tests'], callback_data="tests"
         )
     )
     if is_admin:
         keyboard_builder.row(
             InlineKeyboardButton(
-                text=f"{lexicon.BUTTONS['users']}", callback_data="users"
+                text=lexicon.BUTTONS['users'], callback_data="users"
             )
         )
     return keyboard_builder.as_markup()
@@ -84,12 +84,12 @@ def create_tests_menu_keyboard(
     if is_admin:
         keyboard_builder.row(
             InlineKeyboardButton(
-                text=f"{lexicon.BUTTONS['add test']}", callback_data="add test"
+                text=lexicon.BUTTONS['add test'], callback_data="add test"
             )
         )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text=f"{lexicon.BUTTONS['back']}", callback_data="main menu"
+            text=lexicon.BUTTONS['back'], callback_data="main menu"
         )
     )
     return keyboard_builder.as_markup()
@@ -174,8 +174,8 @@ def create_test_answers_keyboard(
 def create_confirm_keyboard(
     callback_yes: str = "yes",
     callback_no: str = "no",
-    text_yes: str = f"{lexicon.BUTTONS['yes']}",
-    text_no: str = f"{lexicon.BUTTONS['no']}",
+    text_yes: str = lexicon.BUTTONS['yes'],
+    text_no: str = lexicon.BUTTONS['no'],
 ) -> InlineKeyboardMarkup:
     """Create confirm keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
@@ -211,7 +211,7 @@ def create_users_menu_keyboard(users: list[User]) -> InlineKeyboardMarkup:
         )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text=f"{lexicon.BUTTONS['back']}", callback_data="main menu"
+            text=lexicon.BUTTONS['back'], callback_data="main menu"
         )
     )
     return keyboard_builder.as_markup()
@@ -256,19 +256,19 @@ def create_question_menu_keyboard(
         )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text=f"{lexicon.BUTTONS['edit question']}",
+            text=lexicon.BUTTONS['edit question'],
             callback_data=f"edit_question_{answers[0].question_id}",
         ),
     )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text=f"{lexicon.BUTTONS['delete question']}",
+            text=lexicon.BUTTONS['delete question'],
             callback_data=f"delete_question_{answers[0].question_id}",
         ),
     )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text=f"{lexicon.BUTTONS['back']}",
+            text=lexicon.BUTTONS['back'],
             callback_data=(
                 f"test_{get_test_id_by_question_id(answers[0].question_id)}"
             ),
