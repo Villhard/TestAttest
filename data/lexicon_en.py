@@ -4,12 +4,16 @@ MESSAGES = {
     "tests": "List of tests",
     "users": "List of users",
     "test statistics": (
-        """\n\n<b>Statistics:</b>
-        Success/Total: {statistics['completed']}/{statistics['total']}"""
+        """
+        \n\n<b>Statistics:</b>
+        Success/Total: {statistics['completed']}/{statistics['total']}
+        """
     ),
     "users statistics": (
-        """<b>{user.name} {user.surname}</b>\n
-        Tests passed: {results['completed']}/{results['total']}"""
+        """
+        <b>{user.name} {user.surname}</b>\n
+        Tests passed: {results['completed']}/{results['total']}
+        """
     ),
     "add test": "Enter test name",
     "add test description": "Enter test description",
@@ -27,9 +31,19 @@ MESSAGES = {
     "question created": "Question successfully created",
     "greeting user": "Hello, {name}!",
     "greeting stranger": (
-        """Welcome to the bot for testing!
-        Enter your name and surname"""
-    )
+        """
+        Welcome to the bot for testing!
+        Enter your name and surname
+        """
+    ),
+    "incorrect input": (
+        """
+        Incorrect input!
+        Your message should contain
+        name and surname, separated by a space.
+        \nTry again
+        """
+    ),
 }
 
 BUTTONS = {
@@ -42,6 +56,8 @@ BUTTONS = {
     "yes": "Yes",
     "no": "No",
     "skip": "Skip",
+    "test yes": "Start",
+    "test no": "Back",
 }
 
 LOGS = {

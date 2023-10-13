@@ -4,12 +4,16 @@ MESSAGES = {
     "tests": "Список тестов",
     "users": "Список пользователей",
     "test statistics": (
-        """\n\n<b>Статистика:</b>
-        Успех/Всего: {statistics['completed']}/{statistics['total']}"""
+        """
+        \n\n<b>Статистика:</b>
+        Успех/Всего: {statistics['completed']}/{statistics['total']}
+        """
     ),
     "users statistics": (
-        """<b>{user.name} {user.surname}</b>\n
-        Тестов пройдено: {results['completed']}/{results['total']}"""
+        """
+        <b>{user.name} {user.surname}</b>\n
+        Тестов пройдено: {results['completed']}/{results['total']}
+        """
     ),
     "add test": "Введите название теста",
     "add test description": "Введите описание теста",
@@ -27,8 +31,18 @@ MESSAGES = {
     "question created": "Вопрос успешно создан",
     "greeting user": "Привет, {name}!",
     "greeting stranger": (
-        """Добро пожаловать в бота для тестирования!
-        Введите ваше имя и фамилию"""
+        """
+        Добро пожаловать в бота для тестирования!
+        Введите ваше имя и фамилию
+        """
+    ),
+    "incorrect input": (
+        """
+        Некорректный ввод!
+        Ваше сообщение должно содержать
+        имя и фамилию, разделенные пробелом.
+        \nПопробуйте еще раз
+        """
     ),
 }
 
@@ -42,6 +56,8 @@ BUTTONS = {
     "yes": "Да",
     "no": "Нет",
     "skip": "Пропустить",
+    "test yes": "Начать",
+    "test no": "Назад",
 }
 
 LOGS = {
