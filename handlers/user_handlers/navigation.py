@@ -8,8 +8,8 @@ from aiogram.types import Message, CallbackQuery
 
 from config import lexicon
 from database import user_connect as db
+from handlers.user_handlers.states import FSMUserInputName
 from keyboard import keyboard_builder as kb
-from states import FSMUserInputName
 
 router = Router()
 

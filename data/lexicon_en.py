@@ -4,16 +4,12 @@ MESSAGES = {
     "tests": "List of tests",
     "users": "List of users",
     "test statistics": (
-        """
-        \n\n<b>Statistics:</b>
-        Success/Total: {statistics['completed']}/{statistics['total']}
-        """
+        "\n\n<b>Statistics:</b>\n\n"
+        "Success/Total: {completed}/{total}"
     ),
     "users statistics": (
-        """
-        <b>{user.name} {user.surname}</b>\n
-        Tests passed: {results['completed']}/{results['total']}
-        """
+        "<b>{user.name} {user.surname}</b>\n\n"
+        "Tests passed: {results['completed']}/{results['total']}"
     ),
     "add test": "Enter test name",
     "add test description": "Enter test description",
@@ -25,37 +21,29 @@ MESSAGES = {
     "success create test": "Test successfully created!",
     "add question": "Enter question text",
     "add question answer 1": "Enter answer text 1",
-    "add-question answer n": "Enter answer text {n}",
+    "add question answer n": "Enter answer text {n}",
     "confirm correct answer": "Select correct answer",
     "add question image": "Upload image or skip it",
     "question created": "Question successfully created",
     "greeting user": "Hello, {name}!",
     "greeting stranger": (
-        """
-        Welcome to the bot for testing!
-        Enter your name and surname
-        """
+        "Welcome to the bot for testing!\n"
+        "Enter your name and surname"
     ),
     "incorrect input": (
-        """
-        Incorrect input!
-        Your message should contain
-        name and surname, separated by a space.
-        \nTry again
-        """
+        "Incorrect input!\n"
+        "Your message should contain\n"
+        "name and surname, separated by a space.\n"
+        "\nTry again"
     ),
     "finish test success": (
-        """
-        Test passed!
-        Your score: {score} points.
-        """
+        "Test passed!\n"
+        "Your score: {score} points."
     ),
     "finish test fail": (
-        """
-        Test failed!
-        Your score: {score} points.
-        \nTry again.
-        """
+        "Test failed!\n"
+        "Your score: {score} points.\n"
+        "\nTry again."
     ),
 }
 
@@ -71,6 +59,11 @@ BUTTONS = {
     "skip": "Skip",
     "test yes": "Start",
     "test no": "Back",
+    "view questions": "Questions: {count}",
+    "add question": "Add question",
+    "publish test": "Publish test",
+    "delete test": "Delete test",
+    "main menu": "Main menu",
 }
 
 LOGS = {

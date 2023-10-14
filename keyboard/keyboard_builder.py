@@ -1,34 +1,4 @@
-"""
-Модуль для создания клавиатур.
-
-Содержит функции для создания клавиатур для бота.
-
-Функции:
-    create_main_menu_keyboard:
-        Создание главного меню.
-    create_tests_menu_keyboard:
-        Создание клавиатуры для списка тестов.
-    create_test_menu_keyboard:
-        Создание клавиатуры для меню теста.
-    create_choice_answer_keyboard:
-        Создание клавиатуры для выбора правильного ответа
-        при создании теста.
-    create_test_answers_keyboard:
-        Создания клавиатуры выбора ответа для теста.
-    create_confirm_keyboard:
-        Создание клавиатуры для подтверждения действия.
-    create_after_test_keyboard:
-        Создание клавиатуры после прохождения теста.
-    create_users_menu_keyboard:
-        Создание клавиатуры для выбора пользователя.
-    create_user_menu_keyboard:
-        Создание клавиатуры просмотра пользователя.
-    create_question_menu_keyboard:
-        Создание клавиатуры для редактирования вопроса.
-    create_back_button_keyboard:
-        Создание клавиатуры с кнопкой назад.
 # todo: Добавить пагинацию для клавиатур со списками.
-"""
 from random import shuffle
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -105,7 +75,10 @@ def create_test_menu_keyboard(
     if not is_publish:
         keyboard_builder.row(
             InlineKeyboardButton(
-                text=f"Вопросов: {len(questions) if questions else 0}",
+                text=lexicon.BUTTONS["view questions"].format(
+                    count=len(questions) if questions else 0
+                ),
+               # text=f"Вопросов: {len(questions) if questions else 0}",
                 # todo: создать хендлер для получения вопросов
                 callback_data="test_questions",
             )
@@ -121,23 +94,24 @@ def create_test_menu_keyboard(
         #     )
         keyboard_builder.row(
             InlineKeyboardButton(
-                text="Добавить вопрос",
+                text=lexicon.BUTTONS["add question"],
                 callback_data=f"add_question_test_{test.id}",
             )
         )
         keyboard_builder.row(
             InlineKeyboardButton(
-                text="Опубликовать тест",
+                text=lexicon.BUTTONS["publish test"],
                 callback_data=f"confirm_publish_test_{test.id}",
             )
         )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text="Удалить тест", callback_data=f"confirm_delete_test_{test.id}"
+            text=lexicon.BUTTONS["delete test"],
+            callback_data=f"confirm_delete_test_{test.id}"
         )
     )
     keyboard_builder.row(
-        InlineKeyboardButton(text="Назад", callback_data="tests")
+        InlineKeyboardButton(text=lexicon.BUTTONS["back"], callback_data="tests")
     )
     return keyboard_builder.as_markup()
 
@@ -190,7 +164,7 @@ def create_after_test_keyboard() -> InlineKeyboardMarkup:
     """Create after test keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
-        InlineKeyboardButton(text="Главное меню", callback_data="main_menu"),
+        InlineKeyboardButton(text=lexicon.BUTTONS['main menu'], callback_data="main_menu"),
     )
     return keyboard_builder.as_markup()
 
@@ -235,7 +209,7 @@ def create_user_menu_keyboard(
             )
         )
     keyboard_builder.row(
-        InlineKeyboardButton(text="Назад", callback_data="users")
+        InlineKeyboardButton(text=lexicon.BUTTONS['back'], callback_data="users")
     )
     return keyboard_builder.as_markup()
 
@@ -279,7 +253,7 @@ def create_question_menu_keyboard(
 
 def create_back_button_keyboard(
     callback_data: str,
-    mgs: str = "Назад",
+    mgs: str = lexicon.BUTTONS['back'],
 ) -> InlineKeyboardMarkup:
     """Create back button keyboard."""
     keyboard_builder = InlineKeyboardBuilder()

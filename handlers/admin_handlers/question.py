@@ -82,15 +82,13 @@ async def process_input_correct_answer(
             for is_correct in [True if answer == callback.data else False]
         }
     )
+    keyboard = [
+        [InlineKeyboardButton(text=lexicon.BUTTONS['skip'], callback_data="skip")]
+    ]
     await callback.message.edit_text(
         text=lexicon.MESSAGES['add question image'],
         reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=[
-                InlineKeyboardButton(
-                    text=lexicon.BUTTONS['skip'],
-                    callback_data="skip",
-                )
-            ]
+            inline_keyboard=keyboard
         ),
     )
     await state.set_state(FSMCreateQuestions.image)

@@ -107,7 +107,10 @@ async def call_test(callback: CallbackQuery):
 
     if test.is_publish:
         statistics = db.get_statistics_by_test_id(test_id=test_id)
-        text += lexicon.MESSAGES['test statistics'].format(statistics=statistics)
+        text += lexicon.MESSAGES['test statistics'].format(
+            completed=statistics['completed'],
+            total=statistics['total'],
+        )
 
     await callback.message.edit_text(
         text=text,

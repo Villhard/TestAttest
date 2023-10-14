@@ -147,7 +147,10 @@ def get_statistics_by_test_id(test_id: int) -> dict[str, int]:
         total = results.count()
         completed = results.filter(Result.score >= config.pass_score).count()
 
-        statistics = {"completed": completed, "total": total}
+        statistics = {
+            "completed": completed,
+            "total": total,
+        }
 
         return statistics
 
