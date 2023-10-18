@@ -41,6 +41,7 @@ async def call_main_menu(callback: CallbackQuery):
         text=lexicon.MESSAGES['main menu'],
         reply_markup=keyboard,
     )
+    await callback.answer()
 
 
 @router.callback_query(F.data == "tests", StateFilter(default_state))
@@ -57,6 +58,7 @@ async def call_tests(callback: CallbackQuery):
         text=lexicon.MESSAGES['tests'],
         reply_markup=keyboard,
     )
+    await callback.answer()
 
 
 @router.callback_query(
@@ -77,6 +79,7 @@ async def call_test(callback: CallbackQuery):
         text=f"<b>{test.title}</b>\n\n{test.description}",
         reply_markup=keyboard,
     )
+    await callback.answer()
 
 
 @router.message(

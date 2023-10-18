@@ -40,6 +40,7 @@ async def call_add_question(callback: CallbackQuery, state: FSMContext):
         text=lexicon.MESSAGES['add question']
     )
     await state.set_state(FSMCreateQuestions.text)
+    await callback.answer()
 
 
 @router.message(F.text, StateFilter(FSMCreateQuestions.text))
@@ -92,6 +93,7 @@ async def process_input_correct_answer(
         ),
     )
     await state.set_state(FSMCreateQuestions.image)
+    await callback.answer()
 
 
 @router.message(F.photo, StateFilter(FSMCreateQuestions.image))
@@ -154,3 +156,4 @@ async def process_skip_image_question(
     )
     await state.clear()
     await state.set_state(default_state)
+    await callback.answer()

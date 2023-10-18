@@ -28,6 +28,7 @@ async def call_add_test(callback: CallbackQuery, state: FSMContext):
 
     await callback.message.edit_text(text=lexicon.MESSAGES['add test'])
     await state.set_state(FSMCreateTest.title)
+    await callback.answer()
 
 
 @router.callback_query(
@@ -51,6 +52,7 @@ async def call_confirm_delete_test(callback: CallbackQuery):
         text=lexicon.MESSAGES['confirm delete test'],
         reply_markup=keyboard,
     )
+    await callback.answer()
 
 
 @router.callback_query(
@@ -75,6 +77,7 @@ async def call_delete_test(callback: CallbackQuery):
     await callback.message.edit_text(
         text=lexicon.MESSAGES['delete test'], reply_markup=keyboard
     )
+    await callback.answer()
 
 
 @router.callback_query(
@@ -98,6 +101,7 @@ async def call_confirm_publish_test(callback: CallbackQuery):
         text=lexicon.MESSAGES['confirm publish test'],
         reply_markup=keyboard,
     )
+    await callback.answer()
 
 
 @router.callback_query(
@@ -122,6 +126,7 @@ async def call_publish_test(callback: CallbackQuery):
         text=lexicon.MESSAGES['publish test'],
         reply_markup=keyboard,
     )
+    await callback.answer()
 
 
 @router.callback_query(
@@ -149,7 +154,9 @@ async def call_edit_correct_answer(callback: CallbackQuery):
             reply_markup=keyboard,
         )
     except TelegramBadRequest:
-        await callback.answer()
+        pass
+
+    await callback.answer()
 
 
 @router.callback_query(

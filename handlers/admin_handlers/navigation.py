@@ -46,6 +46,7 @@ async def call_main_menu(callback: CallbackQuery):
         text=lexicon.MESSAGES["main menu"],
         reply_markup=keyboard,
     )
+    await callback.answer()
 
 
 @router.callback_query(F.data == "tests", StateFilter(default_state))
@@ -64,6 +65,7 @@ async def call_tests(callback: CallbackQuery):
         text=lexicon.MESSAGES["tests"],
         reply_markup=keyboard,
     )
+    await callback.answer()
 
 
 @router.callback_query(F.data == "users", StateFilter(default_state))
@@ -82,6 +84,7 @@ async def call_users(callback: CallbackQuery):
         text=lexicon.MESSAGES["users"],
         reply_markup=keyboard,
     )
+    await callback.answer()
 
 
 @router.callback_query(
@@ -116,6 +119,7 @@ async def call_test(callback: CallbackQuery):
         text=text,
         reply_markup=keyboard,
     )
+    await callback.answer()
 
 
 @router.callback_query(
@@ -141,6 +145,7 @@ async def call_question(callback: CallbackQuery):
         text=question.text,
         reply_markup=keyboard,
     )
+    await callback.answer()
 
 
 @router.callback_query(
@@ -165,6 +170,7 @@ async def call_user(callback: CallbackQuery):
         text=lexicon.MESSAGES["user statistics"].format(user=user, results=results),
         reply_markup=keyboard,
     )
+    await callback.answer()
 
 
 @router.callback_query(
@@ -199,3 +205,4 @@ async def call_result(call: CallbackQuery):
         text=text,
         reply_markup=keyboard,
     )
+    await call.answer()

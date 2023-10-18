@@ -49,6 +49,7 @@ async def call_start_test(
             text=question.text,
             reply_markup=keyboard,
         )
+    await callback.answer()
 
 
 @router.callback_query(F.data, StateFilter(FSMTesting.testing))
@@ -102,3 +103,4 @@ async def call_answering(callback: CallbackQuery, state: FSMContext):
             reply_markup=keyboard,
         )
         await callback.message.delete()
+    await callback.answer()
