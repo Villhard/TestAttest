@@ -16,7 +16,7 @@ from loguru import logger
 from config import lexicon
 from database import admin_connect as db
 from handlers.admin_handlers.states import FSMCreateQuestions
-from keyboard import keyboard_builder as kb
+import keyboard.keyboard_builder as kb
 from utils import admin_utils as utils
 
 router = Router()

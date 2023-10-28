@@ -7,7 +7,7 @@ from aiogram.types import Message, CallbackQuery
 from loguru import logger
 
 from config import lexicon
-from keyboard import keyboard_builder as kb
+import keyboard.keyboard_builder as kb
 from database import admin_connect as db
 
 router = Router()
