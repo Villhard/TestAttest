@@ -78,20 +78,10 @@ def create_test_menu_keyboard(
                 text=lexicon.BUTTONS["view questions"].format(
                     count=len(questions) if questions else 0
                 ),
-               # text=f"Вопросов: {len(questions) if questions else 0}",
                 # todo: создать хендлер для получения вопросов
                 callback_data="test_questions",
             )
         )
-        # for question in questions:
-        #     keyboard_builder.row(
-        #         InlineKeyboardButton(
-        #             text=(
-        #                 f"{'🖼' if question.image else ''}" f" {question.text}"
-        #             ),
-        #             callback_data=f"question_{question.id}",
-        #         )
-        #     )
         keyboard_builder.row(
             InlineKeyboardButton(
                 text=lexicon.BUTTONS["add question"],
