@@ -21,15 +21,11 @@ def create_main_menu_keyboard(
     # todo: Добавлять меню по мере добавления новых функций
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
-        InlineKeyboardButton(
-            text=lexicon.BUTTONS['tests'], callback_data="tests"
-        )
+        InlineKeyboardButton(text=lexicon.BUTTONS["tests"], callback_data="tests")
     )
     if is_admin:
         keyboard_builder.row(
-            InlineKeyboardButton(
-                text=lexicon.BUTTONS['users'], callback_data="users"
-            )
+            InlineKeyboardButton(text=lexicon.BUTTONS["users"], callback_data="users")
         )
     return keyboard_builder.as_markup()
 
@@ -54,13 +50,11 @@ def create_tests_menu_keyboard(
     if is_admin:
         keyboard_builder.row(
             InlineKeyboardButton(
-                text=lexicon.BUTTONS['add test'], callback_data="add test"
+                text=lexicon.BUTTONS["add test"], callback_data="add test"
             )
         )
     keyboard_builder.row(
-        InlineKeyboardButton(
-            text=lexicon.BUTTONS['back'], callback_data="main menu"
-        )
+        InlineKeyboardButton(text=lexicon.BUTTONS["back"], callback_data="main menu")
     )
     return keyboard_builder.as_markup()
 
@@ -79,7 +73,7 @@ def create_test_menu_keyboard(
                     count=len(questions) if questions else 0
                 ),
                 # todo: создать хендлер для получения вопросов
-                callback_data="test_questions",
+                callback_data=f"test_questions_{test.id}",
             )
         )
         keyboard_builder.row(
@@ -97,9 +91,25 @@ def create_test_menu_keyboard(
     keyboard_builder.row(
         InlineKeyboardButton(
             text=lexicon.BUTTONS["delete test"],
-            callback_data=f"confirm_delete_test_{test.id}"
+            callback_data=f"confirm_delete_test_{test.id}",
         )
     )
+    keyboard_builder.row(
+        InlineKeyboardButton(text=lexicon.BUTTONS["back"], callback_data="tests")
+    )
+    return keyboard_builder.as_markup()
+
+
+def create_questions_menu_keyboard(questions: list[Question]) -> InlineKeyboardMarkup:
+    """Create questions menu keyboard."""
+    keyboard_builder = InlineKeyboardBuilder()
+    for question in questions:
+        keyboard_builder.row(
+            InlineKeyboardButton(
+                text=f"{question.text}",
+                callback_data=f"question_{question.id}",
+            )
+        )
     keyboard_builder.row(
         InlineKeyboardButton(text=lexicon.BUTTONS["back"], callback_data="tests")
     )
@@ -128,9 +138,7 @@ def create_test_answers_keyboard(
     shuffle(answers)
     for answer in answers:
         keyboard_builder.row(
-            InlineKeyboardButton(
-                text=f"{answer.text}", callback_data=f"{answer.id}"
-            )
+            InlineKeyboardButton(text=f"{answer.text}", callback_data=f"{answer.id}")
         )
     return keyboard_builder.as_markup()
 
@@ -138,8 +146,8 @@ def create_test_answers_keyboard(
 def create_confirm_keyboard(
     callback_yes: str = "yes",
     callback_no: str = "no",
-    text_yes: str = lexicon.BUTTONS['yes'],
-    text_no: str = lexicon.BUTTONS['no'],
+    text_yes: str = lexicon.BUTTONS["yes"],
+    text_no: str = lexicon.BUTTONS["no"],
 ) -> InlineKeyboardMarkup:
     """Create confirm keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
@@ -154,7 +162,9 @@ def create_after_test_keyboard() -> InlineKeyboardMarkup:
     """Create after test keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
-        InlineKeyboardButton(text=lexicon.BUTTONS['main menu'], callback_data="main_menu"),
+        InlineKeyboardButton(
+            text=lexicon.BUTTONS["main menu"], callback_data="main_menu"
+        ),
     )
     return keyboard_builder.as_markup()
 
@@ -174,9 +184,7 @@ def create_users_menu_keyboard(users: list[User]) -> InlineKeyboardMarkup:
             )
         )
     keyboard_builder.row(
-        InlineKeyboardButton(
-            text=lexicon.BUTTONS['back'], callback_data="main menu"
-        )
+        InlineKeyboardButton(text=lexicon.BUTTONS["back"], callback_data="main menu")
     )
     return keyboard_builder.as_markup()
 
@@ -199,7 +207,7 @@ def create_user_menu_keyboard(
             )
         )
     keyboard_builder.row(
-        InlineKeyboardButton(text=lexicon.BUTTONS['back'], callback_data="users")
+        InlineKeyboardButton(text=lexicon.BUTTONS["back"], callback_data="users")
     )
     return keyboard_builder.as_markup()
 
@@ -213,26 +221,24 @@ def create_question_menu_keyboard(
         keyboard_builder.row(
             InlineKeyboardButton(
                 text=f"{'✅' if answer.is_correct else ''} {answer.text}",
-                callback_data=(
-                    f"edit_correct_answer_{answer.question_id}_{answer.id}"
-                ),
+                callback_data=(f"edit_correct_answer_{answer.question_id}_{answer.id}"),
             )
         )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text=lexicon.BUTTONS['edit question'],
+            text=lexicon.BUTTONS["edit question"],
             callback_data=f"edit_question_{answers[0].question_id}",
         ),
     )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text=lexicon.BUTTONS['delete question'],
+            text=lexicon.BUTTONS["delete question"],
             callback_data=f"delete_question_{answers[0].question_id}",
         ),
     )
     keyboard_builder.row(
         InlineKeyboardButton(
-            text=lexicon.BUTTONS['back'],
+            text=lexicon.BUTTONS["back"],
             callback_data=(
                 f"test_{get_test_id_by_question_id(answers[0].question_id)}"
             ),
@@ -243,11 +249,9 @@ def create_question_menu_keyboard(
 
 def create_back_button_keyboard(
     callback_data: str,
-    mgs: str = lexicon.BUTTONS['back'],
+    mgs: str = lexicon.BUTTONS["back"],
 ) -> InlineKeyboardMarkup:
     """Create back button keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
-    keyboard_builder.row(
-        InlineKeyboardButton(text=mgs, callback_data=callback_data)
-    )
+    keyboard_builder.row(InlineKeyboardButton(text=mgs, callback_data=callback_data))
     return keyboard_builder.as_markup()

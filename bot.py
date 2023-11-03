@@ -24,6 +24,6 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    logger.info(lexicon.LOGS['starting bot'])
+    logger.info(lexicon.LOGS["starting bot"])
     asyncio.run(main())
-    logger.info(lexicon.LOGS['stopping bot'])
+    logger.info(lexicon.LOGS["stopping bot"])

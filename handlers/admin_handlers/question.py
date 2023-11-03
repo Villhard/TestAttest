@@ -33,12 +33,12 @@ async def call_add_question(callback: CallbackQuery, state: FSMContext):
 
     # DEBUG LOG
     logger.debug(
-        lexicon.MESSAGES['add question'].format(admin_id=callback.from_user.id, test_id=callback.data.split('_')[3])
+        lexicon.MESSAGES["add question"].format(
+            admin_id=callback.from_user.id, test_id=callback.data.split("_")[3]
+        )
     )
 
-    await callback.message.edit_text(
-        text=lexicon.MESSAGES['add question']
-    )
+    await callback.message.edit_text(text=lexicon.MESSAGES["add question"])
     await state.set_state(FSMCreateQuestions.text)
     await callback.answer()
 
@@ -47,7 +47,7 @@ async def call_add_question(callback: CallbackQuery, state: FSMContext):
 async def process_input_question_text(message: Message, state: FSMContext):
     """Create question. Question text."""
     await state.update_data(text=message.text)
-    await message.answer(text=lexicon.MESSAGES['add question answer 1'])
+    await message.answer(text=lexicon.MESSAGES["add question answer 1"])
     await state.set_state(FSMCreateQuestions.answers)
 
 
@@ -60,20 +60,18 @@ async def process_input_answers_text(message: Message, state: FSMContext):
     await state.update_data(answers=answers)
     if len(answers) < 4:
         await message.answer(
-            text=lexicon.MESSAGES['add question answer n'].format(n=len(answers)+1)
+            text=lexicon.MESSAGES["add question answer n"].format(n=len(answers) + 1)
         )
     else:
         keyboard = kb.create_choice_answer_keyboard(answers)
         await message.answer(
-            text=lexicon.MESSAGES['confirm correct answer'],
+            text=lexicon.MESSAGES["confirm correct answer"],
             reply_markup=keyboard,
         )
 
 
 @router.callback_query(F.data, StateFilter(FSMCreateQuestions.answers))
-async def process_input_correct_answer(
-    callback: CallbackQuery, state: FSMContext
-):
+async def process_input_correct_answer(callback: CallbackQuery, state: FSMContext):
     """Create question. Correct answer."""
     data = await state.get_data()
     await state.update_data(
@@ -84,13 +82,11 @@ async def process_input_correct_answer(
         }
     )
     keyboard = [
-        [InlineKeyboardButton(text=lexicon.BUTTONS['skip'], callback_data="skip")]
+        [InlineKeyboardButton(text=lexicon.BUTTONS["skip"], callback_data="skip")]
     ]
     await callback.message.edit_text(
-        text=lexicon.MESSAGES['add question image'],
-        reply_markup=InlineKeyboardMarkup(
-            inline_keyboard=keyboard
-        ),
+        text=lexicon.MESSAGES["add question image"],
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard),
     )
     await state.set_state(FSMCreateQuestions.image)
     await callback.answer()
@@ -123,7 +119,7 @@ async def process_input_image_question(message: Message, state: FSMContext):
         is_publish=test.is_publish,
     )
     await message.answer(
-        text=lexicon.MESSAGES['question created'],
+        text=lexicon.MESSAGES["question created"],
         reply_markup=keyboard,
     )
     await state.clear()
@@ -131,9 +127,7 @@ async def process_input_image_question(message: Message, state: FSMContext):
 
 
 @router.callback_query(F.data, StateFilter(FSMCreateQuestions.image))
-async def process_skip_image_question(
-    callback: CallbackQuery, state: FSMContext
-):
+async def process_skip_image_question(callback: CallbackQuery, state: FSMContext):
     """Create question. Skip image."""
     data = await state.get_data()
     test_id = data["test_id"]
@@ -151,7 +145,7 @@ async def process_skip_image_question(
         is_publish=test.is_publish,
     )
     await callback.message.edit_text(
-        text=lexicon.MESSAGES['question created'],
+        text=lexicon.MESSAGES["question created"],
         reply_markup=keyboard,
     )
     await state.clear()

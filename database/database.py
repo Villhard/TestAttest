@@ -87,9 +87,7 @@ class Question(Base):
 
     __tablename__ = "questions"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    test: Mapped["Test"] = relationship(
-        back_populates="questions", uselist=False
-    )
+    test: Mapped["Test"] = relationship(back_populates="questions", uselist=False)
     test_id = mapped_column(ForeignKey("tests.id"), nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
     image: Mapped[str] = mapped_column(nullable=True)
@@ -114,9 +112,7 @@ class Answer(Base):
 
     __tablename__ = "answers"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    question: Mapped["Question"] = relationship(
-        back_populates="answers", uselist=False
-    )
+    question: Mapped["Question"] = relationship(back_populates="answers", uselist=False)
     question_id = mapped_column(ForeignKey("questions.id"), nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
     is_correct: Mapped[bool] = mapped_column(nullable=False)
@@ -138,13 +134,9 @@ class Result(Base):
 
     __tablename__ = "results"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    test: Mapped["Test"] = relationship(
-        back_populates="results", uselist=False
-    )
+    test: Mapped["Test"] = relationship(back_populates="results", uselist=False)
     test_id = mapped_column(ForeignKey("tests.id"), nullable=False)
-    user: Mapped["User"] = relationship(
-        back_populates="results", uselist=False
-    )
+    user: Mapped["User"] = relationship(back_populates="results", uselist=False)
     user_id = mapped_column(ForeignKey("users.id"), nullable=False)
     score: Mapped[int] = mapped_column(nullable=False)
     incorrect_answers: Mapped[list["IncorrectAnswer"]] = relationship(

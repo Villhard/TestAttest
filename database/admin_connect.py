@@ -99,9 +99,7 @@ def delete_test_by_id(test_id: int) -> None:
             IncorrectAnswer.result.has(test_id=test_id)
         ).delete()
         session.query(Result).filter(Result.test_id == test_id).delete()
-        session.query(Answer).filter(
-            Answer.question.has(test_id=test_id)
-        ).delete()
+        session.query(Answer).filter(Answer.question.has(test_id=test_id)).delete()
         session.query(Question).filter(Question.test_id == test_id).delete()
         session.query(Test).filter(Test.id == test_id).delete()
         session.commit()
@@ -110,9 +108,7 @@ def delete_test_by_id(test_id: int) -> None:
 def publish_test_by_id(test_id: int) -> None:
     """Publish test by id."""
     with Session() as session:
-        session.query(Test).filter(Test.id == test_id).update(
-            {"is_publish": True}
-        )
+        session.query(Test).filter(Test.id == test_id).update({"is_publish": True})
         session.commit()
 
 
@@ -131,10 +127,7 @@ def get_test_id_by_question_id(question_id: int) -> int:
     """Get test id by question id."""
     with Session() as session:
         test_id = (
-            session.query(Question)
-            .filter(Question.id == question_id)
-            .one()
-            .test_id
+            session.query(Question).filter(Question.id == question_id).one().test_id
         )
         return test_id
 
@@ -183,32 +176,22 @@ def get_question_by_id(
 ) -> tuple[Question, list[Answer]]:
     """Get question and answers by question id."""
     with Session() as session:
-        question = (
-            session.query(Question).filter(Question.id == question_id).one()
-        )
-        answers = (
-            session.query(Answer)
-            .filter(Answer.question_id == question.id)
-            .all()
-        )
+        question = session.query(Question).filter(Question.id == question_id).one()
+        answers = session.query(Answer).filter(Answer.question_id == question.id).all()
         return question, answers
 
 
 def get_questions_by_test_id(test_id: int) -> list[Question]:
     """Get questions by test id."""
     with Session() as session:
-        questions = (
-            session.query(Question).filter(Question.test_id == test_id).all()
-        )
+        questions = session.query(Question).filter(Question.test_id == test_id).all()
         return questions
 
 
 def delete_question_by_id(question_id: int) -> None:
     """Delete question by id."""
     with Session() as session:
-        session.query(Answer).filter(
-            Answer.question_id == question_id
-        ).delete()
+        session.query(Answer).filter(Answer.question_id == question_id).delete()
         session.query(Question).filter(Question.id == question_id).delete()
         session.commit()
 
