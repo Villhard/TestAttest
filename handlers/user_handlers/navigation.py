@@ -23,11 +23,11 @@ async def cmd_start(message: Message, state: FSMContext):
             is_admin=False,
         )
         await message.answer(
-            text=lexicon.MESSAGES['greeting user'].format(name=user.name),
+            text=lexicon.MESSAGES["greeting user"].format(name=user.name),
             reply_markup=keyboard,
         )
     else:
-        await message.answer(text=lexicon.MESSAGES['greeting stranger'])
+        await message.answer(text=lexicon.MESSAGES["greeting stranger"])
         await state.set_state(FSMUserInputName.fullname)
 
 
@@ -38,7 +38,7 @@ async def call_main_menu(callback: CallbackQuery):
         is_admin=False,
     )
     await callback.message.edit_text(
-        text=lexicon.MESSAGES['main menu'],
+        text=lexicon.MESSAGES["main menu"],
         reply_markup=keyboard,
     )
     await callback.answer()
@@ -55,7 +55,7 @@ async def call_tests(callback: CallbackQuery):
         is_admin=False,
     )
     await callback.message.edit_text(
-        text=lexicon.MESSAGES['tests'],
+        text=lexicon.MESSAGES["tests"],
         reply_markup=keyboard,
     )
     await callback.answer()
@@ -72,8 +72,8 @@ async def call_test(callback: CallbackQuery):
     keyboard = kb.create_confirm_keyboard(
         callback_yes=f"start_test_{test_id}",
         callback_no="tests",
-        text_yes=lexicon.BUTTONS['test yes'],
-        text_no=lexicon.BUTTONS['test no'],
+        text_yes=lexicon.BUTTONS["test yes"],
+        text_no=lexicon.BUTTONS["test no"],
     )
     await callback.message.edit_text(
         text=f"<b>{test.title}</b>\n\n{test.description}",
@@ -94,7 +94,7 @@ async def process_input_name(message: Message, state: FSMContext):
         is_admin=False,
     )
     await message.answer(
-        text=lexicon.MESSAGES['greeting user'].format(name=name),
+        text=lexicon.MESSAGES["greeting user"].format(name=name),
         reply_markup=keyboard,
     )
     await state.clear()
@@ -103,4 +103,4 @@ async def process_input_name(message: Message, state: FSMContext):
 @router.message(F.text, StateFilter(FSMUserInputName.fullname))
 async def process_incorrect_input_name(message: Message):
     """Incorrect input processing."""
-    await message.answer(text=lexicon.MESSAGES['incorrect input'])
+    await message.answer(text=lexicon.MESSAGES["incorrect input"])

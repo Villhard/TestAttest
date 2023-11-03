@@ -4,8 +4,7 @@ MESSAGES = {
     "tests": "List of tests",
     "users": "List of users",
     "test statistics": (
-        "\n\n<b>Statistics:</b>\n\n"
-        "Success/Total: {completed}/{total}"
+        "\n\n<b>Statistics:</b>\n\n" "Success/Total: {completed}/{total}"
     ),
     "users statistics": (
         "<b>{user.name} {user.surname}</b>\n\n"
@@ -27,8 +26,7 @@ MESSAGES = {
     "question created": "Question successfully created",
     "greeting user": "Hello, {name}!",
     "greeting stranger": (
-        "Welcome to the bot for testing!\n"
-        "Enter your name and surname"
+        "Welcome to the bot for testing!\n" "Enter your name and surname"
     ),
     "incorrect input": (
         "Incorrect input!\n"
@@ -36,15 +34,11 @@ MESSAGES = {
         "name and surname, separated by a space.\n"
         "\nTry again"
     ),
-    "finish test success": (
-        "Test passed!\n"
-        "Your score: {score} points."
-    ),
+    "finish test success": ("Test passed!\n" "Your score: {score} points."),
     "finish test fail": (
-        "Test failed!\n"
-        "Your score: {score} points.\n"
-        "\nTry again."
+        "Test failed!\n" "Your score: {score} points.\n" "\nTry again."
     ),
+    "test questions": 'Test\'s questions "{test_name}"',
 }
 
 BUTTONS = {
@@ -88,4 +82,5 @@ LOGS = {
     "add test title": "Admin: {admin_id} is creating test {title}",
     "add test description": "Admin: {admin_id} is creating description {description} for test {title}",
     "add question": "Admin: {admin_id} started creating new question in test {test_id}",
+    "test questions": "Admin: {admin_id} got to test {test_id} questions",
 }

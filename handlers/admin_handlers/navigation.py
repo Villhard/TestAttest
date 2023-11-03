@@ -19,9 +19,7 @@ async def cmd_start(message: Message):
     admin_id = message.from_user.id
 
     # DEBUG LOG
-    logger.debug(
-        lexicon.LOGS['greeting admin'].format(admin_id=admin_id)
-    )
+    logger.debug(lexicon.LOGS["greeting admin"].format(admin_id=admin_id))
 
     keyboard = kb.create_main_menu_keyboard(is_admin=True)
     await message.answer(
@@ -37,9 +35,7 @@ async def call_main_menu(callback: CallbackQuery):
     admin_id = callback.from_user.id
 
     # DEBUG LOG
-    logger.debug(
-        lexicon.LOGS['main menu'].format(admin_id=admin_id)
-    )
+    logger.debug(lexicon.LOGS["main menu"].format(admin_id=admin_id))
 
     keyboard = kb.create_main_menu_keyboard(is_admin=True)
     await callback.message.edit_text(
@@ -55,9 +51,7 @@ async def call_tests(callback: CallbackQuery):
     admin_id = callback.from_user.id
 
     # DEBUG LOG
-    logger.debug(
-        lexicon.LOGS['tests'].format(admin_id=admin_id)
-    )
+    logger.debug(lexicon.LOGS["tests"].format(admin_id=admin_id))
 
     tests = db.get_tests()
     keyboard = kb.create_tests_menu_keyboard(tests=tests, is_admin=True)
@@ -74,9 +68,7 @@ async def call_users(callback: CallbackQuery):
     admin_id = callback.from_user.id
 
     # DEBUG LOG
-    logger.debug(
-        lexicon.LOGS['users'].format(admin_id=admin_id)
-    )
+    logger.debug(lexicon.LOGS["users"].format(admin_id=admin_id))
 
     users = db.get_users()
     keyboard = kb.create_users_menu_keyboard(users=users)
@@ -97,9 +89,7 @@ async def call_test(callback: CallbackQuery):
     admin_id = callback.from_user.id
 
     # DEBUG LOG
-    logger.debug(
-        lexicon.LOGS['test'].format(admin_id=admin_id, test_id=test_id)
-    )
+    logger.debug(lexicon.LOGS["test"].format(admin_id=admin_id, test_id=test_id))
 
     test = db.get_test_by_id(test_id=test_id)
     questions = db.get_questions_by_test_id(test_id=test_id)
@@ -110,9 +100,9 @@ async def call_test(callback: CallbackQuery):
 
     if test.is_publish:
         statistics = db.get_statistics_by_test_id(test_id=test_id)
-        text += lexicon.MESSAGES['test statistics'].format(
-            completed=statistics['completed'],
-            total=statistics['total'],
+        text += lexicon.MESSAGES["test statistics"].format(
+            completed=statistics["completed"],
+            total=statistics["total"],
         )
 
     await callback.message.edit_text(
@@ -120,6 +110,30 @@ async def call_test(callback: CallbackQuery):
         reply_markup=keyboard,
     )
     await callback.answer()
+
+
+@router.callback_query(
+    lambda call: re.fullmatch(r"test_questions_\d+", call.data),
+    StateFilter(default_state),
+)
+async def call_test_questions(callback: CallbackQuery):
+    """Test questions menu"""
+    test_id = callback.data.split("_")[2]
+    test = db.get_test_by_id(test_id=test_id)
+    questions = db.get_questions_by_test_id(test_id)
+    admin_id = callback.from_user.id
+
+    # DEBUG LOG
+    logger.debug(
+        lexicon.LOGS["test questions"].format(admin_id=admin_id, test_id=test_id)
+    )
+
+    keyboard = kb.create_questions_menu_keyboard(questions=questions)
+
+    await callback.message.edit_text(
+        text=lexicon.MESSAGES["test questions"].format(test_name=test.title),
+        reply_markup=keyboard,
+    )
 
 
 @router.callback_query(
@@ -133,7 +147,7 @@ async def call_question(callback: CallbackQuery):
 
     # DEBUG LOG
     logger.debug(
-        lexicon.LOGS['question'].format(admin_id=admin_id, question_id=question_id)
+        lexicon.LOGS["question"].format(admin_id=admin_id, question_id=question_id)
     )
 
     question, answers = db.get_question_by_id(question_id=question_id)
@@ -158,9 +172,7 @@ async def call_user(callback: CallbackQuery):
     admin_id = callback.from_user.id
 
     # DEBUG LOG
-    logger.debug(
-        lexicon.LOGS['user'].format(admin_id=admin_id, user_id=user_id)
-    )
+    logger.debug(lexicon.LOGS["user"].format(admin_id=admin_id, user_id=user_id))
 
     user = db.get_user_by_id(user_id=user_id)
     results = db.get_results_by_user_id(user_id=user_id)
@@ -183,19 +195,14 @@ async def call_result(call: CallbackQuery):
     admin_id = call.from_user.id
 
     # DEBUG LOG
-    logger.debug(
-        lexicon.LOGS['result'].format(admin_id=admin_id, result_id=result_id)
-    )
+    logger.debug(lexicon.LOGS["result"].format(admin_id=admin_id, result_id=result_id))
 
     result = db.get_result_by_id(result_id=result_id)
     test = db.get_test_by_id(result.test_id)
     result_data = db.get_result_data_by_result(result)
     text = f"<b>{test.title}</b>\n\n"
     text += "\n".join(
-        [
-            f"<u>{data[0]}</u>\n<s>{data[2]}</s>\n{data[1]}\n"
-            for data in result_data
-        ]
+        [f"<u>{data[0]}</u>\n<s>{data[2]}</s>\n{data[1]}\n" for data in result_data]
     )
     keyboard = kb.create_back_button_keyboard(
         callback_data=f"user_{result.user_id}",
