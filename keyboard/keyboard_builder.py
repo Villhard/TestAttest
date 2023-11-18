@@ -240,7 +240,7 @@ def create_question_menu_keyboard(
         InlineKeyboardButton(
             text=lexicon.BUTTONS["back"],
             callback_data=(
-                f"test_{get_test_id_by_question_id(answers[0].question_id)}"
+                f"test {get_test_id_by_question_id(answers[0].question_id)}"
             ),
         )
     )
