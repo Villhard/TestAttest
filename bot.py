@@ -1,4 +1,3 @@
-"""The bot."""
 import asyncio
 
 from aiogram import Bot, Dispatcher
@@ -10,7 +9,6 @@ from handlers import admin_handlers, user_handlers
 
 
 async def main() -> None:
-    """Start the bot."""
     storage: MemoryStorage = MemoryStorage()
 
     bot = Bot(token=config.bot.token, parse_mode="HTML")
