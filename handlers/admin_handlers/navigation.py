@@ -30,13 +30,12 @@ async def cmd_start(message: Message):
 
 @router.callback_query(F.data == "main menu", StateFilter(default_state))
 async def call_main_menu(callback: CallbackQuery):
-    """Main menu."""
     admin_id = callback.from_user.id
 
-    # DEBUG LOG
     logger.debug(lexicon.LOGS["main menu"].format(admin_id=admin_id))
 
     keyboard = kb.create_main_menu_keyboard(is_admin=True)
+
     await callback.message.edit_text(
         text=lexicon.MESSAGES["main menu"],
         reply_markup=keyboard,
@@ -46,14 +45,13 @@ async def call_main_menu(callback: CallbackQuery):
 
 @router.callback_query(F.data == "tests", StateFilter(default_state))
 async def call_tests(callback: CallbackQuery):
-    """Tests menu."""
     admin_id = callback.from_user.id
 
-    # DEBUG LOG
     logger.debug(lexicon.LOGS["tests"].format(admin_id=admin_id))
 
     tests = db.get_tests()
     keyboard = kb.create_tests_menu_keyboard(tests=tests, is_admin=True)
+
     await callback.message.edit_text(
         text=lexicon.MESSAGES["tests"],
         reply_markup=keyboard,

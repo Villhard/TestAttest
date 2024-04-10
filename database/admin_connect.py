@@ -79,7 +79,6 @@ def create_test(title: str, description: str) -> None:
 
 
 def get_tests() -> list[Test]:
-    """Get all tests."""
     with Session() as session:
         tests = session.query(Test).order_by(Test.id.desc()).all()
         return tests

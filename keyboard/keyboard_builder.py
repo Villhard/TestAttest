@@ -33,7 +33,6 @@ def create_tests_menu_keyboard(
     tests: list[Test],
     is_admin: bool = False,
 ) -> InlineKeyboardMarkup:
-    """Create tests menu keyboard."""
     keyboard_builder = InlineKeyboardBuilder()
     for test in tests:
         keyboard_builder.row(
@@ -46,15 +45,18 @@ def create_tests_menu_keyboard(
                 callback_data=f"test {test.id}",
             )
         )
+
     if is_admin:
         keyboard_builder.row(
             InlineKeyboardButton(
                 text=lexicon.BUTTONS["add test"], callback_data="add test"
             )
         )
+
     keyboard_builder.row(
         InlineKeyboardButton(text=lexicon.BUTTONS["back"], callback_data="main menu")
     )
+
     return keyboard_builder.as_markup()
 
 
