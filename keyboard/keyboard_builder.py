@@ -1,4 +1,3 @@
-# todo: Добавить пагинацию для клавиатур со списками.
 from random import shuffle
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -17,16 +16,16 @@ from database.admin_connect import (
 def create_main_menu_keyboard(
     is_admin: bool = False,
 ) -> InlineKeyboardMarkup:
-    """Create main menu keyboard."""
-    # todo: Добавлять меню по мере добавления новых функций
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.row(
         InlineKeyboardButton(text=lexicon.BUTTONS["tests"], callback_data="tests")
     )
+
     if is_admin:
         keyboard_builder.row(
             InlineKeyboardButton(text=lexicon.BUTTONS["users"], callback_data="users")
         )
+
     return keyboard_builder.as_markup()
 
 

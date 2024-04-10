@@ -15,13 +15,12 @@ router = Router()
 
 @router.message(CommandStart(), StateFilter(default_state))
 async def cmd_start(message: Message):
-    """Greeting admin"""
     admin_id = message.from_user.id
 
-    # DEBUG LOG
     logger.debug(lexicon.LOGS["greeting admin"].format(admin_id=admin_id))
 
     keyboard = kb.create_main_menu_keyboard(is_admin=True)
+
     await message.answer(
         text=lexicon.MESSAGES["greeting admin"],
         reply_markup=keyboard,
