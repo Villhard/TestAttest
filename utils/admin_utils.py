@@ -9,6 +9,7 @@
     get_next_number_image:
         Получение следующего номера изображения.
 """
+
 import os
 import shutil
 

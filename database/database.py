@@ -11,6 +11,7 @@
     Result - модель результата.
     IncorrectAnswer - модель неправильного ответа.
 """
+
 from sqlalchemy import BigInteger, ForeignKey, create_engine
 from sqlalchemy.orm import (
     Mapped,

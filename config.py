@@ -10,6 +10,7 @@ Functions:
     load_config:
         Reads the environment variables and returns the configuration.
 """
+
 from dataclasses import dataclass
 
 from environs import Env

@@ -1,6 +1,7 @@
 .env
 .DS_Store
 database.db
+db.sqlite3
 
 .venv/
 **/__pycache__/

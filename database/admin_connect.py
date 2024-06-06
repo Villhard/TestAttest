@@ -51,6 +51,7 @@
     get_result_data_by_result
         Получение данных результата
 """
+
 from sqlalchemy.orm import sessionmaker, aliased
 
 from config import config
